@@ -24,6 +24,7 @@ from shapely.geometry import box
 from scipy.ndimage import uniform_filter
 import warnings
 warnings.filterwarnings('ignore')
+os.environ['AWS_NO_SIGN_REQUEST'] = 'YES'  # public S3 bucket — no credentials needed
 
 
 def load_config(path='config/config.yaml'):
