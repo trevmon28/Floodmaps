@@ -96,8 +96,12 @@ def step_preprocess(cfg, months=None):
             datetime=f'{start}/{end}',
         )
         items = list(results.items())
+        # Filter out scenes missing CRS metadata (causes AttributeError in stackstac)
+        items = [i for i in items if i.properties.get('proj:epsg') is not None]
+        print(f'  Scenes with valid CRS: {len(items)}')
+
         if not items:
-            print(f'  No scenes for {month_str} — skipping')
+            print(f'  No valid scenes for {month_str} — skipping')
             continue
 
         stack = stackstac.stack(
