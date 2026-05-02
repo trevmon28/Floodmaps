@@ -104,6 +104,7 @@ def step_preprocess(cfg, months=None):
             items, assets=['vv', 'vh'], bounds_latlon=bbox,
             epsg=int(output_crs.split(':')[1]), resolution=20, dtype='float64',
             rescale=False,
+            errors_as_nodata=(Exception,),
         )
         composite = stack.median(dim='time').compute()
 
