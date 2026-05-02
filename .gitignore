@@ -1,0 +1,16 @@
+data/raw/
+data/processed/
+data/outputs/
+data/boundaries/
+*.tif
+*.tiff
+*.zip
+*.h5
+*.nc
+__pycache__/
+*.pyc
+.env
+.ipynb_checkpoints/
+*.egg-info/
+dist/
+build/

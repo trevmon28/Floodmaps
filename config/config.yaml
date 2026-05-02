@@ -1,0 +1,49 @@
+project:
+  name: DRC Flood Extent Mapping
+  version: "1.0"
+
+aoi:
+  name: Eastern DRC
+  provinces:
+    - North Kivu
+    - South Kivu
+    - Ituri
+  bbox:
+    # [west, south, east, north] in WGS84
+    west: 26.8
+    south: -5.9
+    east: 30.8
+    north: 3.0
+  crs: EPSG:4326
+  output_crs: EPSG:32735  # UTM Zone 35S — appropriate for eastern DRC
+
+temporal:
+  start: "2025-01-01"
+  end: "2026-04-30"
+  frequency: monthly
+
+data_sources:
+  sar:
+    platform: Sentinel-1
+    product: GRD
+    mode: IW
+    polarizations: [VV, VH]
+    catalog: https://planetarycomputer.microsoft.com/api/stac/v1
+    collection: sentinel-1-grd
+  optical:
+    platform: Sentinel-2
+    product: L2A
+    catalog: https://earth-search.aws.element84.com/v1
+    collection: sentinel-2-l2a
+    max_cloud_cover: 20  # % — will be sparse given DRC cloud cover
+
+processing:
+  tile_size: 512
+  speckle_filter: lee  # options: lee, refined_lee, gamma_map
+  flood_threshold_method: otsu
+  baseline_months: 3   # months of pre-event imagery to build dry baseline
+
+output:
+  format: GeoTIFF  # Cloud-Optimized GeoTIFF (COG)
+  nodata: -9999
+  dtype: float32
