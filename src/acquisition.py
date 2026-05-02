@@ -3,11 +3,9 @@ Data discovery and download via STAC for Sentinel-1 and Sentinel-2.
 """
 import yaml
 import pystac_client
-import planetary_computer
 import stackstac
 import geopandas as gpd
 from shapely.geometry import box
-from datetime import datetime
 import pandas as pd
 
 
@@ -22,16 +20,13 @@ def get_aoi_geometry(cfg):
 
 
 def search_sentinel1(cfg, start, end):
-    catalog = pystac_client.Client.open(
-        cfg["data_sources"]["sar"]["catalog"],
-        modifier=planetary_computer.sign_inplace,
-    )
+    # Element84 Earth Search — free, no API key required
+    catalog = pystac_client.Client.open(cfg["data_sources"]["sar"]["catalog"])
     aoi = get_aoi_geometry(cfg)
     results = catalog.search(
         collections=[cfg["data_sources"]["sar"]["collection"]],
         intersects=aoi.__geo_interface__,
         datetime=f"{start}/{end}",
-        query={"platform": {"eq": "SENTINEL-1"}},
     )
     items = list(results.items())
     print(f"Found {len(items)} Sentinel-1 scenes ({start} to {end})")
@@ -39,9 +34,8 @@ def search_sentinel1(cfg, start, end):
 
 
 def search_sentinel2(cfg, start, end):
-    catalog = pystac_client.Client.open(
-        cfg["data_sources"]["optical"]["catalog"]
-    )
+    # Element84 Earth Search — free, no API key required
+    catalog = pystac_client.Client.open(cfg["data_sources"]["optical"]["catalog"])
     aoi = get_aoi_geometry(cfg)
     results = catalog.search(
         collections=[cfg["data_sources"]["optical"]["collection"]],

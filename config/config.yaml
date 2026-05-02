@@ -28,7 +28,7 @@ data_sources:
     product: GRD
     mode: IW
     polarizations: [VV, VH]
-    catalog: https://planetarycomputer.microsoft.com/api/stac/v1
+    catalog: https://earth-search.aws.element84.com/v1
     collection: sentinel-1-grd
   optical:
     platform: Sentinel-2

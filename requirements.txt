@@ -4,7 +4,6 @@ xarray>=2024.1
 dask[distributed]>=2024.1
 stackstac>=0.5
 pystac-client>=0.7
-planetary-computer>=1.0
 geopandas>=0.14
 shapely>=2.0
 numpy>=1.26
