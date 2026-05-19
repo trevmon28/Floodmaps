@@ -1,0 +1,17 @@
+[Unit]
+Description=Flood Analytics MCP Server
+After=network.target flood-api.service
+
+[Service]
+User=nginx
+Group=nginx
+WorkingDirectory=/opt/flood
+Environment=MCP_TRANSPORT=http
+Environment=MCP_PORT=9001
+EnvironmentFile=/opt/flood/.env
+ExecStart=/opt/flood/venv/bin/python flood_mcp_server.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

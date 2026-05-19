@@ -1,0 +1,23 @@
+[http.routers]
+  [http.routers.flood-api]
+    rule = "Host(`api-flood.trevormonroe.com`)"
+    service = "flood-api"
+    entryPoints = ["websecure"]
+    [http.routers.flood-api.tls]
+      certResolver = "challenger"
+
+  [http.routers.flood-mcp]
+    rule = "Host(`mcp-flood.trevormonroe.com`)"
+    service = "flood-mcp"
+    entryPoints = ["websecure"]
+    [http.routers.flood-mcp.tls]
+      certResolver = "challenger"
+
+[http.services]
+  [http.services.flood-api.loadBalancer]
+    [[http.services.flood-api.loadBalancer.servers]]
+      url = "http://172.18.0.1:8001"
+
+  [http.services.flood-mcp.loadBalancer]
+    [[http.services.flood-mcp.loadBalancer.servers]]
+      url = "http://172.18.0.1:9001"

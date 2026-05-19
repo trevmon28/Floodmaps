@@ -2,6 +2,10 @@ data/raw/
 data/processed/
 data/outputs/
 data/boundaries/
+# Exclude large GeoJSONs and zip from handover — keep CSV/parquet
+data/handover/flood_extents/
+data/handover/maps/
+data/eastern_drc_flood_data.zip
 *.tif
 *.tiff
 *.zip
