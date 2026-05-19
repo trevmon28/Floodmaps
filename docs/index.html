@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eastern DRC Flood Analytics</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      line-height: 1.6;
+    }
+
+    /* ── Hero ──────────────────────────────────────────────────── */
+    .hero {
+      background: linear-gradient(135deg, #1a3a5c 0%, #0d2137 60%, #0d1117 100%);
+      padding: 64px 24px 48px;
+      text-align: center;
+      border-bottom: 1px solid #21262d;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: #1f6feb33;
+      color: #58a6ff;
+      border: 1px solid #1f6feb66;
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: clamp(28px, 5vw, 48px);
+      font-weight: 700;
+      color: #f0f6fc;
+      margin-bottom: 16px;
+    }
+    .hero h1 span { color: #58a6ff; }
+    .hero p {
+      max-width: 600px;
+      margin: 0 auto 28px;
+      color: #8b949e;
+      font-size: 17px;
+    }
+    .hero-meta {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      color: #8b949e;
+    }
+    .hero-meta span { display: flex; align-items: center; gap: 6px; }
+
+    /* ── Layout ─────────────────────────────────────────────────── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    .section { padding: 48px 0; border-bottom: 1px solid #21262d; }
+    .section:last-of-type { border-bottom: none; }
+    h2 {
+      font-size: 22px;
+      font-weight: 600;
+      color: #f0f6fc;
+      margin-bottom: 20px;
+    }
+    h2 small {
+      font-size: 13px;
+      font-weight: 400;
+      color: #8b949e;
+      margin-left: 10px;
+    }
+
+    /* ── Map iframe ──────────────────────────────────────────────── */
+    .map-container {
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid #30363d;
+      box-shadow: 0 4px 24px #00000055;
+    }
+    .map-container iframe {
+      display: block;
+      width: 100%;
+      height: 520px;
+      border: none;
+    }
+    .map-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .map-tab {
+      padding: 6px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      border: 1px solid #30363d;
+      background: #161b22;
+      color: #8b949e;
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+    .map-tab.active, .map-tab:hover {
+      background: #1f6feb22;
+      border-color: #1f6feb88;
+      color: #58a6ff;
+    }
+
+    /* ── Download cards ──────────────────────────────────────────── */
+    .download-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .dl-card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: border-color 0.15s;
+    }
+    .dl-card:hover { border-color: #58a6ff55; }
+    .dl-card-icon { font-size: 24px; }
+    .dl-card h3 { font-size: 15px; font-weight: 600; color: #f0f6fc; }
+    .dl-card p { font-size: 13px; color: #8b949e; flex-grow: 1; }
+    .dl-btn {
+      display: inline-block;
+      margin-top: 4px;
+      padding: 6px 14px;
+      background: #238636;
+      color: #fff;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      text-decoration: none;
+      text-align: center;
+      transition: background 0.15s;
+    }
+    .dl-btn:hover { background: #2ea043; }
+
+    /* ── Stats row ───────────────────────────────────────────────── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .stat-card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 20px 16px;
+      text-align: center;
+    }
+    .stat-card .val {
+      font-size: 28px;
+      font-weight: 700;
+      color: #58a6ff;
+    }
+    .stat-card .lbl {
+      font-size: 12px;
+      color: #8b949e;
+      margin-top: 4px;
+    }
+
+    /* ── Code blocks ─────────────────────────────────────────────── */
+    pre {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 18px 20px;
+      overflow-x: auto;
+      font-size: 13px;
+      line-height: 1.7;
+      color: #e6edf3;
+    }
+    code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; }
+    .kw  { color: #ff7b72; }
+    .st  { color: #a5d6ff; }
+    .cm  { color: #8b949e; }
+    .fn  { color: #d2a8ff; }
+
+    /* ── MCP section ─────────────────────────────────────────────── */
+    .mcp-card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .mcp-card .url-box {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 10px 16px;
+      font-family: monospace;
+      font-size: 14px;
+      color: #58a6ff;
+      flex-grow: 1;
+      word-break: break-all;
+    }
+    .tool-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .chip {
+      background: #1f6feb22;
+      border: 1px solid #1f6feb55;
+      border-radius: 20px;
+      padding: 3px 12px;
+      font-size: 12px;
+      color: #79c0ff;
+    }
+
+    /* ── Quality table ───────────────────────────────────────────── */
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th {
+      text-align: left;
+      padding: 10px 12px;
+      background: #161b22;
+      color: #8b949e;
+      font-weight: 600;
+      border-bottom: 1px solid #30363d;
+    }
+    td { padding: 9px 12px; border-bottom: 1px solid #21262d; color: #c9d1d9; }
+    tr:last-child td { border-bottom: none; }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge-valid   { background: #1a4731; color: #3fb950; }
+    .badge-gap     { background: #3d2200; color: #d29922; }
+    .badge-exclude { background: #3d0e0e; color: #f85149; }
+
+    /* ── Footer ──────────────────────────────────────────────────── */
+    footer {
+      padding: 32px 24px;
+      text-align: center;
+      font-size: 13px;
+      color: #8b949e;
+      border-top: 1px solid #21262d;
+    }
+    footer a { color: #58a6ff; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<!-- ── Hero ──────────────────────────────────────────────────────── -->
+<div class="hero">
+  <div class="hero-badge">Sentinel-1 SAR · Eastern DRC</div>
+  <h1>Eastern DRC <span>Flood Analytics</span></h1>
+  <p>
+    Monthly flood extent mapping for North Kivu, South Kivu, and Ituri provinces.
+    March 2025 – February 2026 · 100 m resolution · Calibrated σ₀ change detection.
+  </p>
+  <div class="hero-meta">
+    <span>📅 14 valid months</span>
+    <span>🗺️ 41 admin-3 territories</span>
+    <span>🔷 31,441 H3-7 hexagons</span>
+    <span>📡 Sentinel-1 SAR</span>
+  </div>
+</div>
+
+<!-- ── Stats ─────────────────────────────────────────────────────── -->
+<div class="container">
+  <div class="section">
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="val">3,428</div>
+        <div class="lbl">Peak flood area (km²)<br>Sep 2025</div>
+      </div>
+      <div class="stat-card">
+        <div class="val">41</div>
+        <div class="lbl">Admin-3 territories<br>covered</div>
+      </div>
+      <div class="stat-card">
+        <div class="val">14</div>
+        <div class="lbl">Months of valid<br>SAR coverage</div>
+      </div>
+      <div class="stat-card">
+        <div class="val">~5 km²</div>
+        <div class="lbl">H3-7 hexagon<br>resolution</div>
+      </div>
+      <div class="stat-card">
+        <div class="val">100 m</div>
+        <div class="lbl">SAR pixel<br>resolution</div>
+      </div>
+    </div>
+
+    <!-- ── Interactive map ───────────────────────────────────────── -->
+    <h2>Interactive Map</h2>
+    <div class="map-tabs">
+      <a class="map-tab active" href="flood_sampling_map.html" target="mapframe">Sampling Frame</a>
+      <a class="map-tab" href="flood_map_interactive.html" target="mapframe">Monthly Extents</a>
+    </div>
+    <div class="map-container">
+      <iframe name="mapframe" src="flood_sampling_map.html" allowfullscreen loading="lazy"></iframe>
+    </div>
+  </div>
+
+  <!-- ── Downloads ─────────────────────────────────────────────── -->
+  <div class="section">
+    <h2>Download Data <small>No GIS software required for CSV files</small></h2>
+    <div class="download-grid">
+
+      <div class="dl-card">
+        <div class="dl-card-icon">📊</div>
+        <h3>Admin-3 Flood (long)</h3>
+        <p>One row per territory per month. Includes centroid lat/lon. Best for statistical models.</p>
+        <a class="dl-btn"
+           href="https://raw.githubusercontent.com/trevmon28/Floodmaps/main/data/handover/csv/admin3_flood.csv"
+           download>Download CSV</a>
+      </div>
+
+      <div class="dl-card">
+        <div class="dl-card-icon">📋</div>
+        <h3>Admin-3 Flood (wide)</h3>
+        <p>One row per territory, flood-area columns for each month. Easy to join survey data in Excel / Stata / R.</p>
+        <a class="dl-btn"
+           href="https://raw.githubusercontent.com/trevmon28/Floodmaps/main/data/handover/csv/admin3_flood_wide.csv"
+           download>Download CSV</a>
+      </div>
+
+      <div class="dl-card">
+        <div class="dl-card-icon">🔷</div>
+        <h3>H3-7 Hex Grid (long)</h3>
+        <p>31,441 hexagons × 14 months. Join on <code>h3_index</code> using the h3 Python library.</p>
+        <a class="dl-btn"
+           href="https://raw.githubusercontent.com/trevmon28/Floodmaps/main/data/handover/csv/h3_7_flood.csv"
+           download>Download CSV</a>
+      </div>
+
+      <div class="dl-card">
+        <div class="dl-card-icon">📍</div>
+        <h3>Flood Centroids</h3>
+        <p>One row per flood polygon per month. Centroid lat/lon + area. Minimal file for quick mapping.</p>
+        <a class="dl-btn"
+           href="https://raw.githubusercontent.com/trevmon28/Floodmaps/main/data/handover/csv/flood_centroids.csv"
+           download>Download CSV</a>
+      </div>
+
+      <div class="dl-card">
+        <div class="dl-card-icon">🗂️</div>
+        <h3>Admin-3 GeoParquet</h3>
+        <p>Territory boundaries + flood data with geometry. For Python/geopandas users.</p>
+        <a class="dl-btn"
+           href="https://raw.githubusercontent.com/trevmon28/Floodmaps/main/data/handover/sampling_frames/admin3.parquet"
+           download>Download Parquet</a>
+      </div>
+
+      <div class="dl-card">
+        <div class="dl-card-icon">🔷</div>
+        <h3>H3-7 GeoParquet</h3>
+        <p>Hexagon polygons + flood data with geometry. Full spatial sampling frame.</p>
+        <a class="dl-btn"
+           href="https://raw.githubusercontent.com/trevmon28/Floodmaps/main/data/handover/sampling_frames/h3_7.parquet"
+           download>Download Parquet</a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Quick-start code ────────────────────────────────────────── -->
+  <div class="section">
+    <h2>Quick Start <small>Python</small></h2>
+    <pre><code><span class="cm"># Check if a territory was flooded in a given month</span>
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+df = pd.<span class="fn">read_csv</span>(<span class="st">"admin3_flood.csv"</span>)
+mask = (df[<span class="st">"shapeName"</span>] == <span class="st">"Rutshuru"</span>) &amp; (df[<span class="st">"month"</span>] == <span class="st">"2025-09"</span>)
+<span class="fn">print</span>(df[mask][[<span class="st">"shapeName"</span>, <span class="st">"month"</span>, <span class="st">"flood_area_km2"</span>, <span class="st">"quality"</span>]])</code></pre>
+
+    <br />
+
+    <pre><code><span class="cm"># Load the spatial sampling frame and check a GPS point</span>
+<span class="kw">import</span> geopandas <span class="kw">as</span> gpd
+<span class="kw">from</span> shapely.geometry <span class="kw">import</span> Point
+
+admin3 = gpd.<span class="fn">read_parquet</span>(<span class="st">"admin3.parquet"</span>)
+pt = <span class="fn">Point</span>(<span class="st">29.23</span>, <span class="st">-1.68</span>)  <span class="cm"># lon, lat</span>
+hit = admin3[admin3.geometry.<span class="fn">contains</span>(pt)]
+<span class="fn">print</span>(hit[[<span class="st">"shapeName"</span>, <span class="st">"month"</span>, <span class="st">"flood_area_km2"</span>]])</code></pre>
+
+    <br />
+
+    <pre><code><span class="cm"># Join flood data to a phone survey dataset</span>
+survey = pd.<span class="fn">read_csv</span>(<span class="st">"my_survey.csv"</span>)        <span class="cm"># must have 'territory' column</span>
+wide   = pd.<span class="fn">read_csv</span>(<span class="st">"admin3_flood_wide.csv"</span>)  <span class="cm"># one row per territory</span>
+merged = survey.<span class="fn">merge</span>(wide, left_on=<span class="st">"territory"</span>, right_on=<span class="st">"shapeName"</span>, how=<span class="st">"left"</span>)</code></pre>
+  </div>
+
+  <!-- ── MCP / API ────────────────────────────────────────────────── -->
+  <div class="section">
+    <h2>MCP Server <small>Query flood data directly from Claude</small></h2>
+    <div class="mcp-card">
+      <div style="flex-basis:100%">
+        <p style="color:#8b949e;font-size:14px;margin-bottom:12px">
+          Add this URL to Claude.ai → Settings → Integrations → Add MCP server.
+          No API key required — the server is public read-only.
+        </p>
+        <div class="url-box">https://mcp-flood.trevormonroe.com/mcp</div>
+        <div class="tool-chips">
+          <span class="chip">list_areas</span>
+          <span class="chip">get_flood_extent</span>
+          <span class="chip">get_flood_summary</span>
+          <span class="chip">find_flood_events</span>
+          <span class="chip">check_health</span>
+        </div>
+      </div>
+      <p style="color:#8b949e;font-size:13px;margin-top:12px">
+        REST API docs: <a href="https://api-flood.trevormonroe.com/docs" style="color:#58a6ff">api-flood.trevormonroe.com/docs</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- ── Data quality ──────────────────────────────────────────────── -->
+  <div class="section">
+    <h2>Data Quality</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Month</th>
+          <th>Status</th>
+          <th>Flood area (km²)</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>2025-01</td><td><span class="badge badge-exclude">excluded</span></td><td>—</td><td>Uncalibrated amplitude data</td></tr>
+        <tr><td>2025-02</td><td><span class="badge badge-exclude">excluded</span></td><td>—</td><td>Uncalibrated amplitude data</td></tr>
+        <tr><td>2025-03</td><td><span class="badge badge-valid">valid</span></td><td>—</td><td>Calibrated σ₀ dB</td></tr>
+        <tr><td>2025-04 – 2025-08</td><td><span class="badge badge-valid">valid</span></td><td>—</td><td>Calibrated σ₀ dB</td></tr>
+        <tr><td>2025-09</td><td><span class="badge badge-valid">valid</span></td><td><strong>3,428</strong></td><td>Peak flood — short rains season South Kivu</td></tr>
+        <tr><td>2025-10 – 2026-02</td><td><span class="badge badge-valid">valid</span></td><td>—</td><td>Calibrated σ₀ dB</td></tr>
+        <tr><td>2026-03</td><td><span class="badge badge-gap">gap</span></td><td>—</td><td>Insufficient S1 coverage (&lt;5 MB source)</td></tr>
+        <tr><td>2026-04</td><td><span class="badge badge-gap">gap</span></td><td>—</td><td>Insufficient S1 coverage (&lt;5 MB source)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── Methodology ────────────────────────────────────────────────── -->
+  <div class="section">
+    <h2>Methodology</h2>
+    <p style="color:#8b949e;font-size:14px;max-width:700px;line-height:1.8">
+      Flood extents are derived from Sentinel-1 SAR (C-band, 100 m resolution) using
+      a −3 dB backscatter change detection threshold relative to a dry-season baseline.
+      Quality masks are applied to exclude areas of known geometric distortion
+      (layover, shadow). Administrative boundaries are sourced from the
+      <a href="https://www.geoboundaries.org/" style="color:#58a6ff">World Bank geoBoundaries</a>
+      project (ADM2 · COD). Hexagonal grid uses
+      <a href="https://h3geo.org/" style="color:#58a6ff">Uber H3</a> resolution 7 (~5 km²/cell).
+      Source code and notebooks:
+      <a href="https://github.com/trevmon28/Floodmaps" style="color:#58a6ff">github.com/trevmon28/Floodmaps</a>.
+    </p>
+  </div>
+</div>
+
+<!-- ── Footer ────────────────────────────────────────────────────── -->
+<footer>
+  <p>
+    Eastern DRC Flood Analytics ·
+    <a href="https://github.com/trevmon28/Floodmaps">GitHub</a> ·
+    <a href="https://api-flood.trevormonroe.com/docs">REST API</a> ·
+    Data: Sentinel-1 / ESA · Boundaries: World Bank geoBoundaries
+  </p>
+</footer>
+
+<script>
+  // Keep map-tab active state in sync when links are clicked
+  document.querySelectorAll('.map-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.map-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>

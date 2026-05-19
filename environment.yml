@@ -1,0 +1,43 @@
+name: floodmaps
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
+
+  # Core geospatial
+  - geopandas>=0.14
+  - rasterio>=1.3
+  - shapely>=2.0
+  - pyproj>=3.6
+  - fiona>=1.9
+
+  # H3 hexagonal grid
+  - h3-py>=4.0
+
+  # Data formats
+  - pyarrow>=14
+  - pandas>=2.0
+  - numpy>=1.25
+
+  # Visualisation
+  - folium>=0.15
+  - matplotlib>=3.8
+  - contextily>=1.4   # basemap tiles
+
+  # Notebooks
+  - jupyter
+  - ipykernel
+  - ipywidgets
+
+  # Utilities
+  - tqdm
+  - requests
+  - python-dotenv
+
+  - pip:
+      # REST API (not needed for notebooks, but lets researchers run the server locally)
+      - fastapi>=0.111
+      - uvicorn[standard]>=0.29
+      - httpx>=0.27
