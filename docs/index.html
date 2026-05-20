@@ -315,17 +315,35 @@
 
       <div class="dl-card">
         <div class="dl-card-icon">📊</div>
+        <h3>Admin-2 Flood (long)</h3>
+        <p>One row per territory per month (World Bank geoBoundaries). Includes centroid lat/lon. Best for statistical models.</p>
+        <a class="dl-btn"
+           href="https://raw.githubusercontent.com/trevmon28/Floodmaps/main/data/handover/csv/admin2_flood.csv"
+           download>Download CSV</a>
+      </div>
+
+      <div class="dl-card">
+        <div class="dl-card-icon">📋</div>
+        <h3>Admin-2 Flood (wide)</h3>
+        <p>One row per territory, flood-area columns for each month. Easy to join survey data in Excel / Stata / R.</p>
+        <a class="dl-btn"
+           href="https://raw.githubusercontent.com/trevmon28/Floodmaps/main/data/handover/csv/admin2_flood_wide.csv"
+           download>Download CSV</a>
+      </div>
+
+      <div class="dl-card">
+        <div class="dl-card-icon">🏘️</div>
         <h3>Admin-3 Flood (long)</h3>
-        <p>One row per territory per month. Includes centroid lat/lon. Best for statistical models.</p>
+        <p>One row per secteur/chefferie per month (OCHA HDX COD-AB). Finer grain for phone-survey sampling.</p>
         <a class="dl-btn"
            href="https://raw.githubusercontent.com/trevmon28/Floodmaps/main/data/handover/csv/admin3_flood.csv"
            download>Download CSV</a>
       </div>
 
       <div class="dl-card">
-        <div class="dl-card-icon">📋</div>
+        <div class="dl-card-icon">🏘️</div>
         <h3>Admin-3 Flood (wide)</h3>
-        <p>One row per territory, flood-area columns for each month. Easy to join survey data in Excel / Stata / R.</p>
+        <p>One row per secteur/chefferie, flood-area columns per month. OCHA HDX source.</p>
         <a class="dl-btn"
            href="https://raw.githubusercontent.com/trevmon28/Floodmaps/main/data/handover/csv/admin3_flood_wide.csv"
            download>Download CSV</a>
@@ -351,8 +369,17 @@
 
       <div class="dl-card">
         <div class="dl-card-icon">🗂️</div>
+        <h3>Admin-2 GeoParquet</h3>
+        <p>Territory boundaries + flood data with geometry (World Bank geoBoundaries). For Python/geopandas users.</p>
+        <a class="dl-btn"
+           href="https://raw.githubusercontent.com/trevmon28/Floodmaps/main/data/handover/sampling_frames/admin2.parquet"
+           download>Download Parquet</a>
+      </div>
+
+      <div class="dl-card">
+        <div class="dl-card-icon">🗂️</div>
         <h3>Admin-3 GeoParquet</h3>
-        <p>Territory boundaries + flood data with geometry. For Python/geopandas users.</p>
+        <p>Secteur/chefferie boundaries + flood data with geometry (OCHA HDX). For Python/geopandas users.</p>
         <a class="dl-btn"
            href="https://raw.githubusercontent.com/trevmon28/Floodmaps/main/data/handover/sampling_frames/admin3.parquet"
            download>Download Parquet</a>
@@ -373,12 +400,19 @@
   <!-- ── Quick-start code ────────────────────────────────────────── -->
   <div class="section">
     <h2>Quick Start <small>Python</small></h2>
-    <pre><code><span class="cm"># Check if a territory was flooded in a given month</span>
+    <pre><code><span class="cm"># Check if a territory (admin-2) was flooded in a given month</span>
 <span class="kw">import</span> pandas <span class="kw">as</span> pd
 
-df = pd.<span class="fn">read_csv</span>(<span class="st">"admin3_flood.csv"</span>)
+df = pd.<span class="fn">read_csv</span>(<span class="st">"admin2_flood.csv"</span>)
 mask = (df[<span class="st">"shapeName"</span>] == <span class="st">"Rutshuru"</span>) &amp; (df[<span class="st">"month"</span>] == <span class="st">"2025-09"</span>)
 <span class="fn">print</span>(df[mask][[<span class="st">"shapeName"</span>, <span class="st">"month"</span>, <span class="st">"flood_area_km2"</span>, <span class="st">"quality"</span>]])</code></pre>
+
+    <br />
+
+    <pre><code><span class="cm"># Check flood at secteur level (admin-3)</span>
+df3 = pd.<span class="fn">read_csv</span>(<span class="st">"admin3_flood.csv"</span>)
+peak = df3.<span class="fn">groupby</span>(<span class="st">"admin3Name"</span>)[<span class="st">"flood_area_km2"</span>].<span class="fn">max</span>().<span class="fn">sort_values</span>(ascending=<span class="kw">False</span>).<span class="fn">head</span>(<span class="st">10</span>)
+<span class="fn">print</span>(peak)</code></pre>
 
     <br />
 
@@ -386,16 +420,17 @@ mask = (df[<span class="st">"shapeName"</span>] == <span class="st">"Rutshuru"</
 <span class="kw">import</span> geopandas <span class="kw">as</span> gpd
 <span class="kw">from</span> shapely.geometry <span class="kw">import</span> Point
 
-admin3 = gpd.<span class="fn">read_parquet</span>(<span class="st">"admin3.parquet"</span>)
+admin2 = gpd.<span class="fn">read_parquet</span>(<span class="st">"admin2.parquet"</span>)  <span class="cm"># territory level</span>
+admin3 = gpd.<span class="fn">read_parquet</span>(<span class="st">"admin3.parquet"</span>)  <span class="cm"># secteur level</span>
 pt = <span class="fn">Point</span>(<span class="st">29.23</span>, <span class="st">-1.68</span>)  <span class="cm"># lon, lat</span>
-hit = admin3[admin3.geometry.<span class="fn">contains</span>(pt)]
-<span class="fn">print</span>(hit[[<span class="st">"shapeName"</span>, <span class="st">"month"</span>, <span class="st">"flood_area_km2"</span>]])</code></pre>
+<span class="fn">print</span>(admin2[admin2.geometry.<span class="fn">contains</span>(pt)][[<span class="st">"shapeName"</span>, <span class="st">"month"</span>, <span class="st">"flood_area_km2"</span>]])
+<span class="fn">print</span>(admin3[admin3.geometry.<span class="fn">contains</span>(pt)][[<span class="st">"admin3Name"</span>, <span class="st">"month"</span>, <span class="st">"flood_area_km2"</span>]])</code></pre>
 
     <br />
 
-    <pre><code><span class="cm"># Join flood data to a phone survey dataset</span>
-survey = pd.<span class="fn">read_csv</span>(<span class="st">"my_survey.csv"</span>)        <span class="cm"># must have 'territory' column</span>
-wide   = pd.<span class="fn">read_csv</span>(<span class="st">"admin3_flood_wide.csv"</span>)  <span class="cm"># one row per territory</span>
+    <pre><code><span class="cm"># Join admin-2 flood data to a phone survey dataset</span>
+survey = pd.<span class="fn">read_csv</span>(<span class="st">"my_survey.csv"</span>)         <span class="cm"># must have 'territory' column</span>
+wide   = pd.<span class="fn">read_csv</span>(<span class="st">"admin2_flood_wide.csv"</span>)  <span class="cm"># one row per territory</span>
 merged = survey.<span class="fn">merge</span>(wide, left_on=<span class="st">"territory"</span>, right_on=<span class="st">"shapeName"</span>, how=<span class="st">"left"</span>)</code></pre>
   </div>
 

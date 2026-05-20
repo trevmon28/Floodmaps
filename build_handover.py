@@ -46,7 +46,7 @@ with open(stats_out, 'w', newline='') as f:
     writer.writerows(rows)
 
 # 3. Sampling frame GeoParquets
-for name in ['admin3.parquet', 'h3_7.parquet']:
+for name in ['admin2.parquet', 'admin3.parquet', 'h3_7.parquet']:
     src = FRAMES_DIR / name
     if src.exists():
         shutil.copy(src, OUT / 'sampling_frames' / name)
@@ -177,7 +177,7 @@ h3>=4.0           # only needed for H3 hex queries
 print("=== Handover package built ===")
 print(f"Location: {OUT}")
 print(f"  flood_extents/   {len(copied_geojson)} GeoJSONs: {copied_geojson}")
-for name in ['admin3.parquet', 'h3_7.parquet']:
+for name in ['admin2.parquet', 'admin3.parquet', 'h3_7.parquet']:
     exists = (OUT / 'sampling_frames' / name).exists()
     print(f"  sampling_frames/{name}  {'OK' if exists else 'MISSING'}")
 for name in ['flood_map_interactive.html', 'flood_sampling_map.html']:
