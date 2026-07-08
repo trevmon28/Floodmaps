@@ -19,7 +19,7 @@ aoi:
 
 temporal:
   start: "2025-01-01"
-  end: "2026-04-30"
+  end: "2026-07-31"
   frequency: monthly
 
 data_sources:

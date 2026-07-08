@@ -1,8 +1,16 @@
 """
 Assembles the researcher handover package into data/handover/
 """
-import shutil, json, csv
+import shutil, json, csv, warnings
 from pathlib import Path
+
+import pandas as pd
+
+try:
+    import geopandas as gpd
+    _GPD_AVAILABLE = True
+except ImportError:
+    _GPD_AVAILABLE = False
 
 ROOT       = Path(r'c:\Users\trevm\Projects\Floodmaps')
 OUT        = ROOT / 'data' / 'handover'
@@ -45,11 +53,62 @@ with open(stats_out, 'w', newline='') as f:
     writer.writeheader()
     writer.writerows(rows)
 
-# 3. Sampling frame GeoParquets
+# 3. Sampling frame GeoParquets + CSV exports
 for name in ['admin2.parquet', 'admin3.parquet', 'h3_7.parquet']:
     src = FRAMES_DIR / name
     if src.exists():
         shutil.copy(src, OUT / 'sampling_frames' / name)
+
+# 3b. CSV versions of sampling frames (long + wide)
+csv_dir = OUT / 'csv'
+csv_dir.mkdir(exist_ok=True)
+
+for frame_name, unit_col in [('admin2', 'shapeName'), ('admin3', 'shapeName'),
+                               ('h3_7', 'h3_index')]:
+    parquet_path = FRAMES_DIR / f'{frame_name}.parquet'
+    if not parquet_path.exists() or not _GPD_AVAILABLE:
+        continue
+    warnings.filterwarnings('ignore')
+    gdf = gpd.read_parquet(parquet_path)
+    df  = pd.DataFrame(gdf.drop(columns=['geometry'], errors='ignore'))
+
+    # Long format
+    df.to_csv(csv_dir / f'{frame_name}_flood.csv', index=False)
+
+    # Wide format (months as columns)
+    if 'month' in df.columns and unit_col in df.columns and 'flood_area_km2' in df.columns:
+        wide = df.pivot_table(index=unit_col, columns='month',
+                              values='flood_area_km2', aggfunc='sum').reset_index()
+        wide.to_csv(csv_dir / f'{frame_name}_flood_wide.csv', index=False)
+
+# 3c. Admin-3 summary exposure statistics (for survey design stratification)
+admin3_parquet = FRAMES_DIR / 'admin3.parquet'
+if admin3_parquet.exists() and _GPD_AVAILABLE:
+    warnings.filterwarnings('ignore')
+    gdf3  = gpd.read_parquet(admin3_parquet)
+    df3   = pd.DataFrame(gdf3.drop(columns=['geometry'], errors='ignore'))
+
+    valid_df3 = df3[~df3.get('month', pd.Series()).isin(BAD_MONTHS | GAP_MONTHS)]
+
+    if 'shapeName' in df3.columns and 'flood_area_km2' in df3.columns:
+        summary = valid_df3.groupby('shapeName').agg(
+            peak_flood_km2   =('flood_area_km2', 'max'),
+            mean_flood_km2   =('flood_area_km2', 'mean'),
+            months_exposed_10km2=('flood_area_km2', lambda x: (x >= 10).sum()),
+        ).reset_index()
+        # Percentage-flooded alternative threshold (>5% area) if flooded_pct present
+        if 'flooded_pct' in df3.columns:
+            pct_exposed = valid_df3.groupby('shapeName')['flooded_pct'].apply(
+                lambda x: (x >= 5).sum()
+            ).reset_index(name='months_exposed_5pct')
+            summary = summary.merge(pct_exposed, on='shapeName', how='left')
+        summary.to_csv(csv_dir / 'admin3_flood_summary.csv', index=False)
+        print(f"  admin3_flood_summary.csv  {len(summary)} Admin-3 units")
+
+# Flood centroids CSV
+centroid_path = FLOOD_DIR / 'flood_centroids.csv'
+if centroid_path.exists():
+    shutil.copy(centroid_path, csv_dir / 'flood_centroids.csv')
 
 # 4. Interactive HTML maps
 for name in ['flood_map_interactive.html', 'flood_sampling_map.html']:
@@ -60,11 +119,12 @@ for name in ['flood_map_interactive.html', 'flood_sampling_map.html']:
 # 5. README
 readme = """\
 # Eastern DRC Flood Mapping — Researcher Handover
-**Date:** 2026-05-19
+**Date:** 2026-07-08
 **Contact:** Trevor Monroe
 **AOI:** North Kivu, South Kivu, Ituri (Eastern DRC)
-**Period:** March 2025 – February 2026 (14 valid months)
-**Method:** Sentinel-1 SAR change detection (−3 dB threshold, 100 m resolution)
+**Period:** January 2025 – July 2026 (14 valid months through Feb 2026; May–Jul 2026 pending acquisition)
+**Method:** Sentinel-1 SAR change detection (Otsu adaptive / fixed −3 dB threshold, 100 m resolution)
+**License:** CC-BY 4.0 — see LICENSE in repository root
 
 ---
 
@@ -101,6 +161,17 @@ Monthly summary table with columns:
 - `flood_area_km2` — total flooded area in km²
 - `flooded_pct` — percentage of AOI flooded
 - `quality` — `valid` | `gap` (no satellite coverage)
+
+### csv/admin3_flood_summary.csv
+One row per Admin-3 unit — recommended for MSNA survey stratification:
+- `shapeName` — secteur/chefferie name
+- `peak_flood_km2` — maximum single-month flood area (all valid months)
+- `mean_flood_km2` — mean flood area across valid months
+- `months_exposed_10km2` — count of valid months with ≥10 km² flooded
+- `months_exposed_5pct` — count of valid months with ≥5% of unit area flooded
+
+### csv/admin3_flood.csv / admin3_flood_wide.csv
+Long-format and wide-format monthly flood tables per Admin-3 unit.
 
 ---
 

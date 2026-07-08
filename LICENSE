@@ -1,0 +1,33 @@
+Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+Copyright (c) 2026 Trevor Monroe
+
+You are free to:
+  Share — copy and redistribute the material in any medium or format
+  Adapt — remix, transform, and build upon the material for any purpose, even commercially
+
+Under the following terms:
+  Attribution — You must give appropriate credit, provide a link to the license,
+  and indicate if changes were made. You may do so in any reasonable manner, but not
+  in any way that suggests the licensor endorses you or your use.
+
+No additional restrictions — You may not apply legal terms or technological measures
+that legally restrict others from doing anything the license permits.
+
+Full license text: https://creativecommons.org/licenses/by/4.0/legalcode
+
+---
+
+When using outputs from this project, please cite:
+
+  Monroe, T. (2026). Monthly Flood Extent Mapping in Eastern Democratic Republic of
+  Congo Using Sentinel-1 SAR: A Time-Series Analysis for Humanitarian Survey Design
+  (January 2025 – July 2026). GitHub. https://github.com/trevmon28/Floodmaps
+
+Data sources used in this project carry their own licenses:
+  - Sentinel-1 SAR: ESA Copernicus Open Access (https://sentinels.copernicus.eu/web/sentinel/sentinel-data-access)
+  - Copernicus DEM GLO-30: CC-BY 4.0 (https://doi.org/10.5270/ESA-c5d3d65)
+  - JRC Global Surface Water: free for non-commercial use (https://global-surface-water.appspot.com/)
+  - OCHA HDX COD-AB: CC-BY-IGO (https://data.humdata.org/dataset/drc-administrative-boundaries)
+  - OpenCelliD: CC-BY-SA 4.0 (https://opencellid.org/downloads.php)
+  - World Bank geoBoundaries: CC-BY 4.0 (https://www.geoboundaries.org/)

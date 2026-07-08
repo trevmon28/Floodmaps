@@ -1,0 +1,41 @@
+{
+  "project": "DRC Flood Extent Mapping",
+  "description": "Sentinel-1 SAR-based monthly flood extent detection for Eastern DRC (North Kivu, South Kivu, Ituri). Produces calibrated sigma0 dB composites, change-detection flood masks, admin-level sampling frames, and researcher handover packages.",
+  "repository": "https://github.com/trevmon28/Floodmaps",
+  "version": "1.1",
+  "features": [
+    {
+      "id": "001",
+      "name": "core-pipeline",
+      "status": "complete",
+      "description": "STAC discovery → SAR preprocessing → flood detection → validation charts → sampling frames",
+      "branch": "main"
+    },
+    {
+      "id": "002",
+      "name": "handover-package",
+      "status": "complete",
+      "description": "Researcher handover: GeoJSON flood extents, admin-2/3 + H3-7 parquets, CSVs, interactive Folium maps",
+      "branch": "main"
+    },
+    {
+      "id": "003",
+      "name": "geosql-integration",
+      "status": "planned",
+      "description": "Integrate dekart-xyz/geosql to enable AI-driven spatial SQL queries over flood data warehouses (BigQuery / PostGIS), with automatic metadata discovery and cost guardrails",
+      "branch": "003-geosql-integration",
+      "spec": "specs/003-geosql-integration/spec.md",
+      "plan": "specs/003-geosql-integration/plan.md",
+      "tasks": "specs/003-geosql-integration/tasks.md"
+    },
+    {
+      "id": "004",
+      "name": "may-july-2026-extension",
+      "status": "in-progress",
+      "description": "Extend temporal coverage from Apr 2026 to Jul 2026 (3 new months)",
+      "branch": "main",
+      "script": "extend_may_july_2026.py"
+    }
+  ],
+  "constitution": ".specify/constitution.md"
+}
