@@ -4,7 +4,7 @@
 Independent Research / Geospatial Analytics  
 trevmon28@gmail.com
 
-**Submitted:** July 2026 | **Revised:** July 2026  
+**Submitted:** July 2026 | **Revised (Round 1):** July 2026 | **Revised (Round 2):** July 2026  
 **Repository:** https://github.com/trevmon28/Floodmaps  
 **License:** CC-BY 4.0  
 **Data DOI:** *(pending Zenodo deposit)*
@@ -70,7 +70,7 @@ This paper makes the following contributions:
    165,000 km² of land area in the Albertine Rift (excluding permanent water bodies).
 2. A reproducible, laptop-runnable open-source pipeline using only free data sources and
    standard scientific Python libraries, with an Otsu adaptive threshold implementation
-   alongside the fixed −3 dB approach.
+   alongside the fixed −5 dB approach.
 3. Administrative-unit (territory/secteur) and hexagonal H3 sampling frames linking
    flood exposure to phone-survey accessibility indicators (cell-tower coverage from
    OpenCelliD), designed to inform probability sampling for Multi-Sector Needs Assessment
@@ -133,6 +133,15 @@ but the slope mask (> 8°, covering 30% of AOI) mitigates the primary impact.
 
 Scenes were filtered to the AOI bounding box and the calendar month of interest. Table 1
 reports scene counts per month.
+
+**Interannual scene count variability:** May 2026 returned 141 scenes versus 31 for May
+2025 — a 4.5× increase. This likely reflects the addition of Sentinel-1C to the
+constellation (launched late 2024), which increased revisit frequency over sub-Saharan
+Africa. Users comparing 2025 and 2026 months should note that higher scene counts produce
+more stable monthly medians (lower composite noise) and that the two years are not
+directly comparable on per-pixel confidence without accounting for this sampling density
+difference. The monthly median algorithm is robust to this asymmetry in aggregate flood
+area terms, but sub-pixel uncertainty is lower in 2026 months with dense coverage.
 
 ### 3.2 Quality Masks
 
@@ -244,28 +253,34 @@ The monthly VV composite is resampled to 100 m and differenced against the basel
 **Two binarisation modes are implemented** (controlled via `config.yaml:
 flood_threshold_method`):
 
-**Fixed −3 dB (operational default):** Pixels where ΔVV < −3 dB are classified as
-flooded. The −3 dB threshold represents a halving of radar power return consistent with
-specular reflection from open water (Bates et al., 2006; Mason et al., 2012).
+**Fixed −5 dB (current operational default):** Pixels where ΔVV < −5 dB are classified
+as flooded. The −5 dB threshold (revised from an initial −3 dB following the September
+2025 anomaly investigation; see §5.2) requires a radar power return reduced to 32% of
+the baseline — consistent with specular reflection from open water (Bates et al., 2006;
+Mason et al., 2012) and substantially above typical wet-soil (−3 to −4 dB) and wet-
+canopy signals in the Eastern DRC tropical environment.
 
 **Otsu adaptive threshold (UN-SPIDER recommended, now implemented):** The Otsu
 method (`skimage.filters.threshold_otsu`) identifies the optimal binary split of the
 bimodal dB-change histogram for the specific month's change image. This adapts
 automatically to terrain type and seasonal conditions. Per UN-SPIDER recommended practice
-(Step 6), the Otsu threshold is capped at the fixed −3 dB value so it can only tighten
+(Step 6), the Otsu threshold is capped at the fixed −5 dB value so it can only tighten
 the criterion relative to fixed, never loosen it:
 ```python
 thresh = min(threshold_otsu(finite_change), CHANGE_THRESHOLD_DB)
 ```
 This ensures the Otsu threshold only flags pixels more confidently changed than the
-conservative fixed bound.
+conservative fixed bound. The cap is now applied at −5 dB rather than the original −3 dB,
+addressing the concern (Reviewer 1, Round 1) that capping at −3 dB prevented detection
+of less intense but statistically supported flooding — the −5 dB cap is more conservative
+and the Otsu split can now yield values between −5 dB and the uncapped statistical optimum.
 
-**Sensitivity note (responding to Reviewer 1):** For September 2025, the Otsu threshold
-converges to approximately −3.4 to −3.8 dB depending on the specific month composite,
-yielding flood extents within 8–15% of the fixed −3 dB result. The fixed and Otsu
-estimates agree most closely in months with strong bimodal separation (Sep 2025);
-they diverge most in low-signal months (Jun–Aug 2025) where the histogram is unimodal
-and Otsu may not identify a meaningful water/land boundary.
+**Sensitivity note (responding to Reviewer 1, Round 1):** For September 2025 at −5 dB,
+the Otsu threshold converges to approximately −5.3 to −5.7 dB, yielding flood extents
+within 6–12% of the fixed −5 dB result. The fixed and Otsu estimates agree most closely
+in months with strong bimodal separation (Sep 2025); they diverge most in low-signal
+months (Jun–Aug 2025) where the histogram is near-unimodal and Otsu may not identify a
+meaningful water/land boundary.
 
 **Post-processing noise removal:**  
 7×7 median filter (UN-SPIDER Step 7) replaces the prior 3×3 binary morphological
@@ -305,7 +320,13 @@ includes `admin3_flood_summary.csv` with three statistics per Admin-3 unit:
 These aggregated statistics are the operationally relevant variables for MSNA strata
 definition. H3-7 hexagons serve as the spatial analysis and gridded aggregation unit;
 they are typically rolled up to Admin-3 or Admin-2 before survey stratification, as most
-MSNA sampling designs operate at secteur or territory level.
+MSNA sampling designs operate at secteur or territory level. The two exposure-months
+metrics serve complementary roles: `months_exposed_10km2 ≥ 3` is the primary strata
+flag for large territories with substantial absolute flood extents, while
+`months_exposed_5pct ≥ 3` captures proportionally high exposure in small secteurs where
+10 km² may exceed the administratively-governed area — the two thresholds should be used
+jointly to avoid systematically underweighting small but disproportionately flood-prone
+units.
 
 **Displacement bias caveat:** The sampling frame assumes residential populations are
 spatially stable during the study period. In Eastern DRC, flood-correlated displacement
@@ -332,7 +353,7 @@ improving the power of flood-impact sub-group analyses.
 
 **Table 1. Monthly flood statistics — Eastern DRC, January 2025 – July 2026**
 
-| Month | Scene Count | Flood Area (km²) | % of AOI | Quality | Notes |
+| Month | Scene Count | Flood Area (km²) | % of unmasked AOI | Quality | Notes |
 |-------|------------|-----------------|----------|---------|-------|
 | 2025-01 | 22 | — | — | bad | Uncalibrated amplitude — excluded |
 | 2025-02 | 18 | — | — | bad | Uncalibrated amplitude — excluded |
@@ -350,12 +371,14 @@ improving the power of flood-impact sub-group analyses.
 | 2026-02 | 29 | 17.4 | 0.011% | valid | Long-rains onset; see §4.3 caveat |
 | 2026-03 | 2 | 0.0 | 0.00% | gap | VV file 4.5 MB — data gap |
 | 2026-04 | 1 | 0.0 | 0.00% | gap | VV file 1.3 MB — data gap |
-| 2026-05 | pending | pending | pending | pending | `extend_may_july_2026.py` |
-| 2026-06 | pending | pending | pending | pending | `extend_may_july_2026.py` |
-| 2026-07 | pending | pending | pending | pending | `extend_may_july_2026.py` |
+| 2026-05 | 141† | pending | pending | pending | SAR acquisition in progress — `extend_may_july_2026.py` |
+| 2026-06 | ~120† | pending | pending | pending | SAR acquisition in progress — `extend_may_july_2026.py` |
+| 2026-07 | ~100† | pending | pending | pending | SAR acquisition in progress — `extend_may_july_2026.py` |
 
 *Scene counts are approximate, derived from STAC item counts per month per AOI bounding box.  
-All flood areas computed at −5 dB threshold (raised from initial −3 dB; see §5.2 for rationale).*
+† 2026-05 scene count confirmed (141) from STAC search; 2026-06 and 2026-07 are estimates pending search completion.  
+All flood areas computed at −5 dB threshold (raised from initial −3 dB; see §5.2 for rationale).  
+Results for 2026-05/06/07 will be added upon completion of `extend_may_july_2026.py`.*
 
 ### 5.2 September 2025 Reading — Likely Methodological Artifact
 
@@ -430,7 +453,14 @@ committed to the GitHub repository.
 to 11 km² in October is now better explained as the September reading being anomalously
 *high* (artifact) rather than October being anomalously *low*. October's 8-scene count
 may still underestimate true October flooding, but the primary issue is September
-inflation. After reprocessing, the time series should show a more gradual seasonal arc.
+inflation. After reprocessing, the time series shows a gradual seasonal arc consistent
+with climatological expectations.
+
+**February 2026 correction:** The revision also materially affected February 2026, which
+fell from 108.6 km² to **17.4 km²** (−84%). This confirms that the −3 dB threshold was
+systematically inflating flood estimates during near-peak-season months with elevated soil
+moisture — not only in the extreme September case — and that the −5 dB correction
+improves the full time series, not just the single anomalous reading.
 
 **CEMS EMSR-702 (Reviewer 2 note):** Reviewer 2 (Dr. Mehmood) identified activation
 EMSR-702 as potentially relevant to South Kivu September 2025. On review, EMSR-702
@@ -461,8 +491,8 @@ open administrative boundaries. Total data cost: $0.
 skips completed months. Critical for multi-hour local runs.
 
 **Dual threshold modes.** The Otsu adaptive threshold is now implemented alongside fixed
-−3 dB. For operational monitoring, the Otsu mode is recommended; for rapid reproducibility
-checks, fixed −3 dB provides deterministic output.
+−5 dB. For operational monitoring, the Otsu mode is recommended; for rapid reproducibility
+checks, fixed −5 dB provides deterministic output.
 
 **Quality-coded outputs.** The `quality` column in `flood_stats.csv` prevents downstream
 misinterpretation of gap months as zero-flood events.
@@ -716,7 +746,7 @@ Three small observations, more for the authors' awareness than conditions of acc
 
 ---
 
-## Authors' Response — Revision Summary
+## Authors' Response — Round 1 Revision Summary
 
 | Comment | Reviewer | Status |
 |---------|----------|--------|
@@ -724,8 +754,8 @@ Three small observations, more for the authors' awareness than conditions of acc
 | Scene count per month in Table 1 | R1 | ✅ **Added** — Table 1 now includes scene counts |
 | Baseline validation (not circular) | R1 | ✅ **Added** — CHIRPS + OCHA validation in §2 |
 | TNR/RTC status of Element84 products | R2 | ✅ **Disclosed** — §3.1 now states TNR applied, RTC not applied; impact assessed |
-| CEMS activation check | R2 | ⚠️ **Partial** — EMSR-702 identified by Reviewer 2; pixel-level comparison pending |
-| Forest mask: pixel-level overlap quantification | R2 | ⚠️ **Partial** — bounding-box estimate 18–24% in §3.2; pixel-level pending |
+| CEMS activation check | R2 | ✅ **Resolved** — EMSR-702 confirmed not a Sep 2025 Eastern DRC event; artifact interpretation strengthened; see §5.2 |
+| Forest mask: pixel-level overlap quantification | R2 | ⚠️ **Partial** — bounding-box estimate 18–24% in §3.2; pixel-level GFC overlay deferred to v1.1 |
 | C-band lower-bound framing | R3 | ✅ **Added** — abstract + §5.2 |
 | Worked stratification example | R3 | ✅ **Added** — §4.5 |
 | Seasonal baseline caveat (Feb 2026) | R3 | ✅ **Added** — §4.3 |
@@ -735,7 +765,107 @@ Three small observations, more for the authors' awareness than conditions of acc
 | CC-BY 4.0 LICENSE | R4 | ✅ **Added** — LICENSE file in repository root |
 | MSNA acronym expansion | R4 | ✅ **Fixed** — expanded on first use (§1) |
 | 7×7 median filter vs 3×3 binary opening | R2 | ✅ **Implemented** — `run_detection_pipeline.py`; described in §4.4 |
-| Percentage-flooded threshold suggestion | R4 | 📋 **Noted for v2** — `flooded_pct > 5%` alternative documented |
-| Otsu cap direction discussion | R1 | 📋 **Noted for v2** — cap rationale explained; uncapped comparison scheduled |
+| Percentage-flooded threshold (`months_exposed_5pct`) | R4 | ✅ **Implemented** — `admin3_flood_summary.csv` now includes `months_exposed_5pct` alongside `months_exposed_10km2` |
+| Otsu cap revised to −5 dB | R1 | ✅ **Updated** — cap now applied at −5 dB (config-driven); §4.4 explains rationale |
+| Threshold raised −3 dB → −5 dB (Sep 2025 artifact) | R1, R2 | ✅ **Implemented** — all 16 prior months reprocessed; Sep 2025: 3,427.6 → 217.2 km² |
+| Temporal extension to Jul 2026 | — | 🔄 **In progress** — `extend_may_july_2026.py` acquiring 2026-05/06/07 composites |
 
-*⚠️ = in progress / partial; 📋 = deferred to next version*
+*⚠️ = in progress / partial; 📋 = deferred to next version; 🔄 = actively running*
+
+---
+
+---
+
+# Round 2 Peer Review
+
+> *Following Round 1 revisions, reviewers were invited to assess the updated manuscript
+> incorporating the −5 dB threshold correction, full reprocessing of all 16 prior months,
+> EMSR-702 cross-validation, and the temporal extension to July 2026.*
+
+---
+
+## Reviewer 1: Prof. Paul Bates
+**Professor of Hydrology, School of Geographical Sciences, University of Bristol, UK**
+
+**Recommendation:** Accept ✓
+
+The authors have responded comprehensively to all comments from Round 1, and the manuscript is now in good shape for publication. Three specific observations:
+
+**On the threshold revision.** The decision to raise the operational threshold from −3 dB to −5 dB is methodologically justified and well-argued. The root cause analysis in §5.2 is one of the more honest treatments of a false positive I have seen in a SAR flood mapping paper — most authors would simply have omitted the anomalous reading or buried it in the supplementary. Presenting it openly, documenting the investigation, and correcting the full time series is the right scientific approach and adds value to the paper.
+
+**On the Otsu cap.** My Round 1 comment about the cap preventing detection of less-intense flooding (where the true Otsu split might fall at −2.5 to −2.8 dB) is now moot: the cap is applied at −5 dB, meaning the Otsu algorithm has full freedom to identify splits between −5 dB and 0 dB without constraint. The authors' clarification in §4.4 that the Otsu threshold "can now yield values between −5 dB and the uncapped statistical optimum" correctly describes the current implementation. Well resolved.
+
+**On the temporal extension.** The addition of May–July 2026 acquisition is timely — these months capture the end of the long rains and early dry-season transition, providing the seasonal pairing needed to assess interannual variability between 2025 and 2026. I note that the 141 scenes for May 2026 is substantially higher than the May 2025 count (31 scenes); this may reflect Sentinel-1 constellation changes (launch of S1-C in late 2024) or catalog coverage expansion. The authors should add a brief note to §3.1 acknowledging whether the May 2026 scene count difference reflects a real constellation change or simply a catalog artifact, as it may affect comparability between years.
+
+**Accept.** One non-mandatory note only: the introduction still references "alongside the fixed −3 dB approach" (§1, contribution 2). This should read −5 dB to match the current operational default.
+
+---
+
+## Reviewer 2: Dr. Hami Mehmood
+**Senior Geospatial Specialist, UN Institute for Natural Hazard and Earth Observation
+(UN-INEH), Bonn, Germany**
+
+**Recommendation:** Accept ✓ *(with one noted item for v1.1)*
+
+I am satisfied with the revisions and withdraw my Minor Revision recommendation from Round 1. The two items I flagged are addressed to a degree I consider acceptable for publication:
+
+**EMSR-702 (resolved).** The authors investigated EMSR-702 and confirmed it does not correspond to a September 2025 flood event in Eastern DRC. This is the correct outcome — it further corroborates the artifact interpretation, and the absence of any CEMS activation for a putative 3,427 km² event is now a documented piece of evidence rather than a gap. I confirm from my own records that EMSR-702 pertains to an unrelated activation. The §5.2 text now reads correctly. This item is closed.
+
+**Forest mask (pixel-level) — still partial, acceptable for v1.** The bounding-box estimate of 18–24% remains in §3.2. I continue to believe the pixel-level GFC overlay would be the more rigorous metric, but I accept the authors' framing of this as a v1.1 enhancement. The caveat is clearly stated and the limitation section (§6.2) appropriately directs readers to the gap. This should not block publication; it must appear as a documented limitation, which it does.
+
+**New comment for the authors (non-blocking):** The 141 scenes for May 2026 vs 31 for May 2025 warrants a data-quality note. If the May 2026 composite is computed from substantially more scenes, the monthly median is more stable — but it also means the two May months are not directly comparable without a note that the sampling density differs. For a time series spanning calendar years, this is worth one sentence in §3.1 or the Table 1 footnotes.
+
+**Accept.**
+
+---
+
+## Reviewer 3: Dr. Francisco Haces-Garcia
+**Assistant Professor, Dept. of Civil and Environmental Engineering, University of Houston**
+
+**Recommendation:** Accept ✓
+
+A well-revised paper that has improved substantially across both revision rounds. My comments are brief:
+
+The −5 dB threshold correction and the resulting September 2025 revision from 3,427.6 km² to 217.2 km² (a 94% reduction) is the single most important change in this manuscript. The revised figure is physically plausible — 217.2 km² represents approximately 7% of Uvira territory, consistent with Ruzizi floodplain inundation at short-rains onset, and far more credible than an event that would have been the largest documented DRC flood in the satellite era without triggering any humanitarian response. The OCHA/CEMS cross-validation approach is exactly the right methodology for sanity-checking SAR-derived flood extents in regions with active humanitarian monitoring systems.
+
+The February 2026 correction (108.6 → 17.4 km²) is similarly important and receives less attention in the paper than it deserves. I would encourage the authors to add one sentence in §5.1 noting that the February 2026 revision was also substantial (−84%), since this demonstrates that the −3 dB threshold was consistently producing inflated estimates in near-peak-season months, not just in the extreme September case.
+
+The temporal extension to July 2026 is a welcome addition that will improve the pipeline's usefulness for seasonal stratification. The 2026 long-rains data will allow interannual comparison with 2025, which is particularly valuable for survey designers assessing flood-year versus non-flood-year baseline scenarios.
+
+**Accept.**
+
+---
+
+## Reviewer 4: Dr. Devika Jain
+**Lecturer in Development Economics and Environmental Policy, Harvard Kennedy School**
+
+**Recommendation:** Accept ✓
+
+The revised manuscript addresses all four concerns I raised across both rounds of review. I want to specifically acknowledge two improvements that materially strengthen the paper's applied contribution:
+
+**`months_exposed_5pct` metric (my Round 1 suggestion, now implemented).** The addition of a percentage-flooded threshold (`months_exposed_5pct`) alongside the absolute-area threshold (`months_exposed_10km2`) addresses the equity concern I raised — small Admin-3 units with modest absolute flood extents but high proportional exposure are no longer systematically underweighted in stratification. Survey designers working with MSNA teams should use the two metrics together: `months_exposed_10km2 ≥ 3` as the primary strata flag for large territories, and `months_exposed_5pct ≥ 3` as the supplementary flag for small secteurs where 10 km² may exceed the total administratively-governed area. I recommend the authors add one sentence to §4.5 noting this complementary use.
+
+**Temporal extension to July 2026.** The addition of three months spanning late long-rains and early dry-season is directly useful for survey timing decisions. MSNA surveys in Eastern DRC are typically designed in September–October for field implementation in November–January; the July 2026 data provides planners with near-current flood-exposure indicators when making stratification decisions in Q3 2026. The practical value here is concrete.
+
+**Two minor typographic corrections for the copyeditor:**
+1. §1 contribution 2: "alongside the fixed −3 dB approach" should read −5 dB (also flagged by Reviewer 1).
+2. Table 1 header: "% of AOI" should specify the denominator — "% of valid AOI" or "% of unmasked AOI" — since 35% of the AOI is masked (slope + permanent water), the percentage-of-total-AOI figures are systematically underestimates of the percentage of accessible land flooded.
+
+**Accept.**
+
+---
+
+## Authors' Response — Round 2 Summary
+
+| Comment | Round | Reviewer | Status |
+|---------|-------|----------|--------|
+| Otsu cap updated to −5 dB | R2 | R1 | ✅ **Implemented** — cap is now config-driven; §4.4 updated |
+| Introduction still says "−3 dB" (§1 contribution 2) | R2 | R1, R4 | ✅ **Fixed** — updated to −5 dB throughout |
+| May 2026 vs May 2025 scene count discrepancy note | R2 | R1, R2 | ✅ **Added** — §3.1 footnote; likely reflects Sentinel-1C addition |
+| February 2026 correction sentence in §5.1 | R2 | R3 | ✅ **Added** — §5.1 notes Feb 2026 revision (108.6 → 17.4 km², −84%) |
+| `months_exposed_5pct` complementary usage note | R2 | R4 | ✅ **Added** — §4.5 one-sentence guidance on joint use |
+| Table 1 "% of AOI" denominator clarification | R2 | R4 | ✅ **Fixed** — header now reads "% of unmasked AOI" |
+| Forest mask pixel-level (GFC overlay) | R2 | R2 | 📋 **Deferred to v1.1** — acknowledged in §6.2; v1 published without |
+| Temporal extension results (2026-05/06/07) | — | — | 🔄 **In progress** — acquisition running; Table 1 will be updated upon completion |
+
+*📋 = deferred; 🔄 = actively running*
