@@ -5,7 +5,7 @@ Acquires and processes Sentinel-1 GRD SAR composites for May, June, and July 202
 then runs flood detection for each new month against the existing baseline_VV.tif.
 
 Run from project root with the gis_env Python interpreter:
-    & "C:\Users\trevm\Projects\SpatialLab\gis_env\Scripts\python.exe" extend_may_july_2026.py
+    & "C:/Users/trevm/Projects/SpatialLab/gis_env/Scripts/python.exe" extend_may_july_2026.py
 
 Prerequisites
 -------------
