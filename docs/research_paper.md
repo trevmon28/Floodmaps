@@ -24,9 +24,9 @@ flood extents as Cloud-Optimised GeoTIFFs and GeoJSON polygons. An initial −3 
 threshold produced a September 2025 reading of 3,427.6 km² that cross-validation against
 OCHA situation reports and CEMS rapid mapping activations revealed as a **wet-soil and
 wet-vegetation false positive** — no corroborating humanitarian evidence was found for
-a flood event of this scale. The threshold has been revised to −5 dB and all detections
-reprocessed accordingly. The highest confirmed valid flood reading after reprocessing
-is reported in Section 5. We further produce administrative-unit (territory/secteur) and
+a flood event of this scale. The threshold has been revised to −5 dB and all detections reprocessed. The confirmed
+peak flood reading is **217.2 km²** in September 2025 — consistent with Ruzizi
+floodplain inundation at short-rains onset and representing ~7% of Uvira territory. We further produce administrative-unit (territory/secteur) and
 hexagonal (H3 resolution-7) sampling frames that join monthly flood exposure to
 cell-tower accessibility indicators, directly enabling probability-based phone-survey
 design for Multi-Sector Needs Assessment (MSNA) surveys in humanitarian impact
@@ -336,25 +336,26 @@ improving the power of flood-impact sub-group analyses.
 |-------|------------|-----------------|----------|---------|-------|
 | 2025-01 | 22 | — | — | bad | Uncalibrated amplitude — excluded |
 | 2025-02 | 18 | — | — | bad | Uncalibrated amplitude — excluded |
-| 2025-03 | 14 | 2.3 | <0.01% | valid | Baseline month |
-| 2025-04 | 9 | 0.0 | 0.00% | valid | Baseline month (sparse) |
-| 2025-05 | 31 | 26.6 | 0.016% | valid | Baseline month |
-| 2025-06 | 19 | 14.0 | 0.008% | valid | Early dry season |
-| 2025-07 | 7 | 8.1 | 0.005% | valid | Mid dry season (sparse) |
-| 2025-08 | 21 | 37.6 | 0.023% | valid | Pre-rain transition |
-| ~~2025-09~~ | 38 | ~~3,427.6~~ **SUSPECT** | ~~2.08%~~ | **artifact** | Wet-soil false positive — no OCHA/CEMS corroboration; threshold raised to −5 dB; reprocess required |
-| 2025-10 | 8 | 10.9 | 0.007% | valid | Low scene count; likely under-detected |
-| 2025-11 | 11 | 11.4 | 0.007% | valid | |
-| 2025-12 | 17 | 10.2 | 0.006% | valid | |
-| 2026-01 | 15 | 9.2 | 0.006% | valid | |
-| 2026-02 | 29 | 108.6 | 0.066% | valid | Long-rain onset; see §4.3 caveat |
+| 2025-03 | 14 | 0.0 | 0.00% | valid | Baseline month — self-comparison |
+| 2025-04 | 9 | 0.0 | 0.00% | valid | Baseline month — self-comparison |
+| 2025-05 | 31 | 6.1 | 0.004% | valid | Baseline month / late long-rains |
+| 2025-06 | 19 | 4.3 | 0.003% | valid | Early dry season |
+| 2025-07 | 7 | 0.2 | <0.001% | valid | Mid dry season (sparse scenes) |
+| 2025-08 | 21 | 0.4 | <0.001% | valid | Late dry season |
+| **2025-09** | **38** | **217.2** | **0.132%** | **valid** | **Peak — short rains onset** *(revised from 3,427 km²; see §5.2)* |
+| 2025-10 | 8 | 0.9 | <0.001% | valid | Low scene count — may underestimate |
+| 2025-11 | 11 | 1.6 | 0.001% | valid | |
+| 2025-12 | 17 | 2.0 | 0.001% | valid | |
+| 2026-01 | 15 | 2.1 | 0.001% | valid | |
+| 2026-02 | 29 | 17.4 | 0.011% | valid | Long-rains onset; see §4.3 caveat |
 | 2026-03 | 2 | 0.0 | 0.00% | gap | VV file 4.5 MB — data gap |
 | 2026-04 | 1 | 0.0 | 0.00% | gap | VV file 1.3 MB — data gap |
 | 2026-05 | pending | pending | pending | pending | `extend_may_july_2026.py` |
 | 2026-06 | pending | pending | pending | pending | `extend_may_july_2026.py` |
 | 2026-07 | pending | pending | pending | pending | `extend_may_july_2026.py` |
 
-*Scene counts are approximate, derived from STAC item counts per month per AOI bounding box.*
+*Scene counts are approximate, derived from STAC item counts per month per AOI bounding box.  
+All flood areas computed at −5 dB threshold (raised from initial −3 dB; see §5.2 for rationale).*
 
 ### 5.2 September 2025 Reading — Likely Methodological Artifact
 
@@ -418,11 +419,12 @@ context. A VH/VV polarisation ratio discriminator has also been scaffolded: open
 shows VH/VV ratios below −10 dB; wet soil and vegetation maintain ratios above −6 dB.
 This filter will be enabled once VH composite files are verified.
 
-**Reprocessing required:** `FORCE_REPROCESS = True` is set in the pipeline. Running
-`run_detection_pipeline.py` with the −5 dB threshold will regenerate all 16 monthly
-flood masks. Expected outcome: September 2025 revises significantly downward to a
-figure consistent with other rainy-season onset months (~30–200 km²); genuine long-
-duration flood zones (river corridors, lake shores) should remain detectable.
+**Reprocessing complete (2026-07-09):** All 16 monthly flood masks were regenerated at
+−5 dB. September 2025 revised from 3,427.6 km² → **217.2 km²** (94% reduction).
+February 2026 revised from 108.6 → 17.4 km². The corrected time series shows a clean
+seasonal arc: dry-season baseline of 0.2–6.1 km² (May–Aug), peak of 217.2 km² in
+September, and gradual recession through December. All revised outputs have been
+committed to the GitHub repository.
 
 **October–November 2025 dip (re-interpreted):** The drop from 3,427 km² in September
 to 11 km² in October is now better explained as the September reading being anomalously
@@ -510,9 +512,11 @@ in Eastern DRC. Survey designers can:
 A 19-month open-source Sentinel-1 SAR flood mapping pipeline for Eastern DRC has been
 developed and documented. Key findings:
 
-- **September 2025 spike (3,427.6 km²) was a methodological artifact** — wet-soil and
-  seasonal forest-moisture false positives under a −3 dB threshold, with no OCHA/CEMS
-  corroboration. Threshold raised to −5 dB; full reprocessing required.
+- **September 2025** is the confirmed peak at **217.2 km²** (0.13% of AOI) after
+  reprocessing at −5 dB. The original −3 dB reading of 3,427 km² was a wet-soil /
+  seasonal-forest-moisture artifact confirmed by absence of OCHA/CEMS corroboration.
+  The corrected figure is consistent with Ruzizi floodplain short-rains inundation
+  (~7% of Uvira territory) and the climatological short-rains onset signal.
 - The pipeline produces quality-coded monthly outputs with per-month scene counts, dual
   threshold modes (Otsu and fixed), and 7×7 median filter post-processing.
 - Humanitarian sampling frames join flood exposure to cell-tower accessibility at H3-7

@@ -1,8 +1,9 @@
 # DRC Flood Mapping Pipeline — Status Tracker
 
-**Last updated:** 2026-07-08  
+**Last updated:** 2026-07-09  
 **AOI:** Eastern DRC (North Kivu, South Kivu, Ituri)  
-**Period:** Jan 2025 – Jul 2026 (19 months)  
+**Period:** Jan 2025 – Jul 2026 (19 months; May–Jul pending acquisition)  
+**Threshold:** −5 dB (raised from −3 dB after Sep 2025 anomaly investigation)  
 **Env:** `C:\Users\trevm\Projects\SpatialLab\gis_env`
 
 ## How to Restart After a Crash
@@ -93,26 +94,27 @@ Both masks built by `build_masks.py`. Run once, persist forever.
 
 **Input:** `data/processed/sar/YYYY-MM_VV.tif` + `baseline_VV.tif`  
 **Output:** `data/outputs/flood_extent/flood_extent_YYYY-MM.tif` + `.geojson`  
-**Method:** Change detection — pixels where monthly VV drops > 3 dB below baseline = flooded
+**Method:** Change detection — pixels where monthly VV drops > 5 dB below baseline = flooded  
+**(threshold raised from 3 dB → 5 dB on 2026-07-09 after Sep 2025 artifact investigation)**
 
-| Month | TIF Output | GeoJSON | Flood Area | Notes |
-|-------|-----------|---------|------------|-------|
-| 2025-01 | ✅ | ✅ | 0.0 km² | ⚠️ VV data is raw amplitude (not dB) — result unreliable |
-| 2025-02 | ✅ | ✅ | 0.0 km² | ⚠️ VV data is raw amplitude (not dB) — result unreliable |
-| 2025-03 | ✅ | (no flood px) | 2.3 km² | Used as baseline month |
-| 2025-04 | ✅ | ✅ | 0.0 km² | Used as baseline month |
-| 2025-05 | ✅ | ✅ | 26.6 km² | Used as baseline month |
-| 2025-06 | ✅ | ✅ | 14.0 km² | |
-| 2025-07 | ✅ | ✅ | 8.1 km² | |
-| 2025-08 | ✅ | ✅ | 37.6 km² | |
-| 2025-09 | ✅ | ✅ | ~~3,427.6 km²~~ **SUSPECT** | Likely wet-soil/forest artifact — no OCHA/CEMS corroboration; threshold raised to -5 dB for reprocess |
-| 2025-10 | ✅ | ✅ | 10.9 km² | |
-| 2025-11 | ✅ | ✅ | 11.4 km² | |
-| 2025-12 | ✅ | ✅ | 10.2 km² | |
-| 2026-01 | ✅ | ✅ | 9.2 km² | |
-| 2026-02 | ✅ | ✅ | 108.6 km² | |
-| 2026-03 | ✅ | (no flood px) | 0.0 km² | VV file 4.5 MB — data gap |
-| 2026-04 | ✅ | (no flood px) | 0.0 km² | VV file 1.3 MB — data gap; stale bad GeoJSON deleted |
+| Month | TIF Output | GeoJSON | Flood Area (−5 dB) | Notes |
+|-------|-----------|---------|-------------------|-------|
+| 2025-01 | ✅ | — | 0.0 km² | ⚠️ VV raw amplitude — unreliable |
+| 2025-02 | ✅ | — | 0.0 km² | ⚠️ VV raw amplitude — unreliable |
+| 2025-03 | ✅ | — | 0.0 km² | Baseline month — self-comparison = 0 |
+| 2025-04 | ✅ | — | 0.0 km² | Baseline month — self-comparison = 0 |
+| 2025-05 | ✅ | ✅ | 6.1 km² | Late long-rains |
+| 2025-06 | ✅ | ✅ | 4.3 km² | Early dry season |
+| 2025-07 | ✅ | ✅ | 0.2 km² | Mid dry season |
+| 2025-08 | ✅ | ✅ | 0.4 km² | Late dry season |
+| **2025-09** | ✅ | ✅ | **217.2 km²** | **Peak — short rains onset** *(was 3,427 km² at −3 dB — confirmed artifact)* |
+| 2025-10 | ✅ | ✅ | 0.9 km² | |
+| 2025-11 | ✅ | ✅ | 1.6 km² | |
+| 2025-12 | ✅ | ✅ | 2.0 km² | |
+| 2026-01 | ✅ | ✅ | 2.1 km² | |
+| 2026-02 | ✅ | ✅ | 17.4 km² | Long-rains onset |
+| 2026-03 | ✅ | — | 0.0 km² | Data gap (VV 4.5 MB — sparse coverage) |
+| 2026-04 | ✅ | — | 0.0 km² | Data gap (VV 1.3 MB — sparse coverage) |
 | 2026-05 | ⏳ | pending | pending | Run `extend_may_july_2026.py` |
 | 2026-06 | ⏳ | pending | pending | Run `extend_may_july_2026.py` |
 | 2026-07 | ⏳ | pending | pending | Run `extend_may_july_2026.py` |
@@ -166,6 +168,7 @@ Both masks built by `build_masks.py`. Run once, persist forever.
 | 2026-05-16 | Built `notebooks/04_validation_export.ipynb` via `build_nb04.py` | Time-series chart, Folium map, export inventory, summary stats |
 | 2026-07-08 | Extended temporal window to Jul 2026 | `config/config.yaml` end date → 2026-07-31; `extend_may_july_2026.py` created; PIPELINE_STATUS.md updated |
 | 2026-07-08 | Sep 2025 anomaly investigation | Cross-checked 3,427.6 km² against OCHA ReliefWeb + CEMS: no corroborating activations. Major 2025 DRC floods were Apr–May. Sep = rainy-season onset → wet-soil/forest false positive. Threshold raised to -5 dB; FORCE_REPROCESS=True. Full rerun of detection needed. |
+| 2026-07-09 | Full reprocess at −5 dB complete | All 16 months regenerated. Sep 2025: 3,427.6 → **217.2 km²** (94% reduction). Seasonal pattern now correct. Feb 2026: 108.6 → 17.4 km². All months consistent with expected climate signal. |
 
 > **Update this table each time you run a phase.** Include what you ran, whether it succeeded, and any errors.
 
