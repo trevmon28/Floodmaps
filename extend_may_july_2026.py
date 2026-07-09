@@ -63,6 +63,11 @@ import yaml
 
 warnings.filterwarnings("ignore")
 
+# Allow unauthenticated reads from public AWS S3 buckets (Sentinel-1 data).
+# Must be set before any rasterio / odc-stac import touches GDAL.
+os.environ.setdefault("AWS_NO_SIGN_REQUEST", "YES")
+os.environ.setdefault("AWS_DEFAULT_REGION", "us-west-2")
+
 # ── Config ────────────────────────────────────────────────────────────────────
 
 PROJECT_ROOT = Path(__file__).resolve().parent
@@ -86,7 +91,7 @@ STAC_URL          = cfg["data_sources"]["sar"]["catalog"]
 COLLECTION        = cfg["data_sources"]["sar"]["collection"]
 
 NEW_MONTHS           = ["2026-05", "2026-06", "2026-07"]
-CHANGE_THRESHOLD_DB  = -3.0
+CHANGE_THRESHOLD_DB  = float(cfg["processing"].get("change_threshold_db", -5.0))
 RESAMPLE_M           = 100          # detection resolution (metres)
 NATIVE_M             = 20           # preprocessing resolution (metres)
 FORCE_REPROCESS_SAR  = False        # set True to redo any existing VV file
@@ -206,28 +211,35 @@ def preprocess_month(month_str):
     try:
         from odc.stac import load as odc_load
         import odc.geo
+        try:
+            from odc.stac import configure_rio
+            configure_rio(cloud_defaults=True, aws={"aws_unsigned": True})
+        except Exception:
+            pass
     except ImportError:
         print("  ERROR: odc-stac / odc-geo not installed.  Run: pip install odc-stac odc-geo")
         return None
 
     print(f"  [SAR] {month_str}: loading VV band via odc-stac at {NATIVE_M} m …")
-    ds = odc_load(
-        items,
-        bands=["vv"],
-        crs=OUTPUT_CRS,
-        resolution=NATIVE_M,
-        bbox=AOI_BBOX,
-        chunks={"x": 2048, "y": 2048},
-        groupby="solar_day",
-    )
+    # rasterio.Env must stay open through .compute() — that is when GDAL reads S3 tiles.
+    with rasterio.Env(AWS_NO_SIGN_REQUEST="YES", GDAL_HTTP_TIMEOUT=120):
+        ds = odc_load(
+            items,
+            bands=["vv"],
+            crs=OUTPUT_CRS,
+            resolution=NATIVE_M,
+            bbox=AOI_BBOX,
+            chunks={"x": 2048, "y": 2048},
+            groupby="solar_day",
+        )
 
-    if "vv" not in ds:
-        print(f"  [SAR] {month_str}: odc-stac returned no VV data.")
-        return None
+        if "vv" not in ds:
+            print(f"  [SAR] {month_str}: odc-stac returned no VV data.")
+            return None
 
-    print(f"  [SAR] {month_str}: computing monthly median …")
-    import dask
-    vv_raw = ds["vv"].median(dim="time").compute().values.astype("float32")
+        print(f"  [SAR] {month_str}: computing monthly median …")
+        import dask
+        vv_raw = ds["vv"].median(dim="time").compute().values.astype("float32")
 
     # Convert raw DN → sigma0 dB  (linear amplitude → power → dB)
     # Sentinel-1 GRD in Element84: stored as uint16 amplitude DN.
@@ -253,7 +265,7 @@ def preprocess_month(month_str):
 # ── Phase 2: Flood Detection ───────────────────────────────────────────────────
 
 def detect_month(month_str, baseline, baseline_transform, baseline_crs):
-    """Run −3 dB change detection for one month against the provided baseline."""
+    """Run change detection for one month against the provided baseline (threshold from config)."""
     vv_path  = PROCESSED_DIR / f"{month_str}_VV.tif"
     out_tif  = OUTPUT_DIR    / f"flood_extent_{month_str}.tif"
     out_json = OUTPUT_DIR    / f"flood_extent_{month_str}.geojson"
