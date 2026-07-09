@@ -42,6 +42,13 @@ processing:
   speckle_filter: lee  # options: lee, refined_lee, gamma_map
   flood_threshold_method: otsu
   baseline_months: 3   # months of pre-event imagery to build dry baseline
+  # Change-detection threshold: -5 dB (raised from -3 dB 2026-07-08).
+  # Sep 2025 spike (3,427 km²) was a wet-soil/forest artifact; -3 dB is too
+  # permissive in tropical equatorial environments during rainy-season onset.
+  # -5 dB requires a halving of power beyond the wet-soil noise floor (~-3 dB).
+  change_threshold_db: -5.0
+  # VH/VV ratio filter (None = disabled; -10.0 recommended once VH files verified)
+  vh_ratio_threshold_db: null
 
 output:
   format: GeoTIFF  # Cloud-Optimized GeoTIFF (COG)

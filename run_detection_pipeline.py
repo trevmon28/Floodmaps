@@ -42,9 +42,13 @@ OUTPUT_DIR          = os.path.join(PROJECT_ROOT, "data", "outputs", "flood_exten
 BASELINE_PATH       = os.path.join(PROCESSED_DIR, "baseline_VV.tif")
 BASELINE_MONTHS     = cfg["processing"]["baseline_months"]
 OUTPUT_CRS          = cfg["aoi"]["output_crs"]
-CHANGE_THRESHOLD_DB  = -3.0
+CHANGE_THRESHOLD_DB  = float(cfg["processing"].get("change_threshold_db", -5.0))
+                               # raised from -3 dB: tropical forest/wet-soil onset can
+                               # produce -3 to -5 dB drops with no standing water.
+                               # Sep 2025 spike (3,427 km²) was likely wet-soil artifact.
+                               # -5 dB requires deeper suppression consistent with open water.
 RESAMPLE_M           = 100
-FORCE_REPROCESS      = True    # rerun all months with corrected baseline
+FORCE_REPROCESS      = True    # rerun all months with corrected threshold
 
 # Threshold method: read from config; fall back to "fixed" if skimage unavailable
 _CFG_METHOD = cfg["processing"].get("flood_threshold_method", "fixed")
@@ -52,6 +56,10 @@ THRESHOLD_METHOD = _CFG_METHOD if (_CFG_METHOD != "otsu" or _SKIMAGE_AVAILABLE) 
 
 # Post-processing method: "median7" (UN-SPIDER recommended) or "opening3" (prior default)
 POSTPROC_METHOD = "median7"   # change to "opening3" to restore prior behaviour
+
+# VH/VV ratio discriminator — water has low VH relative to VV (ratio typically < -12 dB);
+# wet soil and vegetation maintain higher VH.  Set to None to disable (no VH files yet).
+VH_RATIO_THRESHOLD_DB = None   # enable by setting to e.g. -10.0 once VH composites verified
 
 MASKS_DIR       = os.path.join(PROJECT_ROOT, "data", "raw", "masks")
 SLOPE_PATH      = os.path.join(MASKS_DIR, "slope_mask.tif")
@@ -265,6 +273,23 @@ for i, fname in enumerate(vv_files, 1):
     if os.path.exists(PERM_WATER_PATH):
         water_m = load_mask_aligned(PERM_WATER_PATH, flood_mask.shape, transform, crs)
         flood_mask[water_m == 1] = 255
+
+    # ── VH/VV ratio discriminator (wet-soil / wet-vegetation suppression) ────
+    # Open water: VH << VV (ratio typically < -10 dB).
+    # Wet soil / wet forest: VH and VV both reduced but ratio is higher (~-6 to -8 dB).
+    # If VH file is available and VH_RATIO_THRESHOLD_DB is set, mask pixels where
+    # the VH/VV ratio is above the threshold (not water-like).
+    if VH_RATIO_THRESHOLD_DB is not None:
+        vh_path = os.path.join(PROCESSED_DIR, fname.replace("_VV.tif", "_VH.tif"))
+        if os.path.exists(vh_path):
+            vh, _, _ = read_band(vh_path)
+            with np.errstate(invalid="ignore"):
+                vh_vv_ratio = vh - vv   # both in dB, so subtraction = ratio in dB
+            # mask pixels where ratio is too high to be open water
+            non_water_ratio = (vh_vv_ratio > VH_RATIO_THRESHOLD_DB) & np.isfinite(vh_vv_ratio)
+            flood_mask[non_water_ratio & (flood_mask == 1)] = 0
+            ratio_removed = int(non_water_ratio.sum())
+            print(f"  [VH/VV] {ratio_removed:,} px removed by ratio filter", end="  ", flush=True)
 
     out_profile = {
         "driver": "GTiff", "dtype": "uint8", "nodata": 255,

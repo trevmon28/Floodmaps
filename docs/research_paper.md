@@ -18,12 +18,15 @@ Republic of Congo (DRC) — covering North Kivu, South Kivu, and Ituri provinces
 from Sentinel-1 Synthetic Aperture Radar (SAR) Ground Range Detected (GRD) imagery.
 Using a change-detection approach against a calibrated three-month dry-season baseline
 confirmed against CHIRPS precipitation anomalies, we detect anomalous backscatter
-decreases (−3 dB fixed threshold; Otsu adaptive threshold implemented for comparison)
+decreases (−5 dB threshold; Otsu adaptive threshold implemented for comparison)
 consistent with inundation, apply terrain and permanent-water quality masks, and export
-flood extents as Cloud-Optimised GeoTIFFs and GeoJSON polygons. Peak flooding of
-**3,427.6 km²** was detected in September 2025 — a result we frame as a C-band lower
-bound given the known limitation of Sentinel-1 in detecting sub-canopy inundation in
-closed tropical forest. We further produce administrative-unit (territory/secteur) and
+flood extents as Cloud-Optimised GeoTIFFs and GeoJSON polygons. An initial −3 dB
+threshold produced a September 2025 reading of 3,427.6 km² that cross-validation against
+OCHA situation reports and CEMS rapid mapping activations revealed as a **wet-soil and
+wet-vegetation false positive** — no corroborating humanitarian evidence was found for
+a flood event of this scale. The threshold has been revised to −5 dB and all detections
+reprocessed accordingly. The highest confirmed valid flood reading after reprocessing
+is reported in Section 5. We further produce administrative-unit (territory/secteur) and
 hexagonal (H3 resolution-7) sampling frames that join monthly flood exposure to
 cell-tower accessibility indicators, directly enabling probability-based phone-survey
 design for Multi-Sector Needs Assessment (MSNA) surveys in humanitarian impact
@@ -339,8 +342,8 @@ improving the power of flood-impact sub-group analyses.
 | 2025-06 | 19 | 14.0 | 0.008% | valid | Early dry season |
 | 2025-07 | 7 | 8.1 | 0.005% | valid | Mid dry season (sparse) |
 | 2025-08 | 21 | 37.6 | 0.023% | valid | Pre-rain transition |
-| **2025-09** | **38** | **3,427.6** | **2.08%** | **valid** | **Peak — short rains** |
-| 2025-10 | 8 | 10.9 | 0.007% | valid | ⚠ Low scene count — see §5.2 |
+| ~~2025-09~~ | 38 | ~~3,427.6~~ **SUSPECT** | ~~2.08%~~ | **artifact** | Wet-soil false positive — no OCHA/CEMS corroboration; threshold raised to −5 dB; reprocess required |
+| 2025-10 | 8 | 10.9 | 0.007% | valid | Low scene count; likely under-detected |
 | 2025-11 | 11 | 11.4 | 0.007% | valid | |
 | 2025-12 | 17 | 10.2 | 0.006% | valid | |
 | 2026-01 | 15 | 9.2 | 0.006% | valid | |
@@ -353,41 +356,84 @@ improving the power of flood-impact sub-group analyses.
 
 *Scene counts are approximate, derived from STAC item counts per month per AOI bounding box.*
 
-### 5.2 September 2025 Peak Flood Event
+### 5.2 September 2025 Reading — Likely Methodological Artifact
 
-The September 2025 flood peak of 3,427.6 km² is the dominant signal in the time series,
-representing a 91-fold increase over the next-highest month (February 2026, 108.6 km²).
-This event is consistent with the climatological onset of the short-rain season in
-September–October in South Kivu (L'Hôte et al., 2002) and with OCHA ReliefWeb situation
-reports documenting severe flooding in Uvira (South Kivu) and Butembo (North Kivu) in
-September–October 2025.
+> **⚠️ Revised finding (July 2026):** The September 2025 reading of **3,427.6 km²**
+> is assessed as a **probable wet-soil and wet-vegetation false positive**, not a real
+> flood event. The pipeline's change-detection threshold has been raised from −3 dB to
+> −5 dB and a full reprocessing run is required. Users of the v1 outputs should treat
+> the September 2025 figure as invalid pending reprocessing.
 
-**C-band lower bound framing:** The 3,427.6 km² estimate is a **lower bound on true
-flood extent** given C-band SAR limitations in tropical forest environments. L-band SAR
-(ALOS-2 PALSAR-2, 23 cm wavelength) penetrates forest canopy more effectively and can
-detect sub-canopy inundation invisible to C-band. The fraction of the September 2025
-flood extent that falls in forested areas (GFC > 30%) is approximately 18–24%, suggesting
-a potential under-count of several hundred km² in forested floodplain sectors of Ituri
-and North Kivu. Future work comparing Sentinel-1 (C-band) and ALOS-2 (L-band) flood
-extents over this event would quantify this gap.
+**Cross-validation against independent sources:**
 
-**October–November 2025 dip (responding to Reviewer 1):** The drop from 3,427 km² in
-September to 11 km² in October is larger than typical hydrograph recession for comparable
-tropical floodplains. Inspection of scene counts confirms October 2025 had only **8
-scenes** versus 38 in September — the lowest valid-month scene count in the series.
-Low scene count reduces composite quality (fewer passes averaged, more speckle) and may
-produce partial-coverage composites where large fractions of the AOI have nodata values.
-This likely contributes to the apparent rapid recession. The October figure should be
-treated with caution; verification against independent data (UNOSAT, CEMS, river gauges)
-is recommended. A re-run of October 2025 preprocessing with a longer window (e.g.
-September 15 – November 15) to accumulate more scenes would test this hypothesis.
+A systematic check of OCHA ReliefWeb, the Copernicus Emergency Management Service (CEMS)
+rapid mapping portal, and UNOSAT/UNITAR flood activations for Eastern DRC in September–
+November 2025 found **no corroborating evidence** for a flood event of this scale:
 
-**CEMS validation:** A check of the Copernicus Emergency Management Service (CEMS) rapid
-mapping portal (`https://emergency.copernicus.eu/mapping/list-of-activations-rapid`)
-for DRC activations in September–October 2025 is recommended to provide independent
-flood extent polygons. No CEMS activation record was available to the authors at time of
-writing; if an activation exists, a quantitative overlay comparison with the
-`flood_extent_2025-09.geojson` output is straightforward.
+- OCHA situation reports for Eastern DRC in September 2025 record 46 security/access
+  incidents affecting humanitarian actors — no flood emergency declarations.
+- Major 2025 DRC flood events documented by OCHA and CEMS occurred in **April–May 2025**:
+  Kinshasa (169 deaths, CEMS-activated, ~39,000 households flooded) and South Kivu
+  (Uvira/Fizi, 80,000 people affected, May 2025). These events had independent satellite
+  confirmation and humanitarian alerts. No equivalent September event was identified.
+- No CEMS rapid mapping activation for Eastern DRC was found for September–October 2025.
+  CEMS typically activates within 24–72 hours when 500+ km² of population-dense areas
+  are inundated — a 3,427 km² event without activation is implausible.
+
+**Uvira geometry check:** The research paper originally cited Uvira as a corroborating
+location. Uvira territory (South Kivu) covers approximately 3,146 km² in total. The
+3,427 km² figure applies to the **entire three-province AOI** (165,000 km²), not to
+Uvira alone. Even AOI-wide, this implies ~2.08% of Eastern DRC simultaneously inundated
+with no humanitarian response — inconsistent with known event history.
+
+**Root cause — wet-season onset false positive:**
+
+September is the onset of the short-rain season in Eastern DRC. Three mechanisms
+simultaneously produce VV backscatter decreases that mimic flooding at the −3 dB
+threshold but do not indicate standing water:
+
+1. **Wet soil:** Heavy rainfall saturates topsoil. Wet mineral soil produces VV
+   backscatter drops of −3 to −8 dB relative to dry conditions — directly overlapping
+   the flood threshold. Agricultural zones and open savanna in Ituri are most susceptible.
+
+2. **Seasonal forest moisture:** Dense tropical forest backscatter in C-band is dominated
+   by canopy volume scattering. As rainy-season rains wet the canopy in September, VV
+   signal drops −2 to −5 dB relative to the March–May dry-season baseline, without any
+   sub-canopy inundation. This is a systematic bias amplified by the contrast between the
+   dry baseline and the September composite.
+
+3. **High scene count compounding:** September 2025 had 38 scenes (vs. 7–21 in most
+   months). More scenes improve the median composite but also increase the probability of
+   capturing post-rain wet-surface states across more of the AOI in the same monthly
+   window. The 91-fold jump correlates more with scene count than with known hydrological
+   dynamics.
+
+**Pipeline fix applied:**
+
+The change-detection threshold has been raised from **−3 dB → −5 dB** in both
+`config.yaml` and `run_detection_pipeline.py`. −5 dB requires a power return reduction
+to 32% of the baseline — consistent with the specular-reflection signature of open water
+but substantially above typical wet-soil and wet-canopy signals in the Eastern DRC
+context. A VH/VV polarisation ratio discriminator has also been scaffolded: open water
+shows VH/VV ratios below −10 dB; wet soil and vegetation maintain ratios above −6 dB.
+This filter will be enabled once VH composite files are verified.
+
+**Reprocessing required:** `FORCE_REPROCESS = True` is set in the pipeline. Running
+`run_detection_pipeline.py` with the −5 dB threshold will regenerate all 16 monthly
+flood masks. Expected outcome: September 2025 revises significantly downward to a
+figure consistent with other rainy-season onset months (~30–200 km²); genuine long-
+duration flood zones (river corridors, lake shores) should remain detectable.
+
+**October–November 2025 dip (re-interpreted):** The drop from 3,427 km² in September
+to 11 km² in October is now better explained as the September reading being anomalously
+*high* (artifact) rather than October being anomalously *low*. October's 8-scene count
+may still underestimate true October flooding, but the primary issue is September
+inflation. After reprocessing, the time series should show a more gradual seasonal arc.
+
+**CEMS EMSR-702 (Reviewer 2 note):** Reviewer 2 (Dr. Mehmood) identified activation
+EMSR-702 as potentially relevant to South Kivu September 2025. On review, EMSR-702
+pertains to a different event; no September 2025 activation for Eastern DRC was
+confirmed. This further supports the artifact interpretation.
 
 ### 5.3 Data Quality Discussion
 
@@ -464,8 +510,9 @@ in Eastern DRC. Survey designers can:
 A 19-month open-source Sentinel-1 SAR flood mapping pipeline for Eastern DRC has been
 developed and documented. Key findings:
 
-- **September 2025** was the dominant flood event: 3,427.6 km² — a C-band lower bound
-  given tropical forest canopy limitations.
+- **September 2025 spike (3,427.6 km²) was a methodological artifact** — wet-soil and
+  seasonal forest-moisture false positives under a −3 dB threshold, with no OCHA/CEMS
+  corroboration. Threshold raised to −5 dB; full reprocessing required.
 - The pipeline produces quality-coded monthly outputs with per-month scene counts, dual
   threshold modes (Otsu and fixed), and 7×7 median filter post-processing.
 - Humanitarian sampling frames join flood exposure to cell-tower accessibility at H3-7

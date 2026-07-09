@@ -105,7 +105,7 @@ Both masks built by `build_masks.py`. Run once, persist forever.
 | 2025-06 | ✅ | ✅ | 14.0 km² | |
 | 2025-07 | ✅ | ✅ | 8.1 km² | |
 | 2025-08 | ✅ | ✅ | 37.6 km² | |
-| 2025-09 | ✅ | ✅ | **3,427.6 km²** | Peak short rains — standout result |
+| 2025-09 | ✅ | ✅ | ~~3,427.6 km²~~ **SUSPECT** | Likely wet-soil/forest artifact — no OCHA/CEMS corroboration; threshold raised to -5 dB for reprocess |
 | 2025-10 | ✅ | ✅ | 10.9 km² | |
 | 2025-11 | ✅ | ✅ | 11.4 km² | |
 | 2025-12 | ✅ | ✅ | 10.2 km² | |
@@ -165,6 +165,7 @@ Both masks built by `build_masks.py`. Run once, persist forever.
 | 2026-05-16 | Deleted stale GeoJSONs for 2025-01, 2025-02, 2025-04 (old runs, 0 px) | Keeping outputs consistent with flood_stats.csv |
 | 2026-05-16 | Built `notebooks/04_validation_export.ipynb` via `build_nb04.py` | Time-series chart, Folium map, export inventory, summary stats |
 | 2026-07-08 | Extended temporal window to Jul 2026 | `config/config.yaml` end date → 2026-07-31; `extend_may_july_2026.py` created; PIPELINE_STATUS.md updated |
+| 2026-07-08 | Sep 2025 anomaly investigation | Cross-checked 3,427.6 km² against OCHA ReliefWeb + CEMS: no corroborating activations. Major 2025 DRC floods were Apr–May. Sep = rainy-season onset → wet-soil/forest false positive. Threshold raised to -5 dB; FORCE_REPROCESS=True. Full rerun of detection needed. |
 
 > **Update this table each time you run a phase.** Include what you ran, whether it succeeded, and any errors.
 
