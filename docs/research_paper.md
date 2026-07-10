@@ -134,10 +134,14 @@ but the slope mask (> 8°, covering 30% of AOI) mitigates the primary impact.
 Scenes were filtered to the AOI bounding box and the calendar month of interest. Table 1
 reports scene counts per month.
 
-**Interannual scene count variability:** May 2026 returned 141 scenes versus 31 for May
-2025 — a 4.5× increase. This likely reflects the addition of Sentinel-1C to the
-constellation (launched late 2024), which increased revisit frequency over sub-Saharan
-Africa. Users comparing 2025 and 2026 months should note that higher scene counts produce
+**Interannual scene count variability:** May 2026 returned 127 RTC scenes (from
+Microsoft Planetary Computer `sentinel-1-rtc`) versus 31 GRD scenes for May 2025 (from
+Element84 `sentinel-1-grd`) — an approximately 4× increase. This likely reflects the
+addition of Sentinel-1C to the constellation (launched late 2024), which increased
+revisit frequency over sub-Saharan Africa. Note that 2026 months were acquired from the
+`sentinel-1-rtc` collection to match the existing baseline calibration (sigma0 power,
+`10 × log₁₀`); prior months used GRD with equivalent sigma0 calibration applied in
+`02_preprocessing.ipynb`. Users comparing 2025 and 2026 months should note that higher scene counts produce
 more stable monthly medians (lower composite noise) and that the two years are not
 directly comparable on per-pixel confidence without accounting for this sampling density
 difference. The monthly median algorithm is robust to this asymmetry in aggregate flood
@@ -371,14 +375,13 @@ improving the power of flood-impact sub-group analyses.
 | 2026-02 | 29 | 17.4 | 0.011% | valid | Long-rains onset; see §4.3 caveat |
 | 2026-03 | 2 | 0.0 | 0.00% | gap | VV file 4.5 MB — data gap |
 | 2026-04 | 1 | 0.0 | 0.00% | gap | VV file 1.3 MB — data gap |
-| 2026-05 | 141† | pending | pending | pending | SAR acquisition in progress — `extend_may_july_2026.py` |
-| 2026-06 | ~120† | pending | pending | pending | SAR acquisition in progress — `extend_may_july_2026.py` |
-| 2026-07 | ~100† | pending | pending | pending | SAR acquisition in progress — `extend_may_july_2026.py` |
+| 2026-05 | 127‡ | 5.8 | 0.004% | valid‡ | RTC composite; 7.6% spatial coverage — late long-rains signal |
+| 2026-06 | 147‡ | — | — | gap‡ | WarpOperationError — corrupt MPC RTC tiles; no composite written |
+| 2026-07 | 12‡ | 0.0 | 0.00% | partial‡ | 2.5% coverage; incomplete month — re-run after 2026-07-31 |
 
 *Scene counts are approximate, derived from STAC item counts per month per AOI bounding box.  
-† 2026-05 scene count confirmed (141) from STAC search; 2026-06 and 2026-07 are estimates pending search completion.  
-All flood areas computed at −5 dB threshold (raised from initial −3 dB; see §5.2 for rationale).  
-Results for 2026-05/06/07 will be added upon completion of `extend_may_july_2026.py`.*
+All flood areas computed at −5 dB threshold (raised from initial −3 dB; see §5.2 for rationale).*  
+*‡ 2026-05/06/07 acquired from Microsoft Planetary Computer `sentinel-1-rtc` collection (Radiometrically Terrain Corrected sigma0); calibration formula `10 × log₁₀(σ₀_power)` matching the existing pipeline baseline. Scene counts are items returned by STAC search that possessed a readable VV asset; June 2026 has 147 STAC items but all fail during odc-stac warp due to corrupt tile data — treated as a data gap. May 2026 valid pixel coverage is 7.6% of AOI (20.7M / 274M pixels) due to high corruption rate in 2026 RTC files, not a gap in acquisition.*
 
 ### 5.2 September 2025 Reading — Likely Methodological Artifact
 
@@ -866,6 +869,6 @@ The revised manuscript addresses all four concerns I raised across both rounds o
 | `months_exposed_5pct` complementary usage note | R2 | R4 | ✅ **Added** — §4.5 one-sentence guidance on joint use |
 | Table 1 "% of AOI" denominator clarification | R2 | R4 | ✅ **Fixed** — header now reads "% of unmasked AOI" |
 | Forest mask pixel-level (GFC overlay) | R2 | R2 | 📋 **Deferred to v1.1** — acknowledged in §6.2; v1 published without |
-| Temporal extension results (2026-05/06/07) | — | — | 🔄 **In progress** — acquisition running; Table 1 will be updated upon completion |
+| Temporal extension results (2026-05/06/07) | — | — | ✅ **Complete** — May 2026: **5.8 km²** (127 RTC scenes, 7.6% coverage); Jun 2026: **data gap** (WarpOperationError — corrupt MPC RTC tiles); Jul 2026: **0.0 km²** (partial month, 2.5% coverage — re-run after 2026-07-31). Table 1 updated. |
 
 *📋 = deferred; 🔄 = actively running*

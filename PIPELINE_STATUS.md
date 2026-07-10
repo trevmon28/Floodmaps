@@ -1,8 +1,8 @@
 # DRC Flood Mapping Pipeline — Status Tracker
 
-**Last updated:** 2026-07-09  
+**Last updated:** 2026-07-10  
 **AOI:** Eastern DRC (North Kivu, South Kivu, Ituri)  
-**Period:** Jan 2025 – Jul 2026 (19 months; May–Jul pending acquisition)  
+**Period:** Jan 2025 – Jul 2026 (19 months; Jun 2026 = data gap; Jul 2026 = partial/pending re-run)  
 **Threshold:** −5 dB (raised from −3 dB after Sep 2025 anomaly investigation)  
 **Env:** `C:\Users\trevm\Projects\SpatialLab\gis_env`
 
@@ -32,7 +32,7 @@ Then open the notebook for the phase that failed and **run only the cells that h
 | 3 — Flood Detection (with masks) | `run_detection_pipeline.py` | ~2 min | ✅ Complete — all 16 months, 2026-05-16 7:20 PM |
 | 3b — Flood Detection (reprocess) | — | — | ✅ Done via FORCE_REPROCESS=True in step 3 |
 | 4 — Validation & Export | `notebooks/04_validation_export.ipynb` | ~2 min | 🔄 Ready to run |
-| 5 — Extend to May–Jul 2026 | `extend_may_july_2026.py` | ~4–8 hr | ⏳ Pending — run to add 3 new months |
+| 5 — Extend to May–Jul 2026 | `extend_may_july_2026.py` | ~4–8 hr | ✅ Complete — May: 5.8 km²; Jun: data gap; Jul: partial (re-run after 2026-07-31) |
 
 ---
 
@@ -59,9 +59,9 @@ NB02 was run with `process_all=True`. All 16 VV files exist on disk. Skip re-run
 | 2026-02 | ✅ | 1,490 MB | ✅ | 508 MB | Good coverage |
 | 2026-03 | ⚠️ | 4.5 MB | ⚠️ | 3.0 MB | **Both tiny** — suspect; may need reprocess |
 | 2026-04 | ⚠️ | 1.3 MB | ❌ | missing | **Very small** — likely incomplete |
-| 2026-05 | ⏳ | pending | ⏳ | pending | Acquisition pending — run `extend_may_july_2026.py` |
-| 2026-06 | ⏳ | pending | ⏳ | pending | Acquisition pending — run `extend_may_july_2026.py` |
-| 2026-07 | ⏳ | pending | ⏳ | pending | Acquisition pending — run `extend_may_july_2026.py` |
+| 2026-05 | ✅ | 93.6 MB | — | — | RTC acquisition; 7.6% spatial coverage (sparse MPC tiles) |
+| 2026-06 | ❌ | missing | — | — | **Data gap** — WarpOperationError (corrupt MPC RTC tiles) |
+| 2026-07 | ✅ | 32 MB | — | — | Partial month (2.5% coverage); re-run after 2026-07-31 |
 
 > **Note on small files:** VH files < 5 MB may reflect real sparse S1 coverage for that month/AOI. VV files < 5 MB (2026-03, 2026-04) are suspect and may need reprocessing with NB02.
 
@@ -115,9 +115,9 @@ Both masks built by `build_masks.py`. Run once, persist forever.
 | 2026-02 | ✅ | ✅ | 17.4 km² | Long-rains onset |
 | 2026-03 | ✅ | — | 0.0 km² | Data gap (VV 4.5 MB — sparse coverage) |
 | 2026-04 | ✅ | — | 0.0 km² | Data gap (VV 1.3 MB — sparse coverage) |
-| 2026-05 | ⏳ | pending | pending | Run `extend_may_july_2026.py` |
-| 2026-06 | ⏳ | pending | pending | Run `extend_may_july_2026.py` |
-| 2026-07 | ⏳ | pending | pending | Run `extend_may_july_2026.py` |
+| 2026-05 | ✅ | ✅ | 5.8 km² | RTC; 7.6% spatial coverage (late long-rains) |
+| 2026-06 | ❌ | — | 0.0 km² | **Data gap** — WarpOperationError (corrupt MPC RTC tiles) |
+| 2026-07 | ✅ | — | 0.0 km² | Partial month, 2.5% coverage — re-run after 2026-07-31 |
 
 **How to run:**
 1. Open `notebooks/03_flood_detection.ipynb`
@@ -169,6 +169,7 @@ Both masks built by `build_masks.py`. Run once, persist forever.
 | 2026-07-08 | Extended temporal window to Jul 2026 | `config/config.yaml` end date → 2026-07-31; `extend_may_july_2026.py` created; PIPELINE_STATUS.md updated |
 | 2026-07-08 | Sep 2025 anomaly investigation | Cross-checked 3,427.6 km² against OCHA ReliefWeb + CEMS: no corroborating activations. Major 2025 DRC floods were Apr–May. Sep = rainy-season onset → wet-soil/forest false positive. Threshold raised to -5 dB; FORCE_REPROCESS=True. Full rerun of detection needed. |
 | 2026-07-09 | Full reprocess at −5 dB complete | All 16 months regenerated. Sep 2025: 3,427.6 → **217.2 km²** (94% reduction). Seasonal pattern now correct. Feb 2026: 108.6 → 17.4 km². All months consistent with expected climate signal. |
+| 2026-07-10 | Extended to May–Jul 2026 via `extend_may_july_2026.py` | Used `sentinel-1-rtc` (MPC) + rasterio read-validation filter. May: **5.8 km²** (7.6% spatial coverage — sparse RTC tiles). June: **data gap** (WarpOperationError — corrupt MPC tiles persisted beyond center-window filter). July: **0.0 km²** (2.5% coverage, partial month — re-run after 2026-07-31). Fixed CSV-update bug in extend script (rows were not overwritten on re-run). |
 
 > **Update this table each time you run a phase.** Include what you ran, whether it succeeded, and any errors.
 

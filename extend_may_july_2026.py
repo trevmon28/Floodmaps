@@ -68,6 +68,14 @@ warnings.filterwarnings("ignore")
 os.environ.setdefault("AWS_NO_SIGN_REQUEST", "YES")
 os.environ.setdefault("AWS_DEFAULT_REGION", "us-west-2")
 
+# GDAL HTTP settings — set via os.environ so dask worker threads inherit them.
+# rasterio.Env() is NOT inherited by threads spawned by dask.
+os.environ["GDAL_HTTP_TIMEOUT"]              = "600"
+os.environ["GDAL_HTTP_MAX_RETRY"]            = "5"
+os.environ["GDAL_HTTP_RETRY_DELAY"]          = "2"
+os.environ["GDAL_DISABLE_READDIR_ON_OPEN"]   = "EMPTY_DIR"
+os.environ["CPL_VSIL_CURL_ALLOWED_EXTENSIONS"] = ".tiff,.tif"
+
 # ── Config ────────────────────────────────────────────────────────────────────
 
 PROJECT_ROOT = Path(__file__).resolve().parent
@@ -93,8 +101,9 @@ COLLECTION        = cfg["data_sources"]["sar"]["collection"]
 NEW_MONTHS           = ["2026-05", "2026-06", "2026-07"]
 CHANGE_THRESHOLD_DB  = float(cfg["processing"].get("change_threshold_db", -5.0))
 RESAMPLE_M           = 100          # detection resolution (metres)
-NATIVE_M             = 20           # preprocessing resolution (metres)
-FORCE_REPROCESS_SAR  = False        # set True to redo any existing VV file
+NATIVE_M             = 40           # acquisition resolution (metres) — 40 m for new months;
+                                    # detection resamples to 100 m regardless, result is identical
+FORCE_REPROCESS_SAR  = True         # overwrite existing files (needed after switching GRD→RTC)
 
 _CFG_METHOD      = cfg["processing"].get("flood_threshold_method", "fixed")
 THRESHOLD_METHOD = _CFG_METHOD if (_CFG_METHOD != "otsu" or _SKIMAGE_AVAILABLE) else "fixed"
@@ -167,15 +176,6 @@ def preprocess_month(month_str):
         print(f"  [SAR] {month_str}: already exists ({size_mb:.1f} MB) — skipping acquisition.")
         return out_path
 
-    print(f"  [SAR] {month_str}: searching STAC catalog …")
-
-    # Try to import pystac-client; give a clear error if missing.
-    try:
-        from pystac_client import Client
-    except ImportError:
-        print("  ERROR: pystac-client not installed.  Run: pip install pystac-client")
-        return None
-
     # Date range: full calendar month
     year, month = int(month_str[:4]), int(month_str[5:])
     import calendar
@@ -183,20 +183,40 @@ def preprocess_month(month_str):
     dt_start = f"{month_str}-01T00:00:00Z"
     dt_end   = f"{month_str}-{last_day:02d}T23:59:59Z"
 
-    client = Client.open(STAC_URL)
-    search = client.search(
-        collections=[COLLECTION],
+    try:
+        from pystac_client import Client
+    except ImportError:
+        print("  ERROR: pystac-client not installed.  Run: pip install pystac-client")
+        return None
+
+    try:
+        from odc.stac import load as odc_load
+        import odc.geo  # noqa: F401 — registers ds.odc accessor
+    except ImportError:
+        print("  ERROR: odc-stac / odc-geo not installed. Run: pip install odc-stac odc-geo")
+        return None
+
+    # ── Search MPC sentinel-1-rtc (Radiometrically Terrain Corrected) ──────────
+    # RTC delivers float32 sigma0 power — matches the format NB02 (02_preprocessing.ipynb)
+    # used for all existing months. GRD (raw amplitude DN) gives wrong dB values because
+    # the calibration constant differs between MPC and Element84.
+    import planetary_computer
+    print(f"  [SAR] {month_str}: searching MPC sentinel-1-rtc …")
+    mpc_client = Client.open(
+        "https://planetarycomputer.microsoft.com/api/stac/v1",
+        modifier=planetary_computer.sign_inplace,
+    )
+    mpc_search = mpc_client.search(
+        collections=["sentinel-1-rtc"],
         bbox=AOI_BBOX,
         datetime=f"{dt_start}/{dt_end}",
-        query={"sar:polarizations": {"contains": "VV"}},
         limit=500,
     )
-    items = list(search.items())
-    print(f"  [SAR] {month_str}: found {len(items)} Sentinel-1 scenes.")
+    items = [it for it in mpc_search.items() if "vv" in it.assets]
+    print(f"  [SAR] {month_str}: found {len(items)} RTC VV scenes.")
 
     if not items:
-        print(f"  [SAR] {month_str}: no scenes — writing empty placeholder file.")
-        # Write a 1×1 placeholder so the detection loop can note a data gap
+        print(f"  [SAR] {month_str}: no scenes found — writing empty placeholder.")
         placeholder = np.full((1, 1), np.nan, dtype="float32")
         profile = {
             "driver": "GTiff", "dtype": "float32", "nodata": np.nan,
@@ -207,49 +227,81 @@ def preprocess_month(month_str):
         write_cog(placeholder, profile, out_path)
         return out_path
 
-    # Load via odc-stac
-    try:
-        from odc.stac import load as odc_load
-        import odc.geo
+    # Pre-filter: read a small center window from each file — filters corrupt tiles
+    # that pass HEAD checks but fail during odc-stac warp (causing WarpOperationError).
+    from concurrent.futures import ThreadPoolExecutor
+    from rasterio.windows import Window
+
+    def _rio_readable(item):
+        href = item.assets["vv"].href
         try:
-            from odc.stac import configure_rio
-            configure_rio(cloud_defaults=True, aws={"aws_unsigned": True})
+            with rasterio.open(href) as src:
+                h, w = src.height, src.width
+                win = Window(w // 4, h // 4, min(256, w // 2), min(256, h // 2))
+                src.read(1, window=win)
+            return True
         except Exception:
-            pass
-    except ImportError:
-        print("  ERROR: odc-stac / odc-geo not installed.  Run: pip install odc-stac odc-geo")
+            return False
+
+    print(f"  [SAR] {month_str}: read-validating {len(items)} RTC files (parallel) …")
+    with ThreadPoolExecutor(max_workers=10) as ex:
+        flags = list(ex.map(_rio_readable, items))
+    items = [it for it, ok in zip(items, flags) if ok]
+    print(f"  [SAR] {month_str}: {len(items)} items passed read validation.")
+    if not items:
+        print(f"  [SAR] {month_str}: no readable files — skipping.")
         return None
 
     print(f"  [SAR] {month_str}: loading VV band via odc-stac at {NATIVE_M} m …")
-    # rasterio.Env must stay open through .compute() — that is when GDAL reads S3 tiles.
-    with rasterio.Env(AWS_NO_SIGN_REQUEST="YES", GDAL_HTTP_TIMEOUT=120):
-        ds = odc_load(
-            items,
-            bands=["vv"],
-            crs=OUTPUT_CRS,
-            resolution=NATIVE_M,
-            bbox=AOI_BBOX,
-            chunks={"x": 2048, "y": 2048},
-            groupby="solar_day",
-        )
+    ds = odc_load(
+        items,
+        bands=["vv"],
+        crs=OUTPUT_CRS,
+        resolution=NATIVE_M,
+        bbox=AOI_BBOX,
+        chunks={"x": 4096, "y": 4096},
+        groupby="solar_day",
+    )
 
-        if "vv" not in ds:
-            print(f"  [SAR] {month_str}: odc-stac returned no VV data.")
-            return None
+    if "vv" not in ds:
+        print(f"  [SAR] {month_str}: ERROR — 'vv' not in dataset. Skipping.")
+        return None
 
-        print(f"  [SAR] {month_str}: computing monthly median …")
-        import dask
+    print(f"  [SAR] {month_str}: vv shape (time,y,x) = {tuple(ds['vv'].shape)}")
+    print(f"  [SAR] {month_str}: computing monthly median …")
+    try:
         vv_raw = ds["vv"].median(dim="time").compute().values.astype("float32")
+    except Exception as _e:
+        print(f"  [SAR] {month_str}: compute error ({type(_e).__name__}): {_e}. Skipping.")
+        return None
 
-    # Convert raw DN → sigma0 dB  (linear amplitude → power → dB)
-    # Sentinel-1 GRD in Element84: stored as uint16 amplitude DN.
-    # sigma0_linear = (DN / 10000)^2 ;  sigma0_dB = 10 * log10(sigma0_linear)
+    # RTC stores float32 sigma0 power; treat 0 as nodata
+    vv_raw = np.where(vv_raw <= 0, np.nan, vv_raw)
+
+    valid_px = int(np.isfinite(vv_raw).sum())
+    total_px = vv_raw.size
+    print(f"  [SAR] {month_str}: {valid_px:,} / {total_px:,} valid pixels "
+          f"({100*valid_px/total_px:.1f}%)")
+    if valid_px == 0:
+        print(f"  [SAR] {month_str}: ERROR — 0 valid pixels. Skipping write.")
+        return None
+
+    # RTC sigma0 power → dB (same formula as NB02 to_db)
     with np.errstate(divide="ignore", invalid="ignore"):
-        linear = np.where(vv_raw > 0, (vv_raw / 10000.0) ** 2, np.nan)
-        db     = np.where(linear > 0, 10.0 * np.log10(linear), np.nan)
+        db = np.where(vv_raw > 0, 10.0 * np.log10(vv_raw), np.nan)
 
-    transform = ds.geobox.transform
-    crs       = ds.geobox.crs
+    try:
+        transform = ds.odc.geobox.transform
+        crs       = str(ds.odc.geobox.crs)
+    except AttributeError:
+        xc = ds["x"].values.astype("float64")
+        yc = ds["y"].values.astype("float64")
+        dx, dy = float(xc[1] - xc[0]), float(yc[1] - yc[0])
+        transform = rasterio.transform.from_origin(
+            float(xc[0]) - dx / 2, float(yc[0]) - dy / 2,
+            abs(dx), abs(dy),
+        )
+        crs = OUTPUT_CRS
 
     profile = {
         "driver": "GTiff", "dtype": "float32", "nodata": np.nan,
@@ -391,7 +443,8 @@ def main():
         existing = pd.DataFrame()
 
     new_df = pd.DataFrame(new_rows).set_index("month")
-    combined = pd.concat([existing, new_df[~new_df.index.isin(existing.index)]]).sort_index()
+    # Drop existing rows for months being reprocessed, then append updated ones
+    combined = pd.concat([existing[~existing.index.isin(new_df.index)], new_df]).sort_index()
     combined.to_csv(CSV_PATH)
     print(f"  Updated: {CSV_PATH}  ({len(combined)} total months)")
     print()
