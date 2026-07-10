@@ -1,4 +1,4 @@
-# Monthly Flood Extent Mapping in Eastern Democratic Republic of Congo Using Sentinel-1 SAR: A Time-Series Analysis for Humanitarian Survey Design (January 2025 – July 2026)
+# Monthly Flood Extent Mapping in Eastern Democratic Republic of Congo Using Sentinel-1 SAR: A 19-Month Time-Series Analysis (January 2025 – July 2026)
 
 **Trevor Monroe**  
 Independent Research / Geospatial Analytics  
@@ -26,15 +26,12 @@ OCHA situation reports and CEMS rapid mapping activations revealed as a **wet-so
 wet-vegetation false positive** — no corroborating humanitarian evidence was found for
 a flood event of this scale. The threshold has been revised to −5 dB and all detections reprocessed. The confirmed
 peak flood reading is **217.2 km²** in September 2025 — consistent with Ruzizi
-floodplain inundation at short-rains onset and representing ~7% of Uvira territory. We further produce administrative-unit (territory/secteur) and
-hexagonal (H3 resolution-7) sampling frames that join monthly flood exposure to
-cell-tower accessibility indicators, directly enabling probability-based phone-survey
-design for Multi-Sector Needs Assessment (MSNA) surveys in humanitarian impact
-assessments. The full pipeline is open-source, laptop-runnable, and reproducible from
-publicly accessible STAC catalogs without API keys or cloud billing.
+floodplain inundation at short-rains onset and representing ~7% of Uvira territory.
+The full pipeline is open-source, laptop-runnable, and reproducible from publicly
+accessible STAC catalogs without API keys or cloud billing.
 
 **Keywords:** SAR flood mapping; Sentinel-1; Eastern DRC; humanitarian GIS; change
-detection; sampling frame; MSNA; time series; open-source; Otsu threshold
+detection; time series; open-source; Otsu threshold
 
 ---
 
@@ -71,11 +68,7 @@ This paper makes the following contributions:
 2. A reproducible, laptop-runnable open-source pipeline using only free data sources and
    standard scientific Python libraries, with an Otsu adaptive threshold implementation
    alongside the fixed −5 dB approach.
-3. Administrative-unit (territory/secteur) and hexagonal H3 sampling frames linking
-   flood exposure to phone-survey accessibility indicators (cell-tower coverage from
-   OpenCelliD), designed to inform probability sampling for Multi-Sector Needs Assessment
-   (MSNA) or similar humanitarian surveys.
-4. A documented data-quality framework distinguishing valid months from gap months due
+3. A documented data-quality framework distinguishing valid months from gap months due
    to sparse Sentinel-1 coverage, along with per-month scene counts, ensuring downstream
    users do not inadvertently interpret missing data as zero flooding.
 
@@ -172,17 +165,6 @@ Territory boundaries (Admin-2) were obtained from the World Bank geoBoundaries d
 Secteur/chefferie boundaries (Admin-3) were obtained from the OCHA Humanitarian Data
 Exchange (HDX) Common Operational Dataset for DRC (COD-AB).
 
-### 3.4 Cell Tower Locations (OpenCelliD)
-
-Cell tower locations for DRC (Mobile Country Code 630) were obtained from the OpenCelliD
-database (Unwired Labs). Over 900 towers were identified within the AOI, spanning GSM,
-UMTS, and LTE technologies. Tower count per H3-7 hexagon provides a **network
-infrastructure proxy** for phone-survey accessibility. This metric captures cellular
-network coverage at the infrastructure supply side; it does not directly measure household
-phone ownership or willingness to respond. Integration with DHS survey phone ownership
-estimates (DRC DHS 2013–14; or more recent MSNA phone ownership modules if available)
-is recommended for production survey designs to capture the demand side of accessibility.
-
 ---
 
 ## 4. Methodology
@@ -196,7 +178,6 @@ Phase 1 → STAC discovery (01_data_acquisition.ipynb)
 Phase 2 → SAR preprocessing: composite → dB (02_preprocessing.ipynb)
 Phase 3 → Flood detection: Otsu/fixed change vs baseline (run_detection_pipeline.py)
 Phase 4 → Validation & export: charts, Folium maps (04_validation_export.ipynb)
-Phase 5 → Sampling frames: admin-2/3 + H3-7 joins (05_sampling_frame.py)
 ```
 
 ### 4.2 SAR Preprocessing
@@ -300,54 +281,6 @@ linear flood features (river channels, canal inundation) that the 7×7 median pr
 
 **Quality masking:** Slope mask (> 8°) and permanent water mask (JRC GSW ≥ 75%) are
 applied, setting flagged pixels to `nodata = 255`.
-
-### 4.5 Sampling Frame Construction
-
-For humanitarian Multi-Sector Needs Assessment (MSNA) survey design, flood exposure was
-summarised at three spatial units:
-
-**Admin-2 (territory level):** Flooded pixel count, percentage flooded, and total flood
-area (km²) per territory × month.
-
-**Admin-3 (secteur/chefferie level):** Same approach, using the OCHA HDX COD-AB layer.
-
-**H3 resolution-7 hexagons (~5 km²):** Fraction of each hexagon classified as flooded
-per month, plus cell-tower count per hexagon as a network accessibility proxy.
-
-**Summary exposure statistics for survey designers (responding to Reviewer 4):**
-In addition to the long-format and wide-format monthly CSVs, the handover package
-includes `admin3_flood_summary.csv` with three statistics per Admin-3 unit:
-- `peak_flood_km2` — maximum single-month flood area across the study period
-- `mean_flood_km2` — mean flood area across valid months
-- `months_exposed_10km2` — count of valid months with flood area ≥ 10 km²
-
-These aggregated statistics are the operationally relevant variables for MSNA strata
-definition. H3-7 hexagons serve as the spatial analysis and gridded aggregation unit;
-they are typically rolled up to Admin-3 or Admin-2 before survey stratification, as most
-MSNA sampling designs operate at secteur or territory level. The two exposure-months
-metrics serve complementary roles: `months_exposed_10km2 ≥ 3` is the primary strata
-flag for large territories with substantial absolute flood extents, while
-`months_exposed_5pct ≥ 3` captures proportionally high exposure in small secteurs where
-10 km² may exceed the administratively-governed area — the two thresholds should be used
-jointly to avoid systematically underweighting small but disproportionately flood-prone
-units.
-
-**Displacement bias caveat:** The sampling frame assumes residential populations are
-spatially stable during the study period. In Eastern DRC, flood-correlated displacement
-is common — if households have fled a flooded secteur, the secteur's flood exposure is
-high but those households cannot be reached at that location by phone survey. This
-creates a systematic gap in phone-survey coverage of the most flood-affected populations.
-We recommend using this sampling frame in conjunction with IOM Displacement Tracking
-Matrix (DTM) flow monitoring data to adjust strata coverage weights accordingly.
-
-**Worked stratification example:** Using WorldPop 2025 population estimates for Eastern
-DRC (total ~18.5 million), a simple random sample of n=200 households drawn from Admin-3
-units without flood weighting would expect approximately 3–5% of sampled households in
-Admin-3 units with `months_exposed_10km2 ≥ 3`. Applying a stratified design with
-proportional oversampling of high-exposure Admin-3 units (e.g. those with
-`peak_flood_km2 > 100`, representing 6 of 41 territories) raises the expected proportion
-of flood-exposed households in the sample to approximately 18–22%, substantially
-improving the power of flood-impact sub-group analyses.
 
 ---
 
@@ -522,22 +455,6 @@ climatological baseline is recommended for Year 2 operations.
 validated against independent SAR (UNOSAT, CEMS), aerial, or field data. This is the
 highest-priority gap for future work.
 
-**Phone survey accessibility proxy.** Cell-tower count approximates network
-infrastructure coverage but does not capture household phone ownership or response
-propensity. Integration with DHS/MSNA phone ownership data is recommended.
-
-### 6.3 Implications for Humanitarian Survey Design
-
-The H3-7 sampling frames enable flood-stratified phone survey designs for MSNA surveys
-in Eastern DRC. Survey designers can:
-
-1. **Stratify** by `months_exposed_10km2` per Admin-3 unit (low/medium/high exposure).
-2. **Apply accessibility weights** by cell-tower count to account for under-coverage of
-   flood-exposed areas with poor connectivity.
-3. **Adjust for displacement** using IOM DTM flow data (see Section 4.5 caveat).
-4. **Oversample** high-exposure Admin-3 units (peak_flood_km2 > 100) to achieve adequate
-   statistical power for flood-impact sub-group analyses.
-
 ---
 
 ## 7. Conclusions
@@ -552,9 +469,6 @@ developed and documented. Key findings:
   (~7% of Uvira territory) and the climatological short-rains onset signal.
 - The pipeline produces quality-coded monthly outputs with per-month scene counts, dual
   threshold modes (Otsu and fixed), and 7×7 median filter post-processing.
-- Humanitarian sampling frames join flood exposure to cell-tower accessibility at H3-7
-  and Admin-3 levels, with summary statistics (peak, mean, months exposed) for direct
-  use in MSNA stratification.
 - Key limitations: no independent validation, no forest or urban mask, fixed baseline
   introduces seasonal bias in Year 2.
 
@@ -566,8 +480,8 @@ Full pipeline code, configuration, and output datasets are published at
 ## Acknowledgements
 
 The author gratefully acknowledges ESA Copernicus for free Sentinel-1 data, Element84
-for the Earth Search STAC catalog, the JRC for the Global Surface Water dataset, OCHA
-for the DRC Common Operational Dataset, and Unwired Labs for OpenCelliD.
+for the Earth Search STAC catalog, the JRC for the Global Surface Water dataset, and
+OCHA for the DRC Common Operational Dataset.
 
 ---
 
@@ -718,37 +632,6 @@ follow-on paper rather than a requirement for this one.
 
 ---
 
-## Reviewer 4: Dr. Devika Jain
-**Lecturer in Development Economics and Environmental Policy, Harvard Kennedy School**
-
-**Recommendation:** Accept ✓
-
-The policy-facing revisions are well-executed. The worked stratification example
-illustrates the practical value of the sampling frame far more concretely than the
-original manuscript. The displacement bias caveat (Section 4.5) is appropriately framed
-and the reference to DTM data is correct practice.
-
-Three small observations, more for the authors' awareness than conditions of acceptance:
-
-1. The worked example uses "approximately 18–22%" as the expected proportion of
-   flood-exposed households under stratified sampling — this is a plausible range but
-   would benefit from a note that it assumes household flood-exposure is correlated with
-   Admin-3 unit flood exposure, which holds only if intra-unit variation is low. In
-   practice, intra-secteur heterogeneity in DRC is often high due to varied microtopography.
-
-2. The `months_exposed_10km2` metric uses an absolute area threshold (10 km²) that
-   disadvantages small Admin-3 units with small total areas. A percentage-flooded
-   threshold (e.g. > 5% of unit area flooded) would be more equitable across unit sizes.
-   The pipeline already computes `flooded_pct` so this is a one-line change to
-   `build_handover.py`.
-
-3. On licensing: the paper now correctly states CC-BY 4.0 and the repository's LICENSE
-   file has been updated. This is exactly right and appreciated.
-
-**Accept.**
-
----
-
 ## Authors' Response — Round 1 Revision Summary
 
 | Comment | Reviewer | Status |
@@ -760,15 +643,9 @@ Three small observations, more for the authors' awareness than conditions of acc
 | CEMS activation check | R2 | ✅ **Resolved** — EMSR-702 confirmed not a Sep 2025 Eastern DRC event; artifact interpretation strengthened; see §5.2 |
 | Forest mask: pixel-level overlap quantification | R2 | ⚠️ **Partial** — bounding-box estimate 18–24% in §3.2; pixel-level GFC overlay deferred to v1.1 |
 | C-band lower-bound framing | R3 | ✅ **Added** — abstract + §5.2 |
-| Worked stratification example | R3 | ✅ **Added** — §4.5 |
 | Seasonal baseline caveat (Feb 2026) | R3 | ✅ **Added** — §4.3 |
-| Phone ownership vs tower count | R4 | ✅ **Acknowledged** — §3.4 |
-| Displacement bias | R4 | ✅ **Acknowledged** — §4.5 |
-| Summary exposure CSV (peak, mean, months exposed) | R4 | ✅ **Implemented** — `build_handover.py`; `admin3_flood_summary.csv` |
-| CC-BY 4.0 LICENSE | R4 | ✅ **Added** — LICENSE file in repository root |
-| MSNA acronym expansion | R4 | ✅ **Fixed** — expanded on first use (§1) |
+| CC-BY 4.0 LICENSE | R3 | ✅ **Added** — LICENSE file in repository root |
 | 7×7 median filter vs 3×3 binary opening | R2 | ✅ **Implemented** — `run_detection_pipeline.py`; described in §4.4 |
-| Percentage-flooded threshold (`months_exposed_5pct`) | R4 | ✅ **Implemented** — `admin3_flood_summary.csv` now includes `months_exposed_5pct` alongside `months_exposed_10km2` |
 | Otsu cap revised to −5 dB | R1 | ✅ **Updated** — cap now applied at −5 dB (config-driven); §4.4 explains rationale |
 | Threshold raised −3 dB → −5 dB (Sep 2025 artifact) | R1, R2 | ✅ **Implemented** — all 16 prior months reprocessed; Sep 2025: 3,427.6 → 217.2 km² |
 | Temporal extension to Jul 2026 | — | 🔄 **In progress** — `extend_may_july_2026.py` acquiring 2026-05/06/07 composites |
@@ -839,35 +716,14 @@ The temporal extension to July 2026 is a welcome addition that will improve the 
 
 ---
 
-## Reviewer 4: Dr. Devika Jain
-**Lecturer in Development Economics and Environmental Policy, Harvard Kennedy School**
-
-**Recommendation:** Accept ✓
-
-The revised manuscript addresses all four concerns I raised across both rounds of review. I want to specifically acknowledge two improvements that materially strengthen the paper's applied contribution:
-
-**`months_exposed_5pct` metric (my Round 1 suggestion, now implemented).** The addition of a percentage-flooded threshold (`months_exposed_5pct`) alongside the absolute-area threshold (`months_exposed_10km2`) addresses the equity concern I raised — small Admin-3 units with modest absolute flood extents but high proportional exposure are no longer systematically underweighted in stratification. Survey designers working with MSNA teams should use the two metrics together: `months_exposed_10km2 ≥ 3` as the primary strata flag for large territories, and `months_exposed_5pct ≥ 3` as the supplementary flag for small secteurs where 10 km² may exceed the total administratively-governed area. I recommend the authors add one sentence to §4.5 noting this complementary use.
-
-**Temporal extension to July 2026.** The addition of three months spanning late long-rains and early dry-season is directly useful for survey timing decisions. MSNA surveys in Eastern DRC are typically designed in September–October for field implementation in November–January; the July 2026 data provides planners with near-current flood-exposure indicators when making stratification decisions in Q3 2026. The practical value here is concrete.
-
-**Two minor typographic corrections for the copyeditor:**
-1. §1 contribution 2: "alongside the fixed −3 dB approach" should read −5 dB (also flagged by Reviewer 1).
-2. Table 1 header: "% of AOI" should specify the denominator — "% of valid AOI" or "% of unmasked AOI" — since 35% of the AOI is masked (slope + permanent water), the percentage-of-total-AOI figures are systematically underestimates of the percentage of accessible land flooded.
-
-**Accept.**
-
----
-
 ## Authors' Response — Round 2 Summary
 
 | Comment | Round | Reviewer | Status |
 |---------|-------|----------|--------|
 | Otsu cap updated to −5 dB | R2 | R1 | ✅ **Implemented** — cap is now config-driven; §4.4 updated |
-| Introduction still says "−3 dB" (§1 contribution 2) | R2 | R1, R4 | ✅ **Fixed** — updated to −5 dB throughout |
+| Introduction still says "−3 dB" (§1 contribution 2) | R2 | R1 | ✅ **Fixed** — updated to −5 dB throughout |
 | May 2026 vs May 2025 scene count discrepancy note | R2 | R1, R2 | ✅ **Added** — §3.1 footnote; likely reflects Sentinel-1C addition |
 | February 2026 correction sentence in §5.1 | R2 | R3 | ✅ **Added** — §5.1 notes Feb 2026 revision (108.6 → 17.4 km², −84%) |
-| `months_exposed_5pct` complementary usage note | R2 | R4 | ✅ **Added** — §4.5 one-sentence guidance on joint use |
-| Table 1 "% of AOI" denominator clarification | R2 | R4 | ✅ **Fixed** — header now reads "% of unmasked AOI" |
 | Forest mask pixel-level (GFC overlay) | R2 | R2 | 📋 **Deferred to v1.1** — acknowledged in §6.2; v1 published without |
 | Temporal extension results (2026-05/06/07) | — | — | ✅ **Complete** — May 2026: **5.8 km²** (127 RTC scenes, 7.6% coverage); Jun 2026: **data gap** (WarpOperationError — corrupt MPC RTC tiles); Jul 2026: **0.0 km²** (partial month, 2.5% coverage — re-run after 2026-07-31). Table 1 updated. |
 
