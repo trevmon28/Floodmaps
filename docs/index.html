@@ -264,7 +264,7 @@
     January 2025 – July 2026 · 100 m resolution · Calibrated σ₀ change detection (−5 dB).
   </p>
   <div class="hero-meta">
-    <span>📅 13 valid months</span>
+    <span>📅 15 valid months</span>
     <span>🗺️ 41 admin-3 territories</span>
     <span>🔷 31,441 H3-7 hexagons</span>
     <span>📡 Sentinel-1 SAR</span>
@@ -284,7 +284,7 @@
         <div class="lbl">Admin-3 territories<br>covered</div>
       </div>
       <div class="stat-card">
-        <div class="val">13</div>
+        <div class="val">15</div>
         <div class="lbl">Months of valid<br>SAR coverage</div>
       </div>
       <div class="stat-card">
@@ -352,7 +352,7 @@
       <div class="dl-card">
         <div class="dl-card-icon">🔷</div>
         <h3>H3-7 Hex Grid (long)</h3>
-        <p>31,441 hexagons × 13 valid months. Join on <code>h3_index</code> using the h3 Python library.</p>
+        <p>31,441 hexagons × 15 valid months. Join on <code>h3_index</code> using the h3 Python library.</p>
         <a class="dl-btn"
            href="https://raw.githubusercontent.com/trevmon28/Floodmaps/main/data/handover/csv/h3_7_flood.csv"
            download>Download CSV</a>
@@ -477,9 +477,9 @@ merged = survey.<span class="fn">merge</span>(wide, left_on=<span class="st">"te
         <tr><td>2025-04 – 2025-08</td><td><span class="badge badge-valid">valid</span></td><td>—</td><td>Calibrated σ₀ dB</td></tr>
         <tr><td>2025-09</td><td><span class="badge badge-valid">valid</span></td><td><strong>217</strong></td><td>Peak flood — short rains onset South Kivu (−5 dB threshold)</td></tr>
         <tr><td>2025-10 – 2026-02</td><td><span class="badge badge-valid">valid</span></td><td>—</td><td>Calibrated σ₀ dB</td></tr>
-        <tr><td>2026-03</td><td><span class="badge badge-gap">gap</span></td><td>—</td><td>Insufficient S1 coverage (&lt;5 MB source)</td></tr>
-        <tr><td>2026-04</td><td><span class="badge badge-gap">gap</span></td><td>—</td><td>Insufficient S1 coverage (&lt;1.5 MB source)</td></tr>
-        <tr><td>2026-05</td><td><span class="badge badge-valid">valid</span></td><td>5.8</td><td>Sentinel-1 RTC (MPC); 7.6% spatial coverage — sparse tiles</td></tr>
+        <tr><td>2026-03</td><td><span class="badge badge-valid">valid</span></td><td>12.0</td><td>Sentinel-1 RTC (MPC); 7.1% spatial coverage — 107 scenes</td></tr>
+        <tr><td>2026-04</td><td><span class="badge badge-valid">valid</span></td><td>6.2</td><td>Sentinel-1 RTC (MPC); 5.2% spatial coverage — 98 scenes</td></tr>
+        <tr><td>2026-05</td><td><span class="badge badge-valid">valid</span></td><td>5.8</td><td>Sentinel-1 RTC (MPC); 7.6% spatial coverage — 127 scenes</td></tr>
         <tr><td>2026-06</td><td><span class="badge badge-gap">gap</span></td><td>—</td><td>WarpOperationError — corrupt MPC RTC tiles across full AOI</td></tr>
         <tr><td>2026-07</td><td><span class="badge badge-gap">gap</span></td><td>—</td><td>Partial month (2.5% coverage); re-run scheduled after 2026-07-31</td></tr>
       </tbody>

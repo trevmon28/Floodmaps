@@ -127,18 +127,20 @@ but the slope mask (> 8°, covering 30% of AOI) mitigates the primary impact.
 Scenes were filtered to the AOI bounding box and the calendar month of interest. Table 1
 reports scene counts per month.
 
-**Interannual scene count variability:** May 2026 returned 127 RTC scenes (from
-Microsoft Planetary Computer `sentinel-1-rtc`) versus 31 GRD scenes for May 2025 (from
-Element84 `sentinel-1-grd`) — an approximately 4× increase. This likely reflects the
-addition of Sentinel-1C to the constellation (launched late 2024), which increased
-revisit frequency over sub-Saharan Africa. Note that 2026 months were acquired from the
-`sentinel-1-rtc` collection to match the existing baseline calibration (sigma0 power,
-`10 × log₁₀`); prior months used GRD with equivalent sigma0 calibration applied in
-`02_preprocessing.ipynb`. Users comparing 2025 and 2026 months should note that higher scene counts produce
-more stable monthly medians (lower composite noise) and that the two years are not
-directly comparable on per-pixel confidence without accounting for this sampling density
-difference. The monthly median algorithm is robust to this asymmetry in aggregate flood
-area terms, but sub-pixel uncertainty is lower in 2026 months with dense coverage.
+**Interannual scene count variability and dual pipeline:** March–July 2026 months were
+acquired from Microsoft Planetary Computer `sentinel-1-rtc` (107, 98, 127, 147, and 12
+scenes respectively), versus 7–38 GRD scenes per month in 2025 via Element84
+`sentinel-1-grd`. The substantially higher scene counts in 2026 likely reflect the
+addition of Sentinel-1C to the constellation (launched late 2024), increasing revisit
+frequency over sub-Saharan Africa. Note that `sentinel-1-rtc` delivers float32 sigma0
+power — matching the calibrated output of `02_preprocessing.ipynb` — so both approaches
+feed the same `10 × log₁₀` dB conversion before change detection. Spatial coverage for
+2026 RTC months varies: 2026-03 (7.1% AOI), 2026-04 (5.2%), 2026-05 (7.6%) — due to
+sparse tile availability for the newer S1C/S1D satellites in the MPC catalog at time of
+acquisition. Signal is valid for covered pixels; results should be interpreted as a
+lower bound on flood extent for these months. Users comparing 2025 and 2026 months
+should note that higher scene counts produce more stable monthly medians and that
+sub-pixel uncertainty is lower in high-coverage months.
 
 ### 3.2 Quality Masks
 
@@ -306,8 +308,8 @@ applied, setting flagged pixels to `nodata = 255`.
 | 2025-12 | 17 | 2.0 | 0.001% | valid | |
 | 2026-01 | 15 | 2.1 | 0.001% | valid | |
 | 2026-02 | 29 | 17.4 | 0.011% | valid | Long-rains onset; see §4.3 caveat |
-| 2026-03 | 2 | 0.0 | 0.00% | gap | VV file 4.5 MB — data gap |
-| 2026-04 | 1 | 0.0 | 0.00% | gap | VV file 1.3 MB — data gap |
+| 2026-03 | 107‡ | 12.0 | 0.007% | valid‡ | RTC composite; 7.1% spatial coverage — long-rains signal |
+| 2026-04 | 98‡ | 6.2 | 0.004% | valid‡ | RTC composite; 5.2% spatial coverage — long-rains signal |
 | 2026-05 | 127‡ | 5.8 | 0.004% | valid‡ | RTC composite; 7.6% spatial coverage — late long-rains signal |
 | 2026-06 | 147‡ | — | — | gap‡ | WarpOperationError — corrupt MPC RTC tiles; no composite written |
 | 2026-07 | 12‡ | 0.0 | 0.00% | partial‡ | 2.5% coverage; incomplete month — re-run after 2026-07-31 |
@@ -409,9 +411,17 @@ confirmed. This further supports the artifact interpretation.
 notebook version produces change signals ~30 dB higher than calibrated months, rendering
 detection meaningless. These months are excluded from all analyses.
 
-**Gap months (2026-03/04):** VV composite files of 1.3–4.5 MB vs 100–1,800 MB for
-complete months indicate 1–2 scenes total vs 8–38 in valid months. The zero flood area
-for these months is not a true zero but an artifact of missing coverage.
+**Initially-sparse months recovered (2026-03/04):** Original processing via Element84
+`sentinel-1-grd` returned 1–2 scenes (VV files of 1.3–4.5 MB), yielding no usable
+composite. Reprocessing via MPC `sentinel-1-rtc` recovered valid composites: 2026-03
+(107 scenes, 7.1% AOI coverage, **12.0 km²**) and 2026-04 (98 scenes, 5.2% AOI
+coverage, **6.2 km²**). Both months are now classified as valid. Spatial gaps across
+~93–95% of the AOI reflect sparse S1C/S1D tile availability in the MPC catalog; results
+represent lower bounds on flood extent for these months.
+
+**Permanent gap month (2026-06):** All 147 RTC items returned WarpOperationError during
+full-AOI warp. Corrupt tile strips outside the center-window read-validation window are
+unresolvable with the current pipeline. This month has no composite and is excluded.
 
 ---
 
@@ -725,6 +735,6 @@ The temporal extension to July 2026 is a welcome addition that will improve the 
 | May 2026 vs May 2025 scene count discrepancy note | R2 | R1, R2 | ✅ **Added** — §3.1 footnote; likely reflects Sentinel-1C addition |
 | February 2026 correction sentence in §5.1 | R2 | R3 | ✅ **Added** — §5.1 notes Feb 2026 revision (108.6 → 17.4 km², −84%) |
 | Forest mask pixel-level (GFC overlay) | R2 | R2 | 📋 **Deferred to v1.1** — acknowledged in §6.2; v1 published without |
-| Temporal extension results (2026-05/06/07) | — | — | ✅ **Complete** — May 2026: **5.8 km²** (127 RTC scenes, 7.6% coverage); Jun 2026: **data gap** (WarpOperationError — corrupt MPC RTC tiles); Jul 2026: **0.0 km²** (partial month, 2.5% coverage — re-run after 2026-07-31). Table 1 updated. |
+| Temporal extension results (2026-03 to 2026-07) | — | — | ✅ **Complete** — Mar 2026: **12.0 km²** (107 RTC scenes, 7.1% coverage); Apr 2026: **6.2 km²** (98 RTC scenes, 5.2% coverage); May 2026: **5.8 km²** (127 RTC scenes, 7.6% coverage); Jun 2026: **data gap** (WarpOperationError — corrupt MPC RTC tiles); Jul 2026: **0.0 km²** (partial month, 2.5% coverage — re-run after 2026-07-31). Table 1 updated. 15 valid months total. |
 
 *📋 = deferred; 🔄 = actively running*

@@ -98,7 +98,7 @@ OUTPUT_CRS        = cfg["aoi"]["output_crs"]
 STAC_URL          = cfg["data_sources"]["sar"]["catalog"]
 COLLECTION        = cfg["data_sources"]["sar"]["collection"]
 
-NEW_MONTHS           = ["2026-05", "2026-06", "2026-07"]
+NEW_MONTHS           = ["2026-03", "2026-04"]
 CHANGE_THRESHOLD_DB  = float(cfg["processing"].get("change_threshold_db", -5.0))
 RESAMPLE_M           = 100          # detection resolution (metres)
 NATIVE_M             = 40           # acquisition resolution (metres) — 40 m for new months;
