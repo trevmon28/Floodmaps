@@ -1,9 +1,10 @@
 # Eastern DRC Flood Mapping — Researcher Handover
-**Date:** 2026-05-19
+**Date:** 2026-07-08
 **Contact:** Trevor Monroe
 **AOI:** North Kivu, South Kivu, Ituri (Eastern DRC)
-**Period:** March 2025 – February 2026 (14 valid months)
-**Method:** Sentinel-1 SAR change detection (−3 dB threshold, 100 m resolution)
+**Period:** January 2025 – July 2026 (14 valid months through Feb 2026; May–Jul 2026 pending acquisition)
+**Method:** Sentinel-1 SAR change detection (Otsu adaptive / fixed −3 dB threshold, 100 m resolution)
+**License:** CC-BY 4.0 — see LICENSE in repository root
 
 ---
 
@@ -40,6 +41,17 @@ Monthly summary table with columns:
 - `flood_area_km2` — total flooded area in km²
 - `flooded_pct` — percentage of AOI flooded
 - `quality` — `valid` | `gap` (no satellite coverage)
+
+### csv/admin3_flood_summary.csv
+One row per Admin-3 unit — recommended for MSNA survey stratification:
+- `shapeName` — secteur/chefferie name
+- `peak_flood_km2` — maximum single-month flood area (all valid months)
+- `mean_flood_km2` — mean flood area across valid months
+- `months_exposed_10km2` — count of valid months with ≥10 km² flooded
+- `months_exposed_5pct` — count of valid months with ≥5% of unit area flooded
+
+### csv/admin3_flood.csv / admin3_flood_wide.csv
+Long-format and wide-format monthly flood tables per Admin-3 unit.
 
 ---
 
@@ -108,23 +120,3 @@ shapely>=2.0
 folium>=0.15      # only needed to re-render maps
 h3>=4.0           # only needed for H3 hex queries
 ```
-
----
-
-## CSV files (csv/ folder)
-For use in Excel, SPSS, Stata, or R without GIS software.
-
-| File | Description |
-|------|-------------|
-| `admin3_flood.csv` | Long format: one row per territory per month. Includes centroid lat/lon for mapping. |
-| `admin3_flood_wide.csv` | Wide format: one row per territory, flood area columns for each month. Easy to join to survey data. |
-| `h3_7_flood.csv` | One row per H3-7 hex per month. Join on `h3_index` using the `h3` Python library. |
-| `flood_centroids.csv` | One row per flood polygon per month with centroid lat/lon and area. |
-
-**Joining to phone survey data (admin-3):**
-Match on territory name (`shapeName`) or use the centroid coordinates.
-
-**Key columns:**
-- `flood_area_km2` — flooded area within the unit that month
-- `centroid_lon` / `centroid_lat` — centre point of the unit
-- `quality` — `valid` or `gap` (gap = no satellite data that month)
