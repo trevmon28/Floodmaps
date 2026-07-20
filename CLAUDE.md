@@ -1,5 +1,14 @@
 # CLAUDE.md — DRC Flood Extent Mapping
 
+## Shared VPS
+
+`flood-mcp` (`/opt/flood` on the VPS) runs on a shared Bluehost VPS used by
+several other projects. See `C:\Users\trevm\Projects\VPS.md` for host access,
+all services on the box, and the auto-deploy mechanism (weekly, Sundays
+04:00 UTC). Public routing goes through Traefik (not nginx) — this service's
+domain is `mcp-flood.trevormonroe.com` (note the naming break: `mcp-flood`,
+not `flood-mcp` like every other service).
+
 ## Overview
 
 SAR-based flood detection pipeline for eastern DRC (North Kivu, South Kivu, Ituri).
