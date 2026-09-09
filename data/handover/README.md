@@ -1,9 +1,9 @@
 # Eastern DRC Flood Mapping — Researcher Handover
-**Date:** 2026-07-08
+**Date:** 2026-09-09
 **Contact:** Trevor Monroe
 **AOI:** North Kivu, South Kivu, Ituri (Eastern DRC)
-**Period:** January 2025 – July 2026 (14 valid months through Feb 2026; May–Jul 2026 pending acquisition)
-**Method:** Sentinel-1 SAR change detection (Otsu adaptive / fixed −3 dB threshold, 100 m resolution)
+**Period:** January 2025 – July 2026 (19 months, 17 valid, no gaps)
+**Method:** Sentinel-1 SAR change detection (Otsu adaptive / fixed −5 dB threshold, 100 m resolution)
 **License:** CC-BY 4.0 — see LICENSE in repository root
 
 ---
@@ -40,11 +40,11 @@ Monthly summary table with columns:
 - `month` — YYYY-MM
 - `flood_area_km2` — total flooded area in km²
 - `flooded_pct` — percentage of AOI flooded
-- `quality` — `valid` | `gap` (no satellite coverage)
+- `quality` — `valid` (all delivered months; `bad` months are excluded from this package)
 
 ### csv/admin3_flood_summary.csv
 One row per Admin-3 unit — recommended for MSNA survey stratification:
-- `shapeName` — secteur/chefferie name
+- `admin3Name` — secteur/chefferie name
 - `peak_flood_km2` — maximum single-month flood area (all valid months)
 - `mean_flood_km2` — mean flood area across valid months
 - `months_exposed_10km2` — count of valid months with ≥10 km² flooded
@@ -60,8 +60,7 @@ GeoParquet tables joining flood data to administrative boundaries and H3-7 hexag
 Suitable for phone-survey sampling frame design.
 
 **admin3.parquet** — one row per territory per month
-- `shapeName` — territory name
-- `shapeISO` — ISO code
+- `admin3Name` — territory name
 - `flood_area_km2` — flooded area within territory
 - `quality` — data quality flag
 - `geometry` — territory polygon
@@ -102,13 +101,24 @@ No installation needed.
 |-------|--------|--------|
 | 2025-01 | EXCLUDED | Uncalibrated amplitude data |
 | 2025-02 | EXCLUDED | Uncalibrated amplitude data |
-| 2026-03 | gap | Insufficient S1 satellite coverage (<5 MB source) |
-| 2026-04 | gap | Insufficient S1 satellite coverage (<5 MB source) |
 | All others | valid | Calibrated sigma₀ dB, quality masks applied |
 
+### Comparing months
+Monthly SAR coverage ranges from 0.9% to 50.5% of the AOI bounding box, and different
+months image **different places** — no pixel is covered in all 19 months. Reported
+`flood_area_km2` correlates with usable area at r = 0.50, so absolute km² is **not**
+comparable month to month; use `flooded_pct` (share of usable area) for comparisons and
+always report the covered area alongside.
+
+2026-07 is fragmentation-heavy (610 patches, median 1 pixel, only 65% of its area in
+patches ≥10 px, versus 98% for the validated 2025-09 peak). Treat its density as an
+upper bound rather than a seasonal peak.
+
 ## Peak flood event
-September 2025: **3,428 km²** — dominant signal consistent with short rains season
-in South Kivu. Verify against OCHA/ReliefWeb DRC situation reports for Sep–Oct 2025.
+September 2025: **217.2 km²** — dominant signal consistent with the short-rains onset
+in South Kivu. (An earlier release quoted 3,428 km² from a −3 dB threshold; that was
+confirmed a wet-soil/forest artifact and the threshold was raised to −5 dB on
+2026-07-09.) Verify against OCHA/ReliefWeb DRC situation reports for Sep–Oct 2025.
 
 ---
 
