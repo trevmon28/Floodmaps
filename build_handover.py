@@ -19,7 +19,9 @@ FRAMES_DIR = ROOT / 'data' / 'outputs' / 'sampling_frames'
 DOCS_DIR   = ROOT / 'docs'
 
 BAD_MONTHS = {'2025-01', '2025-02'}
-GAP_MONTHS = {'2026-03', '2026-04'}
+# 2026-03/04 were recovered via MPC RTC (2026-07-10) and 2026-06 on 2026-09-08;
+# no month is a gap any more. Kept as a fallback for CSVs without a quality column.
+GAP_MONTHS = set()
 
 # Clean and create output folders
 if OUT.exists():
@@ -42,11 +44,14 @@ stats_out = OUT / 'flood_stats.csv'
 rows = []
 with open(stats_src) as f:
     reader = csv.DictReader(f)
-    fieldnames = reader.fieldnames + ['quality']
+    has_quality = 'quality' in (reader.fieldnames or [])
+    fieldnames = reader.fieldnames if has_quality else reader.fieldnames + ['quality']
     for row in reader:
         m = row['month']
-        row['quality'] = 'bad' if m in BAD_MONTHS else 'gap' if m in GAP_MONTHS else 'valid'
-        if m not in BAD_MONTHS:
+        # flood_stats.csv carries its own quality flag; only derive one if absent.
+        if not row.get('quality'):
+            row['quality'] = 'bad' if m in BAD_MONTHS else 'gap' if m in GAP_MONTHS else 'valid'
+        if row['quality'] != 'bad':
             rows.append(row)
 with open(stats_out, 'w', newline='') as f:
     writer = csv.DictWriter(f, fieldnames=fieldnames)
@@ -63,7 +68,7 @@ for name in ['admin2.parquet', 'admin3.parquet', 'h3_7.parquet']:
 csv_dir = OUT / 'csv'
 csv_dir.mkdir(exist_ok=True)
 
-for frame_name, unit_col in [('admin2', 'shapeName'), ('admin3', 'shapeName'),
+for frame_name, unit_col in [('admin2', 'shapeName'), ('admin3', 'admin3Name'),
                                ('h3_7', 'h3_index')]:
     parquet_path = FRAMES_DIR / f'{frame_name}.parquet'
     if not parquet_path.exists() or not _GPD_AVAILABLE:
@@ -90,18 +95,19 @@ if admin3_parquet.exists() and _GPD_AVAILABLE:
 
     valid_df3 = df3[~df3.get('month', pd.Series()).isin(BAD_MONTHS | GAP_MONTHS)]
 
-    if 'shapeName' in df3.columns and 'flood_area_km2' in df3.columns:
-        summary = valid_df3.groupby('shapeName').agg(
+    unit3 = 'admin3Name' if 'admin3Name' in df3.columns else 'shapeName'
+    if unit3 in df3.columns and 'flood_area_km2' in df3.columns:
+        summary = valid_df3.groupby(unit3).agg(
             peak_flood_km2   =('flood_area_km2', 'max'),
             mean_flood_km2   =('flood_area_km2', 'mean'),
             months_exposed_10km2=('flood_area_km2', lambda x: (x >= 10).sum()),
         ).reset_index()
         # Percentage-flooded alternative threshold (>5% area) if flooded_pct present
         if 'flooded_pct' in df3.columns:
-            pct_exposed = valid_df3.groupby('shapeName')['flooded_pct'].apply(
+            pct_exposed = valid_df3.groupby(unit3)['flooded_pct'].apply(
                 lambda x: (x >= 5).sum()
             ).reset_index(name='months_exposed_5pct')
-            summary = summary.merge(pct_exposed, on='shapeName', how='left')
+            summary = summary.merge(pct_exposed, on=unit3, how='left')
         summary.to_csv(csv_dir / 'admin3_flood_summary.csv', index=False)
         print(f"  admin3_flood_summary.csv  {len(summary)} Admin-3 units")
 
@@ -119,11 +125,11 @@ for name in ['flood_map_interactive.html', 'flood_sampling_map.html']:
 # 5. README
 readme = """\
 # Eastern DRC Flood Mapping — Researcher Handover
-**Date:** 2026-07-08
+**Date:** 2026-09-09
 **Contact:** Trevor Monroe
 **AOI:** North Kivu, South Kivu, Ituri (Eastern DRC)
-**Period:** January 2025 – July 2026 (14 valid months through Feb 2026; May–Jul 2026 pending acquisition)
-**Method:** Sentinel-1 SAR change detection (Otsu adaptive / fixed −3 dB threshold, 100 m resolution)
+**Period:** January 2025 – July 2026 (19 months, 17 valid, no gaps)
+**Method:** Sentinel-1 SAR change detection (Otsu adaptive / fixed −5 dB threshold, 100 m resolution)
 **License:** CC-BY 4.0 — see LICENSE in repository root
 
 ---
@@ -160,11 +166,11 @@ Monthly summary table with columns:
 - `month` — YYYY-MM
 - `flood_area_km2` — total flooded area in km²
 - `flooded_pct` — percentage of AOI flooded
-- `quality` — `valid` | `gap` (no satellite coverage)
+- `quality` — `valid` (all delivered months; `bad` months are excluded from this package)
 
 ### csv/admin3_flood_summary.csv
 One row per Admin-3 unit — recommended for MSNA survey stratification:
-- `shapeName` — secteur/chefferie name
+- `admin3Name` — secteur/chefferie name
 - `peak_flood_km2` — maximum single-month flood area (all valid months)
 - `mean_flood_km2` — mean flood area across valid months
 - `months_exposed_10km2` — count of valid months with ≥10 km² flooded
@@ -180,8 +186,7 @@ GeoParquet tables joining flood data to administrative boundaries and H3-7 hexag
 Suitable for phone-survey sampling frame design.
 
 **admin3.parquet** — one row per territory per month
-- `shapeName` — territory name
-- `shapeISO` — ISO code
+- `admin3Name` — territory name
 - `flood_area_km2` — flooded area within territory
 - `quality` — data quality flag
 - `geometry` — territory polygon
@@ -222,13 +227,24 @@ No installation needed.
 |-------|--------|--------|
 | 2025-01 | EXCLUDED | Uncalibrated amplitude data |
 | 2025-02 | EXCLUDED | Uncalibrated amplitude data |
-| 2026-03 | gap | Insufficient S1 satellite coverage (<5 MB source) |
-| 2026-04 | gap | Insufficient S1 satellite coverage (<5 MB source) |
 | All others | valid | Calibrated sigma₀ dB, quality masks applied |
 
+### Comparing months
+Monthly SAR coverage ranges from 0.9% to 50.5% of the AOI bounding box, and different
+months image **different places** — no pixel is covered in all 19 months. Reported
+`flood_area_km2` correlates with usable area at r = 0.50, so absolute km² is **not**
+comparable month to month; use `flooded_pct` (share of usable area) for comparisons and
+always report the covered area alongside.
+
+2026-07 is fragmentation-heavy (610 patches, median 1 pixel, only 65% of its area in
+patches ≥10 px, versus 98% for the validated 2025-09 peak). Treat its density as an
+upper bound rather than a seasonal peak.
+
 ## Peak flood event
-September 2025: **3,428 km²** — dominant signal consistent with short rains season
-in South Kivu. Verify against OCHA/ReliefWeb DRC situation reports for Sep–Oct 2025.
+September 2025: **217.2 km²** — dominant signal consistent with the short-rains onset
+in South Kivu. (An earlier release quoted 3,428 km² from a −3 dB threshold; that was
+confirmed a wet-soil/forest artifact and the threshold was raised to −5 dB on
+2026-07-09.) Verify against OCHA/ReliefWeb DRC situation reports for Sep–Oct 2025.
 
 ---
 

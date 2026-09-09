@@ -658,7 +658,7 @@ follow-on paper rather than a requirement for this one.
 | 7×7 median filter vs 3×3 binary opening | R2 | ✅ **Implemented** — `run_detection_pipeline.py`; described in §4.4 |
 | Otsu cap revised to −5 dB | R1 | ✅ **Updated** — cap now applied at −5 dB (config-driven); §4.4 explains rationale |
 | Threshold raised −3 dB → −5 dB (Sep 2025 artifact) | R1, R2 | ✅ **Implemented** — all 16 prior months reprocessed; Sep 2025: 3,427.6 → 217.2 km² |
-| Temporal extension to Jul 2026 | — | 🔄 **In progress** — `extend_may_july_2026.py` acquiring 2026-05/06/07 composites |
+| Temporal extension to Jul 2026 | — | 🔄 **In progress** — `extend_months.py` acquiring 2026-05/06/07 composites |
 
 *⚠️ = in progress / partial; 📋 = deferred to next version; 🔄 = actively running*
 

@@ -34,7 +34,7 @@
       "status": "in-progress",
       "description": "Extend temporal coverage from Apr 2026 to Jul 2026 (3 new months)",
       "branch": "main",
-      "script": "extend_may_july_2026.py"
+      "script": "extend_months.py"
     }
   ],
   "constitution": ".specify/constitution.md"
