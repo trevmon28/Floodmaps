@@ -236,9 +236,16 @@ months image **different places** — no pixel is covered in all 19 months. Repo
 comparable month to month; use `flooded_pct` (share of usable area) for comparisons and
 always report the covered area alongside.
 
-2026-07 is fragmentation-heavy (610 patches, median 1 pixel, only 65% of its area in
-patches ≥10 px, versus 98% for the validated 2025-09 peak). Treat its density as an
-upper bound rather than a seasonal peak.
+### Open-water false positives
+Before the permanent-water mask is applied, 81–99% of every month's detected pixels sit
+on JRC permanent water. Calm water is specular at C-band and reads as a large negative
+dB change against a windier baseline, so lakes and rivers register as "flooded". The
+mask removes them, but the extent that survives is largely the fringe around those water
+bodies rather than independent flood signal.
+
+2026-07 is the extreme case: 5,513 km² detected raw, 99.4% of it on permanent water,
+leaving 610 fragments at a median of 1 pixel (versus 98% of area in patches ≥10 px for
+2025-09). Treat 2026-07 as a water-edge artifact, not a seasonal peak.
 
 ## Peak flood event
 September 2025: **217.2 km²** — dominant signal consistent with the short-rains onset
