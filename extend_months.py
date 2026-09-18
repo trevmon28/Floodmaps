@@ -1,11 +1,14 @@
 """
-extend_may_july_2026.py
-=======================
-Acquires and processes Sentinel-1 GRD SAR composites for May, June, and July 2026,
-then runs flood detection for each new month against the existing baseline_VV.tif.
+extend_months.py
+================
+Acquires and processes Sentinel-1 RTC SAR composites for a set of months, then runs
+flood detection for each of them against the existing baseline_VV.tif.
 
 Run from project root with the gis_env Python interpreter:
-    & "C:/Users/trevm/Projects/SpatialLab/gis_env/Scripts/python.exe" extend_may_july_2026.py
+    & "C:/Users/trevm/Projects/SpatialLab/gis_env/Scripts/python.exe" extend_months.py
+    & "C:/Users/trevm/Projects/SpatialLab/gis_env/Scripts/python.exe" extend_months.py 2026-06 2026-07
+
+Months are given as YYYY-MM arguments; with no arguments it processes DEFAULT_MONTHS.
 
 Prerequisites
 -------------
@@ -16,25 +19,30 @@ Prerequisites
 
 What this script does
 ---------------------
-1. For each target month (2026-05, 2026-06, 2026-07):
-   a. Searches the Element84 Earth Search STAC catalog for Sentinel-1 GRD scenes
-      intersecting the Eastern DRC AOI.
-   b. Loads VV-polarisation data via odc-stac, computes a monthly median composite
-      at 20 m native resolution, converts to sigma0 dB scale, and writes a COG TIF.
-   c. If the VV file already exists (same logic as the main pipeline), it is skipped.
-2. Runs the existing detection algorithm (−3 dB change from baseline) for each new month.
-3. Appends results to data/outputs/flood_extent/flood_stats.csv and regenerates the
+1. For each target month:
+   a. Searches Microsoft Planetary Computer for sentinel-1-rtc scenes intersecting
+      the Eastern DRC AOI.
+   b. Loads the VV band via odc-stac block by block, computes a monthly median
+      composite at NATIVE_M resolution, converts sigma0 power to dB, writes a COG.
+   c. If the VV file already exists it is skipped, unless FORCE_REPROCESS_SAR.
+2. Runs the existing detection algorithm (threshold from config) for each month.
+3. Updates data/outputs/flood_extent/flood_stats.csv and regenerates the
    time-series bar chart.
 
-Coverage note
--------------
-2026-03 and 2026-04 already exist but had sparse coverage (< 5 MB files).  Those files
-are NOT reprocessed here — this script only adds the three new months.  If you want to
-force-reprocess earlier sparse months, set FORCE_REPROCESS_SAR = True below.
+Read-failure handling
+---------------------
+MPC intermittently fails reads on RTC tiles that pass a header/center-window check —
+surfacing as WarpOperationError or RasterioIOError during warp. Loading the whole AOI in
+one call means one such failure loses the entire month, which is what produced the
+2026-06 data gap. load_median_vv() composites in horizontal blocks and retries a failed
+block later in the run; the failures are usually transient and read fine minutes later.
+See that function for the full policy.
 """
 
 import os
+import re
 import sys
+import time
 import warnings
 import json
 from datetime import datetime, timezone
@@ -98,12 +106,19 @@ OUTPUT_CRS        = cfg["aoi"]["output_crs"]
 STAC_URL          = cfg["data_sources"]["sar"]["catalog"]
 COLLECTION        = cfg["data_sources"]["sar"]["collection"]
 
-NEW_MONTHS           = ["2026-03", "2026-04"]
+DEFAULT_MONTHS       = ["2026-05", "2026-06", "2026-07"]
+NEW_MONTHS           = sys.argv[1:] or DEFAULT_MONTHS
+for _m in NEW_MONTHS:
+    if not re.fullmatch(r"\d{4}-\d{2}", _m):
+        sys.exit(f"ERROR: month arguments must look like YYYY-MM (got {_m!r})")
+
 CHANGE_THRESHOLD_DB  = float(cfg["processing"].get("change_threshold_db", -5.0))
 RESAMPLE_M           = 100          # detection resolution (metres)
 NATIVE_M             = 40           # acquisition resolution (metres) — 40 m for new months;
                                     # detection resamples to 100 m regardless, result is identical
 FORCE_REPROCESS_SAR  = True         # overwrite existing files (needed after switching GRD→RTC)
+BLOCK_ROWS           = 2048         # rows per acquisition block — confines a corrupt tile
+                                    # to one strip instead of failing the whole month
 
 _CFG_METHOD      = cfg["processing"].get("flood_threshold_method", "fixed")
 THRESHOLD_METHOD = _CFG_METHOD if (_CFG_METHOD != "otsu" or _SKIMAGE_AVAILABLE) else "fixed"
@@ -113,7 +128,7 @@ os.makedirs(PROCESSED_DIR, exist_ok=True)
 os.makedirs(OUTPUT_DIR,    exist_ok=True)
 
 print("=" * 70)
-print("  DRC Flood Mapping — Extending to May–July 2026")
+print("  DRC Flood Mapping — Monthly Extension")
 print("=" * 70)
 print(f"  AOI    : {AOI_BBOX}")
 print(f"  Months : {NEW_MONTHS}")
@@ -151,6 +166,111 @@ def read_band_at(path, resample_m=RESAMPLE_M):
     return arr, transform, src.crs
 
 
+def load_median_vv(items, month_str, native_m=NATIVE_M, block_rows=BLOCK_ROWS):
+    """
+    Monthly median VV composite over `items`, computed in horizontal blocks.
+
+    Loading the whole AOI at once means any single read failure aborts the month — the
+    2026-06 data gap. Blocks bound the blast radius, cap peak memory, and give progress.
+
+    Retry policy
+    ------------
+    MPC read failures here are overwhelmingly *transient*, not corrupt data: 2026-05
+    blocks 9/10 failed mid-run with WarpOperationError/RasterioIOError and then read
+    perfectly, to the pixel, minutes later. (Signing style is irrelevant — sign_inplace
+    and patch_url were measured identical. patch_url is kept only so runs longer than a
+    SAS lifetime stay safe.) So blocks are attempted strictly, and stragglers are
+    deferred to a second pass after the rest of the month rather than being retried in
+    a tight backoff loop.
+
+    ``fail_on_error=False`` is the last resort only. It stops a genuinely unreadable
+    tile from taking the month down, but it applies to *every* read failure, so using
+    it unconditionally silently swallows transient errors as nodata — that quietly cost
+    2026-05 a sixth of its valid pixels (2.85M px, exactly blocks 9+10) before the
+    deferred pass existed. Any block that reaches it is reported to the caller.
+
+    Returns (array, geobox, degraded_row_ranges).
+    """
+    from odc.stac import load as odc_load
+    from odc.geo.geobox import GeoBox
+    from odc.geo.geom import box
+    import planetary_computer
+
+    bbox_native = box(*AOI_BBOX, crs="EPSG:4326").to_crs(OUTPUT_CRS).boundingbox
+    geobox = GeoBox.from_bbox(bbox_native, resolution=native_m)
+    ny, nx = geobox.shape
+    n_blocks = (ny + block_rows - 1) // block_rows
+    print(f"  [SAR] {month_str}: target grid {ny} x {nx} @ {native_m} m "
+          f"— {n_blocks} block(s) of {block_rows} rows")
+
+    out      = np.full((ny, nx), np.nan, dtype="float32")
+    degraded = []
+
+    def _median(sub_geobox, strict):
+        ds = odc_load(items, bands=["vv"], geobox=sub_geobox,
+                      chunks={"x": 2048, "y": 2048}, groupby="solar_day",
+                      patch_url=planetary_computer.sign,
+                      fail_on_error=strict)
+        if "vv" not in ds:
+            raise KeyError("'vv' missing from loaded dataset")
+        return ds["vv"].median(dim="time").compute().values.astype("float32")
+
+    def _try(bi, y0, y1, tries, delay, strict=True):
+        """Attempt one block; on success write it into `out` and return True."""
+        sub = geobox[y0:y1, :]
+        for attempt in range(1, tries + 1):
+            try:
+                block = _median(sub, strict)
+            except Exception as e:
+                if attempt < tries:
+                    print(f"{type(e).__name__}, retry in {delay * attempt}s ...",
+                          end=" ", flush=True)
+                    time.sleep(delay * attempt)
+                else:
+                    print(f"{type(e).__name__}", end=" ", flush=True)
+                continue
+            out[y0:y1] = block
+            # RTC nodata arrives as 0, not NaN — the zero→NaN conversion happens in
+            # preprocess_month, so isfinite() here would count nodata as valid.
+            valid = int((block > 0).sum())
+            note  = "" if strict else " (lenient — partial coverage)"
+            print(f"ok{note} — {100 * valid / block.size:.1f}% valid")
+            return True
+        return False
+
+    # Pass 1 — quick strict attempts. Most blocks land here.
+    pending = []
+    for bi, y0 in enumerate(range(0, ny, block_rows), start=1):
+        y1 = min(y0 + block_rows, ny)
+        print(f"    block {bi}/{n_blocks} (rows {y0}-{y1}) ...", end=" ", flush=True)
+        if not _try(bi, y0, y1, tries=2, delay=10):
+            print("- deferring")
+            pending.append((bi, y0, y1))
+
+    # Pass 2 — MPC read failures are usually transient and clear within minutes, so
+    # retry the stragglers after the rest of the month rather than sitting in a
+    # backoff loop. This is what recovers 2026-05 blocks 9/10, which fail strictly
+    # mid-run but read perfectly a few minutes later.
+    if pending:
+        print(f"  [SAR] {month_str}: second pass over {len(pending)} deferred block(s)")
+        still = []
+        for bi, y0, y1 in pending:
+            print(f"    block {bi}/{n_blocks} (retry) ...", end=" ", flush=True)
+            if not _try(bi, y0, y1, tries=3, delay=30):
+                print("- still failing")
+                still.append((bi, y0, y1))
+        pending = still
+
+    # Pass 3 — genuinely unreadable tiles: take partial coverage over losing the month.
+    for bi, y0, y1 in pending:
+        print(f"    block {bi}/{n_blocks} (lenient) ...", end=" ", flush=True)
+        if not _try(bi, y0, y1, tries=1, delay=0, strict=False):
+            print("- left as nodata")
+        degraded.append((y0, y1))
+
+    return out, geobox, degraded
+
+
 def load_mask_aligned(mask_path, target_shape, target_transform, target_crs):
     with rasterio.open(mask_path) as src:
         dest = np.zeros(target_shape, dtype="uint8")
@@ -165,8 +285,8 @@ def load_mask_aligned(mask_path, target_shape, target_transform, target_crs):
 
 def preprocess_month(month_str):
     """
-    Search STAC, load via odc-stac, compute monthly VV median composite at
-    NATIVE_M resolution, convert amplitude → sigma0 dB, write COG.
+    Search STAC, composite the monthly VV median at NATIVE_M resolution via
+    load_median_vv(), convert sigma0 power → dB, write COG.
 
     Returns the output path, or None if no scenes were found.
     """
@@ -190,8 +310,8 @@ def preprocess_month(month_str):
         return None
 
     try:
-        from odc.stac import load as odc_load
-        import odc.geo  # noqa: F401 — registers ds.odc accessor
+        import odc.stac  # noqa: F401 — used by load_median_vv
+        import odc.geo   # noqa: F401 — registers ds.odc accessor
     except ImportError:
         print("  ERROR: odc-stac / odc-geo not installed. Run: pip install odc-stac odc-geo")
         return None
@@ -200,12 +320,13 @@ def preprocess_month(month_str):
     # RTC delivers float32 sigma0 power — matches the format NB02 (02_preprocessing.ipynb)
     # used for all existing months. GRD (raw amplitude DN) gives wrong dB values because
     # the calibration constant differs between MPC and Element84.
+    # Items are left UNSIGNED here on purpose: load_median_vv passes
+    # patch_url=planetary_computer.sign so each asset URL is signed at read time.
+    # Signing once up front bakes in a SAS token that expires part way through a
+    # multi-hour run, which surfaces as RasterioIOError on the later blocks.
     import planetary_computer
     print(f"  [SAR] {month_str}: searching MPC sentinel-1-rtc …")
-    mpc_client = Client.open(
-        "https://planetarycomputer.microsoft.com/api/stac/v1",
-        modifier=planetary_computer.sign_inplace,
-    )
+    mpc_client = Client.open("https://planetarycomputer.microsoft.com/api/stac/v1")
     mpc_search = mpc_client.search(
         collections=["sentinel-1-rtc"],
         bbox=AOI_BBOX,
@@ -233,7 +354,7 @@ def preprocess_month(month_str):
     from rasterio.windows import Window
 
     def _rio_readable(item):
-        href = item.assets["vv"].href
+        href = planetary_computer.sign(item.assets["vv"].href)
         try:
             with rasterio.open(href) as src:
                 h, w = src.height, src.width
@@ -253,27 +374,16 @@ def preprocess_month(month_str):
         return None
 
     print(f"  [SAR] {month_str}: loading VV band via odc-stac at {NATIVE_M} m …")
-    ds = odc_load(
-        items,
-        bands=["vv"],
-        crs=OUTPUT_CRS,
-        resolution=NATIVE_M,
-        bbox=AOI_BBOX,
-        chunks={"x": 4096, "y": 4096},
-        groupby="solar_day",
-    )
-
-    if "vv" not in ds:
-        print(f"  [SAR] {month_str}: ERROR — 'vv' not in dataset. Skipping.")
-        return None
-
-    print(f"  [SAR] {month_str}: vv shape (time,y,x) = {tuple(ds['vv'].shape)}")
-    print(f"  [SAR] {month_str}: computing monthly median …")
     try:
-        vv_raw = ds["vv"].median(dim="time").compute().values.astype("float32")
+        vv_raw, geobox, degraded_blocks = load_median_vv(items, month_str)
     except Exception as _e:
         print(f"  [SAR] {month_str}: compute error ({type(_e).__name__}): {_e}. Skipping.")
         return None
+
+    if degraded_blocks:
+        rows = ", ".join(f"{a}-{b}" for a, b in degraded_blocks)
+        print(f"  [SAR] {month_str}: WARNING — {len(degraded_blocks)} block(s) needed the "
+              f"lenient fallback; coverage there is partial (rows {rows})")
 
     # RTC stores float32 sigma0 power; treat 0 as nodata
     vv_raw = np.where(vv_raw <= 0, np.nan, vv_raw)
@@ -290,18 +400,8 @@ def preprocess_month(month_str):
     with np.errstate(divide="ignore", invalid="ignore"):
         db = np.where(vv_raw > 0, 10.0 * np.log10(vv_raw), np.nan)
 
-    try:
-        transform = ds.odc.geobox.transform
-        crs       = str(ds.odc.geobox.crs)
-    except AttributeError:
-        xc = ds["x"].values.astype("float64")
-        yc = ds["y"].values.astype("float64")
-        dx, dy = float(xc[1] - xc[0]), float(yc[1] - yc[0])
-        transform = rasterio.transform.from_origin(
-            float(xc[0]) - dx / 2, float(yc[0]) - dy / 2,
-            abs(dx), abs(dy),
-        )
-        crs = OUTPUT_CRS
+    transform = geobox.transform
+    crs       = str(geobox.crs)
 
     profile = {
         "driver": "GTiff", "dtype": "float32", "nodata": np.nan,
@@ -460,8 +560,10 @@ def main():
     ax.bar(plot_df.index, plot_df["flood_area_km2"], color=colors)
     ax.set_ylabel("Flooded area (km²)")
     ax.set_xlabel("Month")
-    ax.set_title("Monthly Flood Extent — Eastern DRC  |  Jan 2025 – Jul 2026  (100 m, −3 dB threshold)\n"
-                 "Red bars = newly added months (2026-05 to 2026-07)")
+    span = f"{plot_df.index[0]} – {plot_df.index[-1]}" if len(plot_df) else "no data"
+    ax.set_title(f"Monthly Flood Extent — Eastern DRC  |  {span}  "
+                 f"({RESAMPLE_M} m, {CHANGE_THRESHOLD_DB:g} dB threshold)\n"
+                 f"Red bars = months reprocessed in this run ({', '.join(NEW_MONTHS)})")
     ax.tick_params(axis="x", rotation=45)
     plt.tight_layout()
 
@@ -482,9 +584,9 @@ def main():
         print(f"  {row['month']}  {area:>8.1f} km²   {str(pct):>6}%   [{q}]")
 
     print()
-    print("[DONE] Extension to May–July 2026 complete.")
+    print(f"[DONE] Extension complete for {', '.join(NEW_MONTHS)}.")
     print("       Next steps:")
-    print("       1. Inspect VV file sizes: ls data/processed/sar/2026-0*.tif")
+    print("       1. Inspect VV file sizes: ls data/processed/sar/*_VV.tif")
     print("       2. Re-run notebooks/04_validation_export.ipynb to refresh the Folium map.")
     print("       3. Run build_handover.py to update the researcher package.")
     print("       4. Update PIPELINE_STATUS.md with the new month results.")

@@ -1,8 +1,8 @@
 # DRC Flood Mapping Pipeline — Status Tracker
 
-**Last updated:** 2026-07-10  
+**Last updated:** 2026-09-08  
 **AOI:** Eastern DRC (North Kivu, South Kivu, Ituri)  
-**Period:** Jan 2025 – Jul 2026 (19 months; Jun 2026 = data gap; Jul 2026 = partial/pending re-run)  
+**Period:** Jan 2025 – Jul 2026 (19 months, no gaps — Jun 2026 recovered and Jul 2026 re-pulled complete on 2026-09-08)  
 **Threshold:** −5 dB (raised from −3 dB after Sep 2025 anomaly investigation)  
 **Env:** `C:\Users\trevm\Projects\SpatialLab\gis_env`
 
@@ -32,7 +32,7 @@ Then open the notebook for the phase that failed and **run only the cells that h
 | 3 — Flood Detection (with masks) | `run_detection_pipeline.py` | ~2 min | ✅ Complete — all 16 months, 2026-05-16 7:20 PM |
 | 3b — Flood Detection (reprocess) | — | — | ✅ Done via FORCE_REPROCESS=True in step 3 |
 | 4 — Validation & Export | `notebooks/04_validation_export.ipynb` | ~2 min | 🔄 Ready to run |
-| 5 — Extend to May–Jul 2026 | `extend_may_july_2026.py` | ~4–8 hr | ✅ Complete — May: 5.8 km²; Jun: data gap; Jul: partial (re-run after 2026-07-31) |
+| 5 — Extend to May–Jul 2026 | `extend_months.py` | ~2 hr | ✅ Complete — May: 5.8 km²; Jun: 35.4 km²; Jul: 31.0 km² (all full-fidelity, no degraded blocks) |
 
 ---
 
@@ -59,9 +59,9 @@ NB02 was run with `process_all=True`. All 16 VV files exist on disk. Skip re-run
 | 2026-02 | ✅ | 1,490 MB | ✅ | 508 MB | Good coverage |
 | 2026-03 | ⚠️ | 4.5 MB | ⚠️ | 3.0 MB | **Both tiny** — suspect; may need reprocess |
 | 2026-04 | ⚠️ | 1.3 MB | ❌ | missing | **Very small** — likely incomplete |
-| 2026-05 | ✅ | 93.6 MB | — | — | RTC acquisition; 7.6% spatial coverage (sparse MPC tiles) |
-| 2026-06 | ❌ | missing | — | — | **Data gap** — WarpOperationError (corrupt MPC RTC tiles) |
-| 2026-07 | ✅ | 32 MB | — | — | Partial month (2.5% coverage); re-run after 2026-07-31 |
+| 2026-05 | ✅ | 98.1 MB | — | — | RTC; 7.6% bbox coverage |
+| 2026-06 | ✅ | 297.1 MB | — | — | RTC; **23.6% bbox coverage** — recovered 2026-09-08, was never a real gap |
+| 2026-07 | ✅ | 107.7 MB | — | — | RTC; 8.5% bbox coverage (full month; was 2.5% on the mid-month pull) |
 
 > **Note on small files:** VH files < 5 MB may reflect real sparse S1 coverage for that month/AOI. VV files < 5 MB (2026-03, 2026-04) are suspect and may need reprocessing with NB02.
 
@@ -115,9 +115,9 @@ Both masks built by `build_masks.py`. Run once, persist forever.
 | 2026-02 | ✅ | ✅ | 17.4 km² | Long-rains onset |
 | 2026-03 | ✅ | — | 0.0 km² | Data gap (VV 4.5 MB — sparse coverage) |
 | 2026-04 | ✅ | — | 0.0 km² | Data gap (VV 1.3 MB — sparse coverage) |
-| 2026-05 | ✅ | ✅ | 5.8 km² | RTC; 7.6% spatial coverage (late long-rains) |
-| 2026-06 | ❌ | — | 0.0 km² | **Data gap** — WarpOperationError (corrupt MPC RTC tiles) |
-| 2026-07 | ✅ | — | 0.0 km² | Partial month, 2.5% coverage — re-run after 2026-07-31 |
+| 2026-05 | ✅ | ✅ | 5.8 km² | 7.6% coverage; reproduced exactly on re-run |
+| 2026-06 | ✅ | ✅ | 35.4 km² | 23.6% coverage; 220 patches, 91% of area in patches ≥10 px |
+| 2026-07 | ✅ | ✅ | 31.0 km² | 8.5% coverage; ⚠️ 610 patches, median 1 px — see fragmentation caveat below |
 
 **How to run:**
 1. Open `notebooks/03_flood_detection.ipynb`
@@ -149,6 +149,10 @@ Both masks built by `build_masks.py`. Run once, persist forever.
 | Fixed -3 dB threshold | Optimal varies by terrain | Consider Otsu adaptive threshold (future) |
 | 2026-03 and 2026-04 VV files are suspiciously small | May produce noisy or empty flood maps | Verify with NB01 scene counts before detection |
 | Data leakage in training data | Affects ML model validity (not this pipeline directly) | Acknowledged; see CLAUDE.md |
+| **Absolute km² not comparable across months** | Coverage varies 0.9%–50.5% of bbox and months image *different places*; r=0.50 between usable area and reported km² | Report density (% of usable area) alongside usable km²; compare only within a fixed reference footprint |
+| **Baseline depth is shallow** | 45.6% of baseline pixels rest on a single observation, so the "dry" median cannot reject transient water; only 4.3% have all 3 obs | Widen the baseline window beyond 2025-03/04/05 |
+| **Detection fires overwhelmingly on open water** | Before masking, 81–99% of every month's detected pixels sit on JRC permanent water. 2026-07 is the extreme: 551,350 px (5,513 km²) raw, of which 99.4% is permanent water. Calm water is specular and reads as a large negative dB change against a windier baseline — a classic SAR false positive | The permanent-water mask hides it but does not fix it; the surviving extent is the fringe around masked water bodies. Consider masking *before* thresholding, and adding a wind/roughness or VH-ratio check |
+| **2026-07 flood extent is fringe, not flood** | 610 patches, median 1 px, only 64.9% of area in patches ≥10 px (vs 98.3% for 2025-09). The 7×7 median filter works — after it, 2026-07 has 569 patches at median 7 px and 99.8% of area in patches ≥10 px. The permanent-water mask then removes 99.3% of the detection, leaving 1-px remnants along its edges | Do not report 2026-07's 0.21% density as a series peak; treat it as a water-edge artifact pending validation |
 
 ---
 
@@ -166,10 +170,14 @@ Both masks built by `build_masks.py`. Run once, persist forever.
 | 2026-05-16 | Deleted stale `flood_extent_2026-04.geojson` (256 MB, from bad 8:24 AM run) | 2026-04 has 0 flood pixels — no GeoJSON warranted |
 | 2026-05-16 | Deleted stale GeoJSONs for 2025-01, 2025-02, 2025-04 (old runs, 0 px) | Keeping outputs consistent with flood_stats.csv |
 | 2026-05-16 | Built `notebooks/04_validation_export.ipynb` via `build_nb04.py` | Time-series chart, Folium map, export inventory, summary stats |
-| 2026-07-08 | Extended temporal window to Jul 2026 | `config/config.yaml` end date → 2026-07-31; `extend_may_july_2026.py` created; PIPELINE_STATUS.md updated |
+| 2026-07-08 | Extended temporal window to Jul 2026 | `config/config.yaml` end date → 2026-07-31; `extend_months.py` created; PIPELINE_STATUS.md updated |
 | 2026-07-08 | Sep 2025 anomaly investigation | Cross-checked 3,427.6 km² against OCHA ReliefWeb + CEMS: no corroborating activations. Major 2025 DRC floods were Apr–May. Sep = rainy-season onset → wet-soil/forest false positive. Threshold raised to -5 dB; FORCE_REPROCESS=True. Full rerun of detection needed. |
 | 2026-07-09 | Full reprocess at −5 dB complete | All 16 months regenerated. Sep 2025: 3,427.6 → **217.2 km²** (94% reduction). Seasonal pattern now correct. Feb 2026: 108.6 → 17.4 km². All months consistent with expected climate signal. |
-| 2026-07-10 | Extended to May–Jul 2026 via `extend_may_july_2026.py` | Used `sentinel-1-rtc` (MPC) + rasterio read-validation filter. May: **5.8 km²** (7.6% spatial coverage — sparse RTC tiles). June: **data gap** (WarpOperationError — corrupt MPC tiles persisted beyond center-window filter). July: **0.0 km²** (2.5% coverage, partial month — re-run after 2026-07-31). Fixed CSV-update bug in extend script (rows were not overwritten on re-run). |
+| 2026-07-10 | Extended to May–Jul 2026 via `extend_months.py` | Used `sentinel-1-rtc` (MPC) + rasterio read-validation filter. May: **5.8 km²** (7.6% spatial coverage — sparse RTC tiles). June: **data gap** (WarpOperationError — corrupt MPC tiles persisted beyond center-window filter). July: **0.0 km²** (2.5% coverage, partial month — re-run after 2026-07-31). Fixed CSV-update bug in extend script (rows were not overwritten on re-run). |
+
+| 2026-09-08 | Re-pulled May–Jul 2026 via `extend_months.py` (renamed from `extend_may_july_2026.py`, months now CLI args) | **Jun 2026 recovered: 35.4 km² — it was never a data gap.** The month was lost to one transient MPC read failure aborting a whole-AOI load. Jul re-pulled complete: 2.5% → 8.5% coverage, 0.0 → 31.0 km². May reproduced exactly (20,753,755 px / 98.1 MB / 5.8 km²). No block needed the lenient fallback. |
+| 2026-09-08 | Root-caused the 2026-06 gap | Failures are **transient**, not corrupt tiles: the same scenes that threw WarpOperationError/RasterioIOError read perfectly minutes later (A/B measured identical to the pixel under both signing methods). Fix = block-wise compositing + deferred second-pass retry; `fail_on_error=False` kept as last resort only, since applying it unconditionally silently cost 2026-05 2.85M valid px. |
+| 2026-09-08 | Coverage audit of all 19 months | Coverage ranges 0.9%–50.5% of bbox and **no pixel is covered in all 19 months** (≥13/19 gives 10,792 km²). Absolute km² correlates with usable area at r=0.50, so the month-to-month km² series is not comparable as published. Baseline rests on a **single** observation for 45.6% of its area (only 4.3% has all 3). |
 
 > **Update this table each time you run a phase.** Include what you ran, whether it succeeded, and any errors.
 
