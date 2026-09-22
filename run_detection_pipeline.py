@@ -12,7 +12,8 @@ import rasterio
 from rasterio.enums import Resampling
 from rasterio.shutil import copy as rio_copy
 from rasterio.features import shapes as rio_shapes
-from scipy.ndimage import binary_opening, median_filter
+from scipy.ndimage import (binary_opening, median_filter,
+                           binary_dilation, distance_transform_edt)
 from shapely.geometry import shape
 import geopandas as gpd
 import matplotlib
@@ -48,6 +49,9 @@ CHANGE_THRESHOLD_DB  = float(cfg["processing"].get("change_threshold_db", -5.0))
                                # Sep 2025 spike (3,427 km²) was likely wet-soil artifact.
                                # -5 dB requires deeper suppression consistent with open water.
 RESAMPLE_M           = 100
+ABS_DB_MAX           = cfg["processing"].get("absolute_db_max", None)
+ABS_METHOD           = cfg["processing"].get("absolute_threshold_method", "fixed")
+WATER_BUFFER_PX      = int(cfg["processing"].get("water_buffer_px", 0))
 FORCE_REPROCESS      = True    # rerun all months with corrected threshold
 
 # Threshold method: read from config; fall back to "fixed" if skimage unavailable
@@ -185,6 +189,24 @@ def load_mask_aligned(mask_path, target_shape, target_transform, target_crs):
 
 slope_mask_arr     = None
 perm_water_mask_arr = None
+_water_dist_cache  = {}        # grid shape -> distance-to-permanent-water (px)
+
+# 2025-01/02 are raw amplitude DN, not calibrated sigma0 — the change signal is
+# meaningless for them, so they ship flagged rather than silently as zeros.
+UNCALIBRATED_MONTHS = {"2025-01", "2025-02"}
+NEAR_WATER_PX       = 5        # <=5 px (500 m) of permanent water = "near water"
+
+
+def water_distance(shape, transform, crs):
+    """Distance in pixels to the nearest UNBUFFERED permanent-water pixel."""
+    if shape in _water_dist_cache:
+        return _water_dist_cache[shape]
+    if not os.path.exists(PERM_WATER_PATH):
+        _water_dist_cache[shape] = None
+        return None
+    wm = load_mask_aligned(PERM_WATER_PATH, shape, transform, crs)
+    _water_dist_cache[shape] = distance_transform_edt(wm == 0)
+    return _water_dist_cache[shape]
 
 if os.path.exists(SLOPE_PATH):
     print(f"[MASKS] Slope mask found: {SLOPE_PATH}")
@@ -251,45 +273,72 @@ for i, fname in enumerate(vv_files, 1):
     nodata_mask = ~np.isfinite(vv) | ~np.isfinite(baseline)
     flood_mask[nodata_mask] = 255
 
-    # ── Post-processing noise removal ─────────────────────────────────────────
-    if POSTPROC_METHOD == "median7":
-        # 7×7 median filter (UN-SPIDER step 7) — more spatially adaptive than
-        # binary_opening; preserves area while suppressing isolated noisy pixels.
-        valid_binary = (flood_mask == 1).astype("float32")
-        smoothed     = median_filter(valid_binary, size=7)
-        flood_mask   = np.where(flood_mask == 255, 255,
-                                (smoothed > 0.5).astype("uint8"))
-    else:
-        # Prior default: binary morphological opening (3×3)
-        valid   = flood_mask == 1
-        cleaned = binary_opening(valid, structure=np.ones((3, 3)))
-        flood_mask[valid & ~cleaned] = 0
-
-    # ── Apply quality masks (set flagged pixels to nodata=255) ────────────────
-    if os.path.exists(SLOPE_PATH):
-        slope_m = load_mask_aligned(SLOPE_PATH, flood_mask.shape, transform, crs)
-        flood_mask[slope_m == 1] = 255
-
-    if os.path.exists(PERM_WATER_PATH):
-        water_m = load_mask_aligned(PERM_WATER_PATH, flood_mask.shape, transform, crs)
-        flood_mask[water_m == 1] = 255
+    # ── Absolute backscatter gate ─────────────────────────────────────────────
+    # The change criterion alone is not sufficient: a bright pixel that merely
+    # dropped 5 dB from an even brighter baseline is still far too bright to be
+    # standing water. Measured in this AOI (2026-07): permanent water median
+    # -23.0 dB, non-water median -10.5 dB, yet flagged pixels reached -7.3 dB at
+    # p90. Require the month itself to be dark, not just darker than before.
+    if ABS_DB_MAX is not None:
+        # "fixed" is the default and the physically correct choice here. The gate
+        # is a CEILING that rejects implausibly bright pixels — not a water
+        # detector. Otsu on the VV histogram finds the open-water/land split
+        # (-12 to -16.8 dB across this series), which is far darker than shallow
+        # or vegetated flooding (flagged pixels sit at -13 to -14 dB median), so
+        # using it as the gate deletes most genuine flood signal. It is kept only
+        # for open-water-only mapping, where that strictness is the point.
+        abs_thr = float(ABS_DB_MAX)
+        if ABS_METHOD == "otsu" and _SKIMAGE_AVAILABLE:
+            finite_vv = vv[np.isfinite(vv)]
+            if finite_vv.size > 0:
+                abs_thr = float(threshold_otsu(finite_vv))
+        too_bright = (flood_mask == 1) & ~(vv < abs_thr)
+        n_bright = int(too_bright.sum())
+        flood_mask[too_bright] = 0
+        print(f"  [abs<{abs_thr:.1f}dB] -{n_bright:,} px", end="  ", flush=True)
 
     # ── VH/VV ratio discriminator (wet-soil / wet-vegetation suppression) ────
     # Open water: VH << VV (ratio typically < -10 dB).
-    # Wet soil / wet forest: VH and VV both reduced but ratio is higher (~-6 to -8 dB).
-    # If VH file is available and VH_RATIO_THRESHOLD_DB is set, mask pixels where
-    # the VH/VV ratio is above the threshold (not water-like).
+    # Wet soil / wet forest: both reduced but the ratio stays higher (~-6 to -8 dB).
     if VH_RATIO_THRESHOLD_DB is not None:
         vh_path = os.path.join(PROCESSED_DIR, fname.replace("_VV.tif", "_VH.tif"))
         if os.path.exists(vh_path):
             vh, _, _ = read_band(vh_path)
             with np.errstate(invalid="ignore"):
                 vh_vv_ratio = vh - vv   # both in dB, so subtraction = ratio in dB
-            # mask pixels where ratio is too high to be open water
             non_water_ratio = (vh_vv_ratio > VH_RATIO_THRESHOLD_DB) & np.isfinite(vh_vv_ratio)
             flood_mask[non_water_ratio & (flood_mask == 1)] = 0
-            ratio_removed = int(non_water_ratio.sum())
-            print(f"  [VH/VV] {ratio_removed:,} px removed by ratio filter", end="  ", flush=True)
+            print(f"  [VH/VV] -{int(non_water_ratio.sum()):,} px", end="  ", flush=True)
+
+    # ── Quality masks, applied BEFORE smoothing ───────────────────────────────
+    # Masking after the median filter carved holes in already-smoothed blobs and
+    # left 1-px remnants along the mask edges. Masking first lets the morphology
+    # operate on the final candidate set, so surviving patches stay coherent.
+    if os.path.exists(SLOPE_PATH):
+        slope_m = load_mask_aligned(SLOPE_PATH, flood_mask.shape, transform, crs)
+        flood_mask[slope_m == 1] = 255
+
+    if os.path.exists(PERM_WATER_PATH):
+        water_m = load_mask_aligned(PERM_WATER_PATH, flood_mask.shape, transform, crs)
+        water_core = water_m == 1
+        if WATER_BUFFER_PX > 0:
+            # Buffer outward to absorb shoreline drift and geolocation error.
+            water_m = binary_dilation(water_core,
+                                      iterations=WATER_BUFFER_PX).astype("uint8")
+        flood_mask[water_m == 1] = 255
+
+    # ── Post-processing noise removal ─────────────────────────────────────────
+    if POSTPROC_METHOD == "median7":
+        # 7x7 median filter (UN-SPIDER step 7) — more spatially adaptive than
+        # binary_opening; preserves area while suppressing isolated noisy pixels.
+        valid_binary = (flood_mask == 1).astype("float32")
+        smoothed     = median_filter(valid_binary, size=7)
+        flood_mask   = np.where(flood_mask == 255, 255,
+                                (smoothed > 0.5).astype("uint8"))
+    else:
+        valid   = flood_mask == 1
+        cleaned = binary_opening(valid, structure=np.ones((3, 3)))
+        flood_mask[valid & ~cleaned] = 0
 
     out_profile = {
         "driver": "GTiff", "dtype": "uint8", "nodata": 255,
@@ -318,10 +367,27 @@ for i, fname in enumerate(vv_files, 1):
 
     valid_px   = int((flood_mask != 255).sum())
     flooded_px = int((flood_mask == 1).sum())
-    area_km2   = round(flooded_px * (RESAMPLE_M / 1000) ** 2, 1)
+    px_km2     = (RESAMPLE_M / 1000) ** 2
+    area_km2   = round(flooded_px * px_km2, 1)
     pct        = round(flooded_px / valid_px * 100, 2) if valid_px else 0
+
+    # Split the extent by distance to permanent water instead of silently
+    # deleting near-shore detections. Riparian flooding is real and is where
+    # people live, but it is also where the false positives concentrate — so
+    # report both and let the user judge rather than making the call here.
+    dist = water_distance(flood_mask.shape, transform, crs)
+    if dist is not None and flooded_px:
+        d_flood   = dist[flood_mask == 1]
+        near_px   = int((d_flood <= NEAR_WATER_PX).sum())
+        away_km2  = round((flooded_px - near_px) * px_km2, 1)
+        near_km2  = round(near_px * px_km2, 1)
+    else:
+        near_km2, away_km2 = 0.0, area_km2
+
     flood_stats.append({"month": month_str, "flooded_pct": pct,
-                        "flooded_px": flooded_px, "flood_area_km2": area_km2})
+                        "flooded_px": flooded_px, "flood_area_km2": area_km2,
+                        "near_water_km2": near_km2, "away_water_km2": away_km2,
+                        "quality": "bad" if month_str in UNCALIBRATED_MONTHS else "valid"})
 
     geojson_note = f"{len(flood_geoms)} polygon(s)" if flood_geoms else "no flooded pixels"
     print(f"{pct}% flooded — {area_km2} km²  ({geojson_note})")
@@ -343,7 +409,9 @@ fig, ax = plt.subplots(figsize=(13, 4))
 ax.bar(df.index, df["flood_area_km2"], color="#1a6faf")
 ax.set_ylabel("Flooded area (km²)")
 ax.set_xlabel("Month")
-ax.set_title("Monthly Flood Extent — Eastern DRC (100 m, -3 dB threshold)")
+ax.set_title(f"Monthly Flood Extent — Eastern DRC "
+             f"({RESAMPLE_M} m, {CHANGE_THRESHOLD_DB:g} dB change"
+             + (f" + abs<{ABS_DB_MAX:g} dB" if ABS_DB_MAX is not None else "") + ")")
 ax.tick_params(axis="x", rotation=45)
 plt.tight_layout()
 chart_path = os.path.join(OUTPUT_DIR, "flood_area_timeseries.png")

@@ -3,7 +3,7 @@ h3_index,flood_area_km2,month,quality
 876aee5a1ffffff,,,
 876ac48cbffffff,,,
 876ac672dffffff,,,
-8796d6c60ffffff,0.07999999999989522,2026-07,valid
+8796d6c60ffffff,,,
 876ac0454ffffff,,,
 876ac22b6ffffff,,,
 876ac4118ffffff,,,
@@ -148,7 +148,7 @@ h3_index,flood_area_km2,month,quality
 8796d3c1cffffff,,,
 876ac0592ffffff,,,
 876ac4d98ffffff,,,
-876ade469ffffff,0.019999999999976717,2026-07,valid
+876ade469ffffff,,,
 8796d3469ffffff,,,
 876ad266affffff,,,
 876adc996ffffff,,,
@@ -201,7 +201,7 @@ h3_index,flood_area_km2,month,quality
 876ac084dffffff,,,
 876ac245effffff,,,
 8796d0d80ffffff,,,
-876ac4511ffffff,0.28000000000006986,2025-05,valid
+876ac4511ffffff,0.2100000000000582,2025-05,valid
 876ad0310ffffff,,,
 876ac6373ffffff,,,
 8796d68a6ffffff,,,
@@ -337,8 +337,8 @@ h3_index,flood_area_km2,month,quality
 876ad5b50ffffff,,,
 8796d2149ffffff,,,
 876ac58daffffff,,,
-876ad16d9ffffff,0.18237363262266953,2026-07,valid
-8796d6793ffffff,0.01,2026-07,valid
+876ad16d9ffffff,,,
+8796d6793ffffff,,,
 876af3274ffffff,,,
 876ad539dffffff,,,
 876ac6260ffffff,,,
@@ -454,7 +454,7 @@ h3_index,flood_area_km2,month,quality
 876ad02d1ffffff,,,
 8796d2ba3ffffff,,,
 876ac44d2ffffff,,,
-876adacb1ffffff,0.054522097935946034,2026-07,valid
+876adacb1ffffff,,,
 876ac2670ffffff,,,
 876ade975ffffff,,,
 876ac080effffff,,,
@@ -474,7 +474,7 @@ h3_index,flood_area_km2,month,quality
 876ade90bffffff,,,
 876ac0a34ffffff,,,
 876ac2896ffffff,,,
-876ada494ffffff,0.00027578048526822295,2026-07,valid
+876ada494ffffff,,,
 876ac655affffff,,,
 876ade158ffffff,,,
 876ad56aeffffff,,,
@@ -527,7 +527,7 @@ h3_index,flood_area_km2,month,quality
 8796892e6ffffff,,,
 876ad2285ffffff,,,
 876ad3103ffffff,,,
-876ade084ffffff,0.01330376259668781,2026-07,valid
+876ade084ffffff,,,
 876ac01adffffff,,,
 876ad12a1ffffff,,,
 8796d06e0ffffff,,,
@@ -687,7 +687,7 @@ h3_index,flood_area_km2,month,quality
 876ac64dcffffff,,,
 876ac620affffff,,,
 8796d2d4bffffff,,,
-876ada416ffffff,0.017982977519389123,2026-07,valid
+876ada416ffffff,,,
 8796d0464ffffff,,,
 876ac2818ffffff,,,
 8796d22c6ffffff,,,
@@ -741,7 +741,7 @@ h3_index,flood_area_km2,month,quality
 876ac0d59ffffff,,,
 876ac4a1dffffff,,,
 8796d30eeffffff,,,
-876ac0a20ffffff,0.12737158163452342,2026-06,valid
+876ac0a20ffffff,,,
 876ac05a6ffffff,,,
 876ac2408ffffff,,,
 876ac426affffff,,,
@@ -805,7 +805,7 @@ h3_index,flood_area_km2,month,quality
 876aeed68ffffff,,,
 876ac6d63ffffff,,,
 876ac5092ffffff,,,
-876adac9dffffff,0.033026154749684844,2026-07,valid
+876adac9dffffff,,,
 8796d3763ffffff,,,
 876adcc90ffffff,,,
 876ac0c1bffffff,,,
@@ -899,7 +899,7 @@ h3_index,flood_area_km2,month,quality
 8796d00aaffffff,,,
 876ad149cffffff,,,
 8796d3d6effffff,,,
-876adac86ffffff,0.009999999999988358,2026-07,valid
+876adac86ffffff,,,
 876ac6d4cffffff,,,
 876ade94affffff,,,
 876adc420ffffff,,,
@@ -912,7 +912,7 @@ h3_index,flood_area_km2,month,quality
 876ac6599ffffff,,,
 876ad2398ffffff,,,
 8796d6accffffff,,,
-876ac0b5effffff,0.058872633847333405,2026-06,valid
+876ac0b5effffff,,,
 876ac2122ffffff,,,
 8796d2655ffffff,,,
 8796d6319ffffff,,,
@@ -996,7 +996,7 @@ h3_index,flood_area_km2,month,quality
 8796d3413ffffff,,,
 876ac6ba4ffffff,,,
 876ad5a68ffffff,,,
-876ade7a2ffffff,0.23792611770567354,2026-07,valid
+876ade7a2ffffff,,,
 876ac08cbffffff,,,
 876ac272dffffff,,,
 8796d2c60ffffff,,,
@@ -1360,7 +1360,7 @@ h3_index,flood_area_km2,month,quality
 876ac649affffff,,,
 876ad2299ffffff,,,
 8796d600bffffff,,,
-876ade098ffffff,0.049999999999953436,2026-07,valid
+876ade098ffffff,,,
 876ac2023ffffff,,,
 8796d06f4ffffff,,,
 876af1610ffffff,,,
@@ -1579,7 +1579,7 @@ h3_index,flood_area_km2,month,quality
 876ac54cdffffff,,,
 8796d3098ffffff,,,
 876ac6829ffffff,,,
-8796d6d5cffffff,0.022938248653593677,2026-07,valid
+8796d6d5cffffff,,,
 876ac0550ffffff,,,
 876ac23b2ffffff,,,
 876ad5743ffffff,,,
@@ -1709,7 +1709,7 @@ h3_index,flood_area_km2,month,quality
 8796d3d82ffffff,,,
 876ac2090ffffff,,,
 876ad3312ffffff,,,
-876adac9affffff,0.06861316289808024,2026-07,valid
+876adac9affffff,,,
 876ac6d60ffffff,,,
 876ade105ffffff,,,
 876ade95effffff,,,
@@ -1737,7 +1737,7 @@ h3_index,flood_area_km2,month,quality
 876ade8f4ffffff,,,
 876ac0a1dffffff,,,
 876ac46e1ffffff,,,
-8796d2db2ffffff,0.0584926000940091,2026-07,valid
+8796d2db2ffffff,,,
 876ad50ceffffff,,,
 876ac6543ffffff,,,
 876ad326cffffff,,,
@@ -1801,7 +1801,7 @@ h3_index,flood_area_km2,month,quality
 8796d0082ffffff,,,
 876ac4d56ffffff,,,
 876adc954ffffff,,,
-876ade7b6ffffff,0.31702792898226095,2026-07,valid
+876ade7b6ffffff,,,
 876ad3a89ffffff,,,
 8796d635bffffff,,,
 876ac2741ffffff,,,
@@ -1826,7 +1826,7 @@ h3_index,flood_area_km2,month,quality
 876ad129effffff,,,
 876ad3100ffffff,,,
 876ac4cecffffff,,,
-876ada515ffffff,0.03000000000000582,2026-07,valid
+876ada515ffffff,,,
 876ad0aebffffff,,,
 876ac6b4effffff,,,
 876ae2650ffffff,,,
@@ -1978,7 +1978,7 @@ h3_index,flood_area_km2,month,quality
 876ac6868ffffff,,,
 876adc4b5ffffff,,,
 876ac6719ffffff,,,
-876ade466ffffff,0.3448379572255937,2026-07,valid
+876ade466ffffff,,,
 876aee58dffffff,,,
 876ac2a55ffffff,,,
 876ac4253ffffff,,,
@@ -2073,7 +2073,7 @@ h3_index,flood_area_km2,month,quality
 876ad065dffffff,,,
 876ac66c0ffffff,,,
 876adc45cffffff,,,
-8796d656dffffff,0.15001601880534526,2026-07,valid
+8796d656dffffff,,,
 876ac40abffffff,,,
 876af1b72ffffff,,,
 876ad1d0cffffff,,,
@@ -2149,7 +2149,7 @@ h3_index,flood_area_km2,month,quality
 876ad3a30ffffff,,,
 876ad2656ffffff,,,
 876ae34f3ffffff,,,
-876ac561cffffff,0.770368925575139,2025-06,valid
+876ac561cffffff,0.004768945865896811,2025-06,valid
 8796d30c6ffffff,,,
 876ad141bffffff,,,
 8796d3cedffffff,,,
@@ -2208,7 +2208,7 @@ h3_index,flood_area_km2,month,quality
 876ac2780ffffff,,,
 876ac68c1ffffff,,,
 8796d3130ffffff,,,
-8796d2cb3ffffff,0.004392455653875615,2026-07,valid
+8796d2cb3ffffff,,,
 876ac6444ffffff,,,
 876ade042ffffff,,,
 876ac016bffffff,,,
@@ -2522,7 +2522,7 @@ h3_index,flood_area_km2,month,quality
 876adc126ffffff,,,
 876aee435ffffff,,,
 876ac638affffff,,,
-876ac4528ffffff,0.6370998389968112,2025-05,valid
+876ac4528ffffff,0.6270998402802406,2025-05,valid
 8796d4c92ffffff,,,
 8796d6af4ffffff,,,
 876ac26c6ffffff,,,
@@ -2595,7 +2595,7 @@ h3_index,flood_area_km2,month,quality
 876ac6483ffffff,,,
 8796892e3ffffff,,,
 876ad2282ffffff,,,
-876ade081ffffff,0.029999999999912687,2026-07,valid
+876ade081ffffff,,,
 876ac01aaffffff,,,
 876ac200cffffff,,,
 8796d06ddffffff,,,
@@ -2727,7 +2727,7 @@ h3_index,flood_area_km2,month,quality
 8796d232dffffff,,,
 876ad110affffff,,,
 876ad5842ffffff,,,
-876aded6bffffff,0.01596285677040922,2026-07,valid
+876aded6bffffff,,,
 876ac2cf6ffffff,,,
 876ac4b58ffffff,,,
 8796d62b2ffffff,,,
@@ -2826,7 +2826,7 @@ h3_index,flood_area_km2,month,quality
 876adc5aeffffff,,,
 876ad3301ffffff,,,
 876ade410ffffff,,,
-8796d6d45ffffff,0.019999999999941794,2026-07,valid
+8796d6d45ffffff,,,
 8796d3d71ffffff,,,
 876ac239bffffff,,,
 876ac56a0ffffff,,,
@@ -2922,7 +2922,7 @@ h3_index,flood_area_km2,month,quality
 876ac29acffffff,,,
 8796d6b9dffffff,,,
 876ac0391ffffff,,,
-876ac0b4affffff,0.187659869983535,2026-06,valid
+876ac0b4affffff,,,
 876ac4055ffffff,,,
 8796d2726ffffff,,,
 8796d4588ffffff,,,
@@ -2951,8 +2951,8 @@ h3_index,flood_area_km2,month,quality
 876ad1499ffffff,,,
 8796d3d6bffffff,,,
 876ad3b88ffffff,,,
-8796d645affffff,0.02000000000006985,2026-07,valid
-876adac83ffffff,0.06000000000003492,2026-07,valid
+8796d645affffff,,,
+876adac83ffffff,,,
 876ad1d26ffffff,,,
 876ac6d49ffffff,,,
 8796d2796ffffff,,,
@@ -2967,7 +2967,7 @@ h3_index,flood_area_km2,month,quality
 876af026cffffff,,,
 876ac0401ffffff,,,
 876ac6596ffffff,,,
-8796d6c0dffffff,0.22787185434515544,2026-07,valid
+8796d6c0dffffff,,,
 876ad2395ffffff,,,
 876ade194ffffff,,,
 8796d6ac9ffffff,,,
@@ -3312,7 +3312,7 @@ h3_index,flood_area_km2,month,quality
 876ac4341ffffff,,,
 876ac48b1ffffff,,,
 876ac6713ffffff,,,
-8796d6c46ffffff,0.07896334873253193,2026-07,valid
+8796d6c46ffffff,,,
 876ade554ffffff,,,
 876af1a98ffffff,,,
 876ad5a23ffffff,,,
@@ -3441,7 +3441,7 @@ h3_index,flood_area_km2,month,quality
 8796d2d06ffffff,,,
 876ae3252ffffff,,,
 876ad2296ffffff,,,
-876ade095ffffff,0.010000000000011642,2026-07,valid
+876ade095ffffff,,,
 876ac2020ffffff,,,
 8796d06f1ffffff,,,
 8796d2553ffffff,,,
@@ -3760,7 +3760,7 @@ h3_index,flood_area_km2,month,quality
 876ad5245ffffff,,,
 876aeeca5ffffff,,,
 8796d36a0ffffff,,,
-876ac0b58ffffff,0.17015960002836142,2026-06,valid
+876ac0b58ffffff,,,
 876ae26f3ffffff,,,
 876aee4f2ffffff,,,
 876ac481cffffff,,,
@@ -3852,7 +3852,7 @@ h3_index,flood_area_km2,month,quality
 876ac2812ffffff,,,
 876ac4674ffffff,,,
 8796d2d45ffffff,,,
-876ada410ffffff,0.1199999999998021,2026-07,valid
+876ada410ffffff,,,
 876ac2150ffffff,,,
 876ac64d6ffffff,,,
 876ad22d5ffffff,,,
@@ -3895,7 +3895,7 @@ h3_index,flood_area_km2,month,quality
 8796d00d8ffffff,,,
 876ac6bb5ffffff,,,
 876adc951ffffff,,,
-876ade7b3ffffff,0.6806317742980036,2026-07,valid
+876ade7b3ffffff,,,
 876ac08dcffffff,,,
 876ad5941ffffff,,,
 876ac45a0ffffff,,,
@@ -3981,7 +3981,7 @@ h3_index,flood_area_km2,month,quality
 8796d2380ffffff,,,
 876ac5b11ffffff,,,
 876af1649ffffff,,,
-876ac0b75ffffff,0.004133617886545502,2026-06,valid
+876ac0b75ffffff,,,
 876ad1910ffffff,,,
 8796d6044ffffff,,,
 876ad3772ffffff,,,
@@ -4131,7 +4131,7 @@ h3_index,flood_area_km2,month,quality
 8796d2895ffffff,,,
 876ac6791ffffff,,,
 876adc52dffffff,,,
-8796d6cc4ffffff,0.009789218588538732,2026-07,valid
+8796d6cc4ffffff,,,
 876ac231affffff,,,
 876ac2362ffffff,,,
 8796d284dffffff,,,
@@ -4195,7 +4195,7 @@ h3_index,flood_area_km2,month,quality
 876ac056affffff,,,
 876ac0b2dffffff,,,
 876ae26c8ffffff,,,
-876ade441ffffff,0.06999999999999418,2026-07,valid
+876ade441ffffff,,,
 876ada58dffffff,,,
 876ad2642ffffff,,,
 876ac6653ffffff,,,
@@ -4245,7 +4245,7 @@ h3_index,flood_area_km2,month,quality
 876ac2436ffffff,,,
 876ad3a2dffffff,,,
 876ae34f0ffffff,,,
-876ac5619ffffff,0.11078307353400733,2025-06,valid
+876ac5619ffffff,,,
 876ad1418ffffff,,,
 8796d3ceaffffff,,,
 876ad50dcffffff,,,
@@ -4258,7 +4258,7 @@ h3_index,flood_area_km2,month,quality
 876ade8c6ffffff,,,
 876ac2851ffffff,,,
 876ac46b3ffffff,,,
-8796d2d84ffffff,0.040000000000064026,2026-07,valid
+8796d2d84ffffff,,,
 876ac6515ffffff,,,
 876ade113ffffff,,,
 876adec5effffff,,,
@@ -4630,9 +4630,9 @@ h3_index,flood_area_km2,month,quality
 876ac271cffffff,,,
 8796d3d29ffffff,,,
 8796d3576ffffff,,,
-876ade791ffffff,0.05391243455944541,2026-07,valid
+876ade791ffffff,,,
 876ade905ffffff,,,
-876ac0a2effffff,0.3036919404699616,2026-06,valid
+876ac0a2effffff,,,
 876ac2890ffffff,,,
 876ac6b93ffffff,,,
 876ac46f2ffffff,,,
@@ -4860,7 +4860,7 @@ h3_index,flood_area_km2,month,quality
 876af1cd2ffffff,,,
 8796d66cdffffff,,,
 876af3b34ffffff,,,
-876ac0a62ffffff,0.40787270102904644,2026-07,valid
+876ac0a62ffffff,0.25787270102899407,2026-07,valid
 8796d2256ffffff,,,
 876ad3648ffffff,,,
 876ad1033ffffff,,,
@@ -4993,7 +4993,7 @@ h3_index,flood_area_km2,month,quality
 876ac5760ffffff,,,
 876ad1d1dffffff,,,
 876af1a56ffffff,,,
-8796d6451ffffff,0.048190277123701324,2026-07,valid
+8796d6451ffffff,,,
 876ae3642ffffff,,,
 876af12a3ffffff,,,
 876ad156affffff,,,
@@ -5048,7 +5048,7 @@ h3_index,flood_area_km2,month,quality
 876ad1496ffffff,,,
 8796d3d68ffffff,,,
 876ad342bffffff,,,
-876adac80ffffff,0.053539594101738086,2026-07,valid
+876adac80ffffff,,,
 8796d35b5ffffff,,,
 876af1302ffffff,,,
 876ac6d46ffffff,,,
@@ -5168,7 +5168,7 @@ h3_index,flood_area_km2,month,quality
 876ac6b34ffffff,,,
 8796d02abffffff,,,
 876adc8d0ffffff,,,
-876ade732ffffff,0.06000000000011642,2026-07,valid
+876ade732ffffff,,,
 876ac085bffffff,,,
 8796d0d8effffff,,,
 876ad5b14ffffff,,,
@@ -5195,7 +5195,7 @@ h3_index,flood_area_km2,month,quality
 876ac2653ffffff,,,
 876ac6804ffffff,,,
 8796d3073ffffff,,,
-876ac49a2ffffff,0.35965931137555274,2026-02,valid
+876ac49a2ffffff,0.2996593113755469,2026-02,valid
 876ac44b5ffffff,,,
 8796d2b86ffffff,,,
 876ad02b4ffffff,,,
@@ -5323,7 +5323,7 @@ h3_index,flood_area_km2,month,quality
 876ac2b8affffff,,,
 876ac684effffff,,,
 876ad264dffffff,,,
-876ade44cffffff,0.009999999999982538,2026-07,valid
+876ade44cffffff,,,
 876ac0575ffffff,,,
 8796d290affffff,,,
 876ac609bffffff,,,
@@ -5649,7 +5649,7 @@ h3_index,flood_area_km2,month,quality
 876ac4420ffffff,,,
 8796d2af1ffffff,,,
 876ac6282ffffff,,,
-8796d67b5ffffff,0.019999999999976717,2026-07,valid
+8796d67b5ffffff,,,
 876ad3106ffffff,,,
 8796d04dcffffff,,,
 876ad18ceffffff,,,
@@ -5861,7 +5861,7 @@ h3_index,flood_area_km2,month,quality
 876af1a00ffffff,,,
 876ad3b29ffffff,,,
 876af3862ffffff,,,
-876ac0a23ffffff,0.12243563502896551,2026-06,valid
+876ac0a23ffffff,,,
 876ac5715ffffff,,,
 876af124dffffff,,,
 876ad1514ffffff,,,
@@ -5980,7 +5980,7 @@ h3_index,flood_area_km2,month,quality
 8796d3421ffffff,,,
 876ac6bb2ffffff,,,
 876ad3382ffffff,,,
-876ade7b0ffffff,0.2182482944027439,2026-07,valid
+876ade7b0ffffff,,,
 876ad1520ffffff,,,
 876af1259ffffff,,,
 876ac08d9ffffff,,,
@@ -6127,7 +6127,7 @@ h3_index,flood_area_km2,month,quality
 876ac4321ffffff,,,
 876ac675bffffff,,,
 876ac6183ffffff,,,
-8796d66b6ffffff,0.45914479697932514,2026-07,valid
+8796d66b6ffffff,0.03000000000001746,2026-07,valid
 876af3b1dffffff,,,
 876af1508ffffff,,,
 876af336affffff,,,
@@ -6330,7 +6330,7 @@ h3_index,flood_area_km2,month,quality
 876ac0a56ffffff,0.10999999999999419,2026-06,valid
 876ac0a56ffffff,0.08000000000008149,2026-07,valid
 876ac471affffff,,,
-876ada4b6ffffff,0.6933075914169502,2026-07,valid
+876ada4b6ffffff,0.09374390276718188,2026-07,valid
 876af14d5ffffff,,,
 876ad179cffffff,,,
 876ac599dffffff,,,
@@ -6378,7 +6378,7 @@ h3_index,flood_area_km2,month,quality
 876ac64a8ffffff,,,
 8796d3925ffffff,,,
 876ad1053ffffff,,,
-876ade0a6ffffff,0.1288803454682555,2026-07,valid
+876ade0a6ffffff,,,
 876ac2031ffffff,,,
 8796d0702ffffff,,,
 8796d2564ffffff,,,
@@ -6415,7 +6415,7 @@ h3_index,flood_area_km2,month,quality
 876ac0694ffffff,,,
 8796d1594ffffff,,,
 876ac4d25ffffff,,,
-876ade56bffffff,0.7161303406542565,2026-07,valid
+876ade56bffffff,,,
 876ad276cffffff,,,
 876ac696dffffff,,,
 876ac08aeffffff,,,
@@ -6796,7 +6796,7 @@ h3_index,flood_area_km2,month,quality
 876ad3995ffffff,,,
 876ac5581ffffff,,,
 876ad1380ffffff,,,
-876ade09effffff,0.008287968801815674,2026-07,valid
+876ade09effffff,,,
 8796d3c52ffffff,,,
 876ad5044ffffff,,,
 876ac64a0ffffff,,,
@@ -6887,7 +6887,7 @@ h3_index,flood_area_km2,month,quality
 876ad198bffffff,,,
 876af16c4ffffff,,,
 876ad140dffffff,,,
-876ac560effffff,0.24172006540025942,2025-06,valid
+876ac560effffff,,,
 876ae32b0ffffff,,,
 876ae34e5ffffff,,,
 8796d001bffffff,,,
@@ -6962,7 +6962,7 @@ h3_index,flood_area_km2,month,quality
 876ade548ffffff,,,
 876ac24d3ffffff,,,
 876ac4335ffffff,,,
-876ada518ffffff,0.020000000000005822,2026-07,valid
+876ada518ffffff,,,
 8796d2a06ffffff,,,
 876aee452ffffff,,,
 876ae2653ffffff,,,
@@ -7015,7 +7015,7 @@ h3_index,flood_area_km2,month,quality
 876af1448ffffff,,,
 876ad3571ffffff,,,
 876ac6648ffffff,,,
-876ada582ffffff,0.01000000000000582,2026-07,valid
+876ada582ffffff,,,
 876ac515dffffff,,,
 8796d382effffff,,,
 876adcd5bffffff,,,
@@ -7132,7 +7132,7 @@ h3_index,flood_area_km2,month,quality
 8796d361cffffff,,,
 876ac6dadffffff,,,
 876aee590ffffff,,,
-876ade9abffffff,0.02999999999999418,2026-07,valid
+876ade9abffffff,,,
 876ae2791ffffff,,,
 876ac2a58ffffff,,,
 876ac0ad4ffffff,,,
@@ -7188,7 +7188,7 @@ h3_index,flood_area_km2,month,quality
 876ad0723ffffff,,,
 876ac46c4ffffff,,,
 876ac4924ffffff,,,
-8796d2d95ffffff,0.019307830812835148,2026-07,valid
+8796d2d95ffffff,,,
 876ac6526ffffff,,,
 876ac2ac2ffffff,,,
 876ade124ffffff,,,
@@ -7259,7 +7259,7 @@ h3_index,flood_area_km2,month,quality
 876adc184ffffff,,,
 8796d691bffffff,,,
 8796d0642ffffff,,,
-8796d24a4ffffff,0.009999999999976717,2026-07,valid
+8796d24a4ffffff,,,
 876ac5c35ffffff,,,
 876ad1a34ffffff,,,
 876af176dffffff,,,
@@ -7750,7 +7750,7 @@ h3_index,flood_area_km2,month,quality
 876ac441dffffff,,,
 8796d2aeeffffff,,,
 876ad021cffffff,,,
-8796d67b2ffffff,0.020009427801128257,2026-07,valid
+8796d67b2ffffff,,,
 8796d04d9ffffff,,,
 876ad18cbffffff,,,
 876af1604ffffff,,,
@@ -7776,7 +7776,7 @@ h3_index,flood_area_km2,month,quality
 8796d3980ffffff,,,
 876ac0188ffffff,,,
 876ac2c9affffff,,,
-8796d6994ffffff,0.030000000000046566,2026-07,valid
+8796d6994ffffff,,,
 876ac695effffff,,,
 876ad275dffffff,,,
 876ade55cffffff,,,
@@ -8014,7 +8014,7 @@ h3_index,flood_area_km2,month,quality
 8796d0794ffffff,,,
 876ad1b86ffffff,,,
 8796d362bffffff,,,
-876adacf6ffffff,0.12999999999999418,2026-07,valid
+876adacf6ffffff,,,
 876ad584affffff,,,
 876aeec30ffffff,,,
 876ae34abffffff,,,
@@ -8036,7 +8036,7 @@ h3_index,flood_area_km2,month,quality
 8796d6a03ffffff,,,
 876ac2059ffffff,,,
 8796d072affffff,,,
-8796d258cffffff,0.029999999999976715,2026-07,valid
+8796d258cffffff,,,
 876ac5d1dffffff,,,
 876ad1b1cffffff,,,
 8796d6250ffffff,,,
@@ -8068,7 +8068,7 @@ h3_index,flood_area_km2,month,quality
 8796d06c0ffffff,,,
 8796d2522ffffff,,,
 876ac5cb3ffffff,,,
-876ac0b4dffffff,0.04175486980290244,2026-06,valid
+876ac0b4dffffff,,,
 876ad1ab2ffffff,,,
 876ad3914ffffff,,,
 876ad5776ffffff,,,
@@ -8223,7 +8223,7 @@ h3_index,flood_area_km2,month,quality
 876af1505ffffff,,,
 876ad362effffff,,,
 876ac04d8ffffff,,,
-8796d6ce4ffffff,0.010000000000029104,2026-07,valid
+8796d6ce4ffffff,,,
 876ad1019ffffff,,,
 8796d38ebffffff,,,
 876ac0da3ffffff,,,
@@ -8761,7 +8761,7 @@ h3_index,flood_area_km2,month,quality
 876ac66f6ffffff,,,
 876ad311dffffff,,,
 876adc492ffffff,,,
-8796d6c29ffffff,0.011488481739479648,2026-07,valid
+8796d6c29ffffff,,,
 876ac041dffffff,,,
 876ac40e1ffffff,,,
 8796d27b2ffffff,,,
@@ -8851,7 +8851,7 @@ h3_index,flood_area_km2,month,quality
 8796d3570ffffff,,,
 876ac462affffff,,,
 876ac6d01ffffff,,,
-876ac0a28ffffff,0.17539038918629352,2026-06,valid
+876ac0a28ffffff,,,
 876ac288affffff,,,
 876ac0966ffffff,,,
 876ac46ecffffff,,,
@@ -9210,7 +9210,7 @@ h3_index,flood_area_km2,month,quality
 876ac299dffffff,,,
 876ae26d6ffffff,,,
 876aee4d5ffffff,,,
-876ada59bffffff,0.01,2026-07,valid
+876ada59bffffff,,,
 876ac6661ffffff,,,
 876af3959ffffff,,,
 8796d6b94ffffff,,,
@@ -9261,7 +9261,7 @@ h3_index,flood_area_km2,month,quality
 8796d0283ffffff,,,
 876ac658dffffff,,,
 876ad238cffffff,,,
-876ade18bffffff,0.00024821172278547006,2026-07,valid
+876ade18bffffff,,,
 8796d6ac0ffffff,,,
 876ac02b4ffffff,,,
 876ad5aecffffff,,,
@@ -9281,7 +9281,7 @@ h3_index,flood_area_km2,month,quality
 876ac0503ffffff,,,
 876ade8d4ffffff,,,
 876ac46c1ffffff,,,
-8796d2d92ffffff,0.02974936875879555,2026-07,valid
+8796d2d92ffffff,,,
 876ac6523ffffff,,,
 876ade121ffffff,,,
 8796d6a56ffffff,,,
@@ -9388,7 +9388,7 @@ h3_index,flood_area_km2,month,quality
 876ad009affffff,,,
 8796d296cffffff,,,
 876ac5415ffffff,,,
-876ac429bffffff,0.24473957438135333,2026-02,valid
+876ac429bffffff,0.23349923532055947,2026-02,valid
 876ad1214ffffff,,,
 876ad3076ffffff,,,
 876ac4c62ffffff,,,
@@ -9722,7 +9722,7 @@ h3_index,flood_area_km2,month,quality
 876ac648effffff,,,
 8796892eeffffff,,,
 876ad228dffffff,,,
-876ade08cffffff,0.0021410620557325444,2026-07,valid
+876ade08cffffff,,,
 876ac01b5ffffff,,,
 8796d06e8ffffff,,,
 8796d254affffff,,,
@@ -9773,7 +9773,7 @@ h3_index,flood_area_km2,month,quality
 8796d0614ffffff,,,
 876ac3da5ffffff,,,
 876ae3adeffffff,,,
-876ade794ffffff,0.17606186775486574,2026-07,valid
+876ade794ffffff,,,
 8796d2476ffffff,,,
 876ad1a06ffffff,,,
 876ac6b96ffffff,,,
@@ -9881,7 +9881,7 @@ h3_index,flood_area_km2,month,quality
 876ac4655ffffff,,,
 876ac695bffffff,,,
 876ad275affffff,,,
-876ade559ffffff,1.3246879094550292,2026-07,valid
+876ade559ffffff,,,
 876ac0682ffffff,,,
 876ac0991ffffff,,,
 876ac24e4ffffff,,,
@@ -9931,7 +9931,7 @@ h3_index,flood_area_km2,month,quality
 8796d2943ffffff,,,
 876ad0071ffffff,,,
 876ac6521ffffff,,,
-8796d2d90ffffff,0.024866078280619593,2026-07,valid
+8796d2d90ffffff,,,
 876ac60d4ffffff,,,
 876af3a6effffff,,,
 876ac285dffffff,,,
@@ -10009,7 +10009,7 @@ h3_index,flood_area_km2,month,quality
 8796d35adffffff,,,
 876af1aceffffff,,,
 876ad1d95ffffff,,,
-8796d64c9ffffff,0.040000000000011644,2026-07,valid
+8796d64c9ffffff,,,
 876ad5a59ffffff,,,
 8796d2052ffffff,,,
 876af131bffffff,,,
@@ -10151,7 +10151,7 @@ h3_index,flood_area_km2,month,quality
 876ac66c9ffffff,,,
 876ad0666ffffff,,,
 8796892c3ffffff,,,
-8796d6996ffffff,0.05217049049475563,2026-07,valid
+8796d6996ffffff,,,
 876ac2a05ffffff,,,
 876ac018affffff,,,
 876ac5cb0ffffff,,,
@@ -10196,7 +10196,7 @@ h3_index,flood_area_km2,month,quality
 876ac411effffff,,,
 876ac26cbffffff,,,
 8796d0d9cffffff,,,
-876ac452dffffff,0.8489016146678651,2025-05,valid
+876ac452dffffff,0.848901615523864,2025-05,valid
 876ad032cffffff,,,
 876ac045affffff,,,
 8796d68c2ffffff,,,
@@ -10483,7 +10483,7 @@ h3_index,flood_area_km2,month,quality
 876ade543ffffff,,,
 876ac291cffffff,,,
 876aee454ffffff,,,
-876ada51affffff,0.02999999999992433,2026-07,valid
+876ada51affffff,,,
 876ac6945ffffff,,,
 8796d31b4ffffff,,,
 876ac4ae3ffffff,,,
@@ -10503,7 +10503,7 @@ h3_index,flood_area_km2,month,quality
 876ac0a50ffffff,,,
 876ac28b2ffffff,,,
 876ac4714ffffff,,,
-876ada4b0ffffff,0.17318692303581484,2026-07,valid
+876ada4b0ffffff,,,
 876af024cffffff,,,
 876ac6576ffffff,,,
 876ad36aaffffff,,,
@@ -10791,7 +10791,7 @@ h3_index,flood_area_km2,month,quality
 876ad5b41ffffff,,,
 8796d02d8ffffff,,,
 876ac58cbffffff,,,
-876ad16caffffff,0.0223652418056624,2026-07,valid
+876ad16caffffff,,,
 876af1403ffffff,,,
 876af3265ffffff,,,
 876ad352cffffff,,,
@@ -10843,7 +10843,7 @@ h3_index,flood_area_km2,month,quality
 8796d2819ffffff,,,
 876ad1da9ffffff,,,
 876af1ae2ffffff,,,
-8796d64ddffffff,0.09923068597855936,2026-07,valid
+8796d64ddffffff,,,
 876af3944ffffff,,,
 876ad5a6dffffff,,,
 8796d0204ffffff,,,
@@ -10920,7 +10920,7 @@ h3_index,flood_area_km2,month,quality
 876ae3590ffffff,,,
 8796d3d8affffff,,,
 876ad331affffff,,,
-876adaca2ffffff,0.12709020237266533,2026-07,valid
+876adaca2ffffff,,,
 876ad3990ffffff,,,
 8796d6262ffffff,,,
 876ac6d68ffffff,,,
@@ -10952,7 +10952,7 @@ h3_index,flood_area_km2,month,quality
 876ad32b0ffffff,,,
 8796d356dffffff,,,
 876ade893ffffff,,,
-876ac0a25ffffff,0.0400691972066148,2026-06,valid
+876ac0a25ffffff,,,
 876ac46e9ffffff,,,
 876ada485ffffff,,,
 876ac6c95ffffff,,,
@@ -10976,7 +10976,7 @@ h3_index,flood_area_km2,month,quality
 876ac206affffff,,,
 876ad1b98ffffff,,,
 876ac5d99ffffff,,,
-8796d259dffffff,0.030000000000023282,2026-07,valid
+8796d259dffffff,,,
 8796d2608ffffff,,,
 876ac5d2effffff,,,
 876ad1b2dffffff,,,
@@ -11067,7 +11067,7 @@ h3_index,flood_area_km2,month,quality
 876ad309effffff,,,
 876ac6d69ffffff,,,
 876ac4c8affffff,,,
-876adaca3ffffff,0.010686994799582527,2026-07,valid
+876adaca3ffffff,,,
 876ac6aecffffff,,,
 876adc888ffffff,,,
 876ac0813ffffff,,,
@@ -11315,7 +11315,7 @@ h3_index,flood_area_km2,month,quality
 876ad1561ffffff,,,
 876ad5225ffffff,,,
 876aeec85ffffff,,,
-8796d6548ffffff,0.009999999999976717,2026-07,valid
+8796d6548ffffff,,,
 8796d3680ffffff,,,
 876af1b4dffffff,,,
 876ac6015ffffff,,,
@@ -11387,7 +11387,7 @@ h3_index,flood_area_km2,month,quality
 8796d3542ffffff,,,
 876ac0559ffffff,,,
 876ac6cd3ffffff,,,
-8796d6d65ffffff,0.017829508675980352,2026-07,valid
+8796d6d65ffffff,,,
 876ade430ffffff,,,
 876ade8d1ffffff,,,
 876ac285cffffff,,,
@@ -11461,7 +11461,7 @@ h3_index,flood_area_km2,month,quality
 8796d3404ffffff,,,
 876ac6b95ffffff,,,
 876ac0d76ffffff,,,
-876ade793ffffff,0.009435542080025363,2026-07,valid
+876ade793ffffff,,,
 876ac271effffff,,,
 876ac4580ffffff,,,
 876adec4dffffff,,,
@@ -11614,7 +11614,7 @@ h3_index,flood_area_km2,month,quality
 8796d311effffff,,,
 876ac0701ffffff,,,
 876ade4adffffff,,,
-876ac429affffff,1.0839393863037103,2026-02,valid
+876ac429affffff,1.065478944975581,2026-02,valid
 8796d296bffffff,,,
 876ad0099ffffff,,,
 876ac5949ffffff,,,
@@ -11629,7 +11629,7 @@ h3_index,flood_area_km2,month,quality
 8796d30b4ffffff,,,
 876ac6845ffffff,,,
 876ad2644ffffff,,,
-876ade443ffffff,0.019999999999965077,2026-07,valid
+876ade443ffffff,,,
 876ad112affffff,,,
 876ac056cffffff,,,
 876ac532bffffff,,,
@@ -11986,7 +11986,7 @@ h3_index,flood_area_km2,month,quality
 8796d6742ffffff,,,
 8796d0469ffffff,,,
 8796d22cbffffff,,,
-876ad185bffffff,0.07999999999998836,2026-07,valid
+876ad185bffffff,,,
 8796d628dffffff,,,
 876ad10a8ffffff,,,
 876ad1b59ffffff,,,
@@ -12027,7 +12027,7 @@ h3_index,flood_area_km2,month,quality
 8796d3ce2ffffff,,,
 876ad1410ffffff,,,
 8796d0395ffffff,,,
-876ac5611ffffff,1.6886517302415047,2025-06,valid
+876ac5611ffffff,0.7852310541358611,2025-06,valid
 876ac5988ffffff,,,
 876af14c0ffffff,,,
 876ae34e8ffffff,,,
@@ -12164,7 +12164,7 @@ h3_index,flood_area_km2,month,quality
 876ad1575ffffff,,,
 876aeec99ffffff,,,
 8796d3694ffffff,,,
-876ac0b4cffffff,0.12005667888159934,2026-06,valid
+876ac0b4cffffff,,,
 876ac29aeffffff,,,
 876aee4e6ffffff,,,
 876ac4810ffffff,,,
@@ -12303,7 +12303,7 @@ h3_index,flood_area_km2,month,quality
 876ac011dffffff,,,
 8796d3741ffffff,,,
 8796d0650ffffff,,,
-8796d24b2ffffff,0.01,2026-07,valid
+8796d24b2ffffff,,,
 876ac5070ffffff,,,
 876ac5c43ffffff,,,
 876aeed46ffffff,,,
@@ -12891,7 +12891,7 @@ h3_index,flood_area_km2,month,quality
 876ad262dffffff,,,
 876ade42cffffff,,,
 876adc196ffffff,,,
-8796d6d61ffffff,0.027548396350118968,2026-07,valid
+8796d6d61ffffff,,,
 87968925affffff,,,
 876ac0555ffffff,,,
 8796d2c69ffffff,,,
@@ -12996,7 +12996,7 @@ h3_index,flood_area_km2,month,quality
 876ac4071ffffff,,,
 876ac5d1bffffff,,,
 8796d2742ffffff,,,
-8796d258affffff,0.0014408397424547793,2026-07,valid
+8796d258affffff,,,
 876ad1cd2ffffff,,,
 8796d45a4ffffff,,,
 876af1a0bffffff,,,
@@ -13057,7 +13057,7 @@ h3_index,flood_area_km2,month,quality
 876adac35ffffff,,,
 8796d356affffff,,,
 876ac20c1ffffff,,,
-876ac0a22ffffff,0.04012358575811376,2026-06,valid
+876ac0a22ffffff,,,
 876ac2884ffffff,,,
 876ac46e6ffffff,,,
 876ada482ffffff,,,
@@ -13087,7 +13087,7 @@ h3_index,flood_area_km2,month,quality
 876ade0dcffffff,,,
 8796d6a11ffffff,,,
 876ad329dffffff,,,
-8796d259affffff,0.029999999999959254,2026-07,valid
+8796d259affffff,,,
 876ac5d2bffffff,,,
 8796d3d0dffffff,,,
 876ad1b2affffff,,,
@@ -13298,7 +13298,7 @@ h3_index,flood_area_km2,month,quality
 876ac686dffffff,,,
 876ad3445ffffff,,,
 876ad266cffffff,,,
-876ade46bffffff,0.010000000000029104,2026-07,valid
+876ade46bffffff,,,
 876af131cffffff,,,
 876ac0594ffffff,,,
 876ac4258ffffff,,,
@@ -13377,7 +13377,7 @@ h3_index,flood_area_km2,month,quality
 876aee5a3ffffff,,,
 876ac48cdffffff,,,
 876ad06ccffffff,,,
-8796d6c62ffffff,0.03999999999998836,2026-07,valid
+8796d6c62ffffff,,,
 876ac6001ffffff,,,
 8796d2870ffffff,,,
 876ac0456ffffff,,,
@@ -13549,7 +13549,7 @@ h3_index,flood_area_km2,month,quality
 876ac42ddffffff,,,
 8796d3401ffffff,,,
 876ac6b92ffffff,,,
-876ade790ffffff,0.48972039919406907,2026-07,valid
+876ade790ffffff,,,
 876ac271bffffff,,,
 876ac0619ffffff,,,
 8796d2c4effffff,,,
@@ -13765,7 +13765,7 @@ h3_index,flood_area_km2,month,quality
 876ac0495ffffff,,,
 876ac4159ffffff,,,
 8796d282affffff,,,
-876ade698ffffff,0.10999999999987777,2026-07,valid
+876ade698ffffff,,,
 876af1af3ffffff,,,
 876adc836ffffff,,,
 876af3955ffffff,,,
@@ -13919,7 +13919,7 @@ h3_index,flood_area_km2,month,quality
 876ac6488ffffff,,,
 8796892e8ffffff,,,
 876ac014cffffff,,,
-876ade086ffffff,0.0366303929858853,2026-07,valid
+876ade086ffffff,,,
 8796d6958ffffff,,,
 876ac2011ffffff,,,
 876ade023ffffff,,,
@@ -13952,7 +13952,7 @@ h3_index,flood_area_km2,month,quality
 876ac5c6bffffff,,,
 876ad1a6affffff,,,
 876af17a3ffffff,,,
-8796d619effffff,0.0700000000000815,2026-07,valid
+8796d619effffff,,,
 876ad38ccffffff,,,
 876ad318affffff,,,
 876ad572effffff,,,
@@ -14046,7 +14046,7 @@ h3_index,flood_area_km2,month,quality
 879689359ffffff,,,
 8796d2ae5ffffff,,,
 8796d2d68ffffff,,,
-876ada433ffffff,0.13739647786980688,2026-07,valid
+876ada433ffffff,,,
 876ad0213ffffff,,,
 876ac6276ffffff,,,
 876adc012ffffff,,,
@@ -14105,7 +14105,7 @@ h3_index,flood_area_km2,month,quality
 8796d315affffff,,,
 876ac68ebffffff,,,
 876ad26eaffffff,,,
-876ade4e9ffffff,0.11999999999978463,2026-07,valid
+876ade4e9ffffff,,,
 876ac0612ffffff,,,
 876ac2474ffffff,,,
 876ade914ffffff,,,
@@ -14196,7 +14196,7 @@ h3_index,flood_area_km2,month,quality
 876ac6743ffffff,,,
 8796d26f3ffffff,,,
 876ac4022ffffff,,,
-8796d6c76ffffff,0.12063966061995061,2026-07,valid
+8796d6c76ffffff,,,
 876ac046affffff,,,
 876ac412effffff,,,
 876af1ac8ffffff,,,
@@ -14235,12 +14235,12 @@ h3_index,flood_area_km2,month,quality
 876aeec96ffffff,,,
 876af1273ffffff,,,
 8796d3691ffffff,,,
-876ac0b49ffffff,1.1983931423715395,2026-06,valid
+876ac0b49ffffff,0.9099999999999825,2026-06,valid
 876ac29abffffff,,,
 876ae26e4ffffff,,,
 876aee4e3ffffff,,,
 876ac480dffffff,,,
-876ada5a9ffffff,0.009999999999965075,2026-07,valid
+876ada5a9ffffff,,,
 876ad060cffffff,,,
 876adc40bffffff,,,
 8796d6ba2ffffff,,,
@@ -14288,7 +14288,7 @@ h3_index,flood_area_km2,month,quality
 876ac659bffffff,,,
 876ad3406ffffff,,,
 876ad239affffff,,,
-876ade199ffffff,0.010387116747246287,2026-07,valid
+876ade199ffffff,,,
 876ad15a4ffffff,,,
 876af12ddffffff,,,
 8796d6aceffffff,,,
@@ -14709,8 +14709,7 @@ h3_index,flood_area_km2,month,quality
 876ad3a1effffff,,,
 876ac2d2dffffff,,,
 876ae34e1ffffff,,,
-876ac560affffff,1.1178520187628345,2025-06,valid
-876ac560affffff,0.1686054529646103,2026-01,valid
+876ac560affffff,,,
 876ad1409ffffff,,,
 8796d3cdbffffff,,,
 876ad326bffffff,,,
@@ -14746,7 +14745,7 @@ h3_index,flood_area_km2,month,quality
 8796d2d0bffffff,,,
 876ac649cffffff,,,
 876ad229bffffff,,,
-876ade09affffff,0.04171203129716748,2026-07,valid
+876ade09affffff,,,
 876ac2025ffffff,,,
 8796d06f6ffffff,,,
 876ac62a8ffffff,,,
@@ -15051,7 +15050,7 @@ h3_index,flood_area_km2,month,quality
 876ad524affffff,,,
 876aeecaaffffff,,,
 8796d36a5ffffff,,,
-876ac0b5dffffff,0.007026601062702795,2026-06,valid
+876ac0b5dffffff,,,
 876ac4821ffffff,,,
 876ad0620ffffff,,,
 876ac6683ffffff,,,
@@ -15085,7 +15084,7 @@ h3_index,flood_area_km2,month,quality
 876ad5929ffffff,,,
 8796d00c0ffffff,,,
 876ac6524ffffff,,,
-8796d2d93ffffff,0.15500053970118957,2026-07,valid
+8796d2d93ffffff,,,
 876ae358affffff,,,
 876ac46c2ffffff,,,
 876ac56b3ffffff,,,
@@ -15093,7 +15092,7 @@ h3_index,flood_area_km2,month,quality
 8796d3d84ffffff,,,
 876ac2860ffffff,,,
 876ad3314ffffff,,,
-876adac9cffffff,0.03999999999998836,2026-07,valid
+876adac9cffffff,,,
 876ac6d62ffffff,,,
 876ade960ffffff,,,
 876ade8d5ffffff,,,
@@ -15251,7 +15250,7 @@ h3_index,flood_area_km2,month,quality
 876ad5643ffffff,,,
 876ae32a4ffffff,,,
 876ac6662ffffff,,,
-876ada59cffffff,0.23294617840066417,2026-07,valid
+876ada59cffffff,0.16999999999990686,2026-07,valid
 876ad302effffff,,,
 876ac4800ffffff,,,
 876aee4d6ffffff,,,
@@ -15453,7 +15452,7 @@ h3_index,flood_area_km2,month,quality
 876ade408ffffff,,,
 876ad1d0effffff,,,
 876ad2609ffffff,,,
-8796d6442ffffff,0.02,2026-07,valid
+8796d6442ffffff,,,
 876adc5a6ffffff,,,
 876ad3b70ffffff,,,
 876ac680affffff,,,
@@ -15929,7 +15928,7 @@ h3_index,flood_area_km2,month,quality
 876ac0a33ffffff,,,
 876ac2895ffffff,,,
 8796d066bffffff,,,
-876ada493ffffff,0.029999999999959254,2026-07,valid
+876ada493ffffff,,,
 876ac6559ffffff,,,
 8796d6a8cffffff,,,
 876ac20e2ffffff,,,
@@ -16114,7 +16113,7 @@ h3_index,flood_area_km2,month,quality
 8796d6a82ffffff,,,
 876ad0210ffffff,,,
 876ac6273ffffff,,,
-8796d67a6ffffff,0.009999999999994178,2026-07,valid
+8796d67a6ffffff,,,
 876ac46edffffff,,,
 8796d04cdffffff,,,
 876ac5ac0ffffff,,,
@@ -16271,7 +16270,7 @@ h3_index,flood_area_km2,month,quality
 876ad0673ffffff,,,
 876ac66d6ffffff,,,
 876adc472ffffff,,,
-8796d6c09ffffff,0.02999999999998836,2026-07,valid
+8796d6c09ffffff,,,
 876ac40c1ffffff,,,
 8796d2792ffffff,,,
 876ad1d22ffffff,,,
@@ -16419,7 +16418,7 @@ h3_index,flood_area_km2,month,quality
 876adc9a9ffffff,,,
 876ade80bffffff,,,
 8796d654bffffff,,,
-876ac0934ffffff,1.7598587524715217,2026-02,valid
+876ac0934ffffff,1.569559645338066,2026-02,valid
 876ac2796ffffff,,,
 876af1b50ffffff,,,
 876ac6018ffffff,,,
@@ -16736,7 +16735,7 @@ h3_index,flood_area_km2,month,quality
 876ac2913ffffff,,,
 876ae264cffffff,,,
 876ac4775ffffff,,,
-876ada511ffffff,0.030000000000023282,2026-07,valid
+876ada511ffffff,,,
 876ad3742ffffff,,,
 8796d6014ffffff,,,
 876af1619ffffff,,,
@@ -16850,7 +16849,7 @@ h3_index,flood_area_km2,month,quality
 8796d1585ffffff,,,
 876ae32d9ffffff,,,
 876ac4d16ffffff,,,
-876adc914ffffff,0.20785404870326604,2025-09,valid
+876adc914ffffff,0.19696977223099854,2025-09,valid
 876ac2701ffffff,,,
 876ac4563ffffff,,,
 8796d2c34ffffff,,,
@@ -17033,7 +17032,7 @@ h3_index,flood_area_km2,month,quality
 876ade426ffffff,,,
 8796d6d5bffffff,,,
 876ac23b1ffffff,,,
-876ade0a4ffffff,0.010732535395255309,2026-07,valid
+876ade0a4ffffff,,,
 876ac4213ffffff,,,
 8796d28e4ffffff,,,
 876ad22a5ffffff,,,
@@ -17058,7 +17057,7 @@ h3_index,flood_area_km2,month,quality
 876ad075bffffff,,,
 8796d302dffffff,,,
 876adc55affffff,,,
-8796d6cf1ffffff,0.00021078145050114754,2026-07,valid
+8796d6cf1ffffff,,,
 876ac04e5ffffff,,,
 876ac41a9ffffff,,,
 876ad506dffffff,,,
@@ -17118,7 +17117,7 @@ h3_index,flood_area_km2,month,quality
 876ac5784ffffff,,,
 876ad1583ffffff,,,
 8796d36a2ffffff,,,
-876ac0b5affffff,0.05356977879859679,2026-06,valid
+876ac0b5affffff,,,
 876ae26f5ffffff,,,
 876ad3275ffffff,,,
 876aee4f4ffffff,,,
@@ -17139,7 +17138,7 @@ h3_index,flood_area_km2,month,quality
 876af1252ffffff,,,
 8796d4498ffffff,,,
 876ad1519ffffff,,,
-876adad03ffffff,0.06531678460591882,2026-07,valid
+876adad03ffffff,,,
 8796d2636ffffff,,,
 876ac0af0ffffff,,,
 876ac2952ffffff,,,
@@ -17153,7 +17152,7 @@ h3_index,flood_area_km2,month,quality
 876ac4001ffffff,,,
 8796d26d2ffffff,,,
 876ad1c62ffffff,,,
-876ada4b4ffffff,0.12999999999992434,2026-07,valid
+876ada4b4ffffff,,,
 8796d4534ffffff,,,
 876ac4718ffffff,,,
 8796d6396ffffff,,,
@@ -17211,7 +17210,7 @@ h3_index,flood_area_km2,month,quality
 876ac09b2ffffff,,,
 876ac2814ffffff,,,
 876ac4676ffffff,,,
-876ada412ffffff,0.012017021890228309,2026-07,valid
+876ada412ffffff,,,
 876ac64d8ffffff,,,
 876ade995ffffff,,,
 876ade0d6ffffff,,,
@@ -17370,7 +17369,7 @@ h3_index,flood_area_km2,month,quality
 876ad18a8ffffff,,,
 876ad370affffff,,,
 876ac0449ffffff,,,
-8796d6c55ffffff,0.011036650867235029,2026-07,valid
+8796d6c55ffffff,,,
 876ad10f5ffffff,,,
 876ac6722ffffff,,,
 876aded56ffffff,,,
@@ -17493,7 +17492,7 @@ h3_index,flood_area_km2,month,quality
 876ac0cd0ffffff,,,
 8796d3002ffffff,,,
 876ac6793ffffff,,,
-8796d6cc6ffffff,0.060089494646620105,2026-07,valid
+8796d6cc6ffffff,,,
 876ac231cffffff,,,
 876adcd45ffffff,,,
 876af1b18ffffff,,,
@@ -17657,7 +17656,7 @@ h3_index,flood_area_km2,month,quality
 8796d3956ffffff,,,
 876ad1084ffffff,,,
 876ac091dffffff,,,
-8796d2cb2ffffff,0.005607544360053478,2026-07,valid
+8796d2cb2ffffff,,,
 876ac6443ffffff,,,
 8796892a3ffffff,,,
 8796d6976ffffff,,,
@@ -17894,7 +17893,7 @@ h3_index,flood_area_km2,month,quality
 8796d68c6ffffff,,,
 876af1aedffffff,,,
 876ad1db4ffffff,,,
-8796d64e8ffffff,0.009279687135178264,2026-07,valid
+8796d64e8ffffff,,,
 876ae36d9ffffff,,,
 876ac6393ffffff,,,
 876ad0330ffffff,,,
@@ -18015,7 +18014,7 @@ h3_index,flood_area_km2,month,quality
 876ac27a3ffffff,,,
 8796d2612ffffff,,,
 876ac5da3ffffff,,,
-876ad1ba2ffffff,0.002345943618073665,2026-07,valid
+876ad1ba2ffffff,,,
 876ac0941ffffff,,,
 8796d62d6ffffff,,,
 876ad3a04ffffff,,,
@@ -18077,7 +18076,7 @@ h3_index,flood_area_km2,month,quality
 876ac280dffffff,,,
 876ac09abffffff,,,
 876ac4d69ffffff,,,
-876ade882ffffff,0.1420975863322588,2026-07,valid
+876ade882ffffff,,,
 876ad0b68ffffff,,,
 876ac6c84ffffff,,,
 8796d34f3ffffff,,,
@@ -18192,7 +18191,7 @@ h3_index,flood_area_km2,month,quality
 876ad371effffff,,,
 876ade956ffffff,,,
 876ad1109ffffff,,,
-876aded6affffff,0.0040371432423731805,2026-07,valid
+876aded6affffff,,,
 876ac6d58ffffff,,,
 876ac2cf5ffffff,,,
 876adac92ffffff,,,
@@ -18215,7 +18214,7 @@ h3_index,flood_area_km2,month,quality
 876ac2c8bffffff,,,
 876ac4aedffffff,,,
 876ad274effffff,,,
-876ade54dffffff,0.5823180034219249,2026-07,valid
+876ade54dffffff,,,
 876ac0676ffffff,,,
 876ac24d8ffffff,,,
 876ad1c5bffffff,,,
@@ -18364,7 +18363,7 @@ h3_index,flood_area_km2,month,quality
 876aeec90ffffff,,,
 8796d368bffffff,,,
 8796d2056ffffff,,,
-876ac0b43ffffff,0.030000000000011642,2026-06,valid
+876ac0b43ffffff,,,
 876ac29a5ffffff,,,
 876ae26deffffff,,,
 876aee4ddffffff,,,
@@ -18406,7 +18405,7 @@ h3_index,flood_area_km2,month,quality
 8796d3d6affffff,,,
 876ac509effffff,,,
 876aeed74ffffff,,,
-876adac82ffffff,0.01,2026-07,valid
+876adac82ffffff,,,
 876ac6d48ffffff,,,
 876ade946ffffff,,,
 876ac28d1ffffff,,,
@@ -18420,7 +18419,7 @@ h3_index,flood_area_km2,month,quality
 876ad2394ffffff,,,
 876af1389ffffff,,,
 876ad1650ffffff,,,
-876ade193ffffff,0.029999999999976715,2026-07,valid
+876ade193ffffff,,,
 8796d6ac8ffffff,,,
 876ac5851ffffff,,,
 8796d20c0ffffff,,,
@@ -18440,7 +18439,7 @@ h3_index,flood_area_km2,month,quality
 8796d2873ffffff,,,
 876ade8dcffffff,,,
 876ac41a2ffffff,,,
-876ac0a05ffffff,0.0009176609821002023,2026-06,valid
+876ac0a05ffffff,,,
 876ac46c9ffffff,,,
 8796d2d9affffff,,,
 876ac04deffffff,,,
@@ -18838,7 +18837,7 @@ h3_index,flood_area_km2,month,quality
 8796d6354ffffff,,,
 876ad3a82ffffff,,,
 876ad146dffffff,,,
-876ade69bffffff,0.10999999999991851,2026-07,valid
+876ade69bffffff,,,
 876ac6a9dffffff,,,
 8796d358cffffff,,,
 876ac6d1dffffff,,,
@@ -19128,7 +19127,7 @@ h3_index,flood_area_km2,month,quality
 876ac469affffff,,,
 876ac6825ffffff,,,
 876ade423ffffff,,,
-8796d6d58ffffff,0.07198311755621116,2026-07,valid
+8796d6d58ffffff,,,
 876ac054cffffff,,,
 876ac23aeffffff,,,
 876ac4210ffffff,,,
@@ -19348,7 +19347,7 @@ h3_index,flood_area_km2,month,quality
 8796d3423ffffff,,,
 876ac6bb4ffffff,,,
 876adc950ffffff,,,
-876ade7b2ffffff,0.5741623836996728,2026-07,valid
+876ade7b2ffffff,,,
 876ac08dbffffff,,,
 8796d36c6ffffff,,,
 876adad91ffffff,,,
@@ -19555,7 +19554,7 @@ h3_index,flood_area_km2,month,quality
 876ac0573ffffff,,,
 876adc596ffffff,,,
 876ac0521ffffff,,,
-876ade44affffff,0.35287679485142825,2026-07,valid
+876ade44affffff,,,
 876ac2383ffffff,,,
 876ad264bffffff,,,
 8796d28b6ffffff,,,
@@ -19578,7 +19577,7 @@ h3_index,flood_area_km2,month,quality
 876ad072dffffff,,,
 876ac6790ffffff,,,
 876adc52cffffff,,,
-8796d6cc3ffffff,0.012136186024498898,2026-07,valid
+8796d6cc3ffffff,,,
 876ac2319ffffff,,,
 8796d284cffffff,,,
 876af1b15ffffff,,,
@@ -19910,7 +19909,7 @@ h3_index,flood_area_km2,month,quality
 8796d2216ffffff,,,
 876ad1218ffffff,,,
 876ad17a6ffffff,,,
-876ac5419ffffff,0.04,2026-06,valid
+876ac5419ffffff,,,
 876af3341ffffff,,,
 876ad3608ffffff,,,
 876ae32f0ffffff,,,
@@ -20043,7 +20042,7 @@ h3_index,flood_area_km2,month,quality
 876ad5258ffffff,,,
 8796d36b3ffffff,,,
 876ad5763ffffff,,,
-876ac0b6bffffff,0.030000000000040744,2026-06,valid
+876ac0b6bffffff,,,
 876aee505ffffff,,,
 876ad3901ffffff,,,
 876ad062effffff,,,
@@ -20106,7 +20105,7 @@ h3_index,flood_area_km2,month,quality
 8796d3575ffffff,,,
 876ac6d06ffffff,,,
 876ade904ffffff,,,
-876ac0a2dffffff,0.17296734210060907,2026-06,valid
+876ac0a2dffffff,,,
 876ac46f1ffffff,,,
 876ac6553ffffff,,,
 8796d2d2cffffff,,,
@@ -20127,7 +20126,7 @@ h3_index,flood_area_km2,month,quality
 876ac6c9cffffff,,,
 876ade89affffff,,,
 876ac2825ffffff,,,
-876ada423ffffff,1.081749880372692,2026-07,valid
+876ada423ffffff,,,
 8796d2d58ffffff,,,
 876ac64e9ffffff,,,
 876ad22e8ffffff,,,
@@ -20154,7 +20153,7 @@ h3_index,flood_area_km2,month,quality
 8796d0781ffffff,,,
 8796d2ceeffffff,,,
 876ac20b0ffffff,,,
-8796d69b2ffffff,0.2600000000000524,2026-07,valid
+8796d69b2ffffff,,,
 876ac01a6ffffff,,,
 876ac2008ffffff,,,
 8796d06d9ffffff,,,
@@ -20278,7 +20277,7 @@ h3_index,flood_area_km2,month,quality
 8796d2adcffffff,,,
 876ad020affffff,,,
 876ac626dffffff,,,
-876ada535ffffff,0.010000000000023284,2026-07,valid
+876ada535ffffff,,,
 876ac4799ffffff,,,
 8796d67a0ffffff,,,
 8796d2329ffffff,,,
@@ -20310,7 +20309,7 @@ h3_index,flood_area_km2,month,quality
 876ac694cffffff,,,
 876ad3b13ffffff,,,
 876ad274bffffff,,,
-876ade54affffff,0.04675647752719387,2026-07,valid
+876ade54affffff,,,
 876ad1cb1ffffff,,,
 8796d4583ffffff,,,
 876ac24d5ffffff,,,
@@ -20382,7 +20381,7 @@ h3_index,flood_area_km2,month,quality
 876ad260dffffff,,,
 876ade40cffffff,,,
 876adc46bffffff,,,
-8796d6d41ffffff,0.030000000000011642,2026-07,valid
+8796d6d41ffffff,,,
 876ac0535ffffff,,,
 876ad066cffffff,,,
 876ac486dffffff,,,
@@ -20514,7 +20513,7 @@ h3_index,flood_area_km2,month,quality
 876ac50f4ffffff,,,
 8796d00a3ffffff,,,
 876ac5696ffffff,0.17680917504951013,2025-12,valid
-876ac5696ffffff,2.3647639278254604,2026-06,valid
+876ac5696ffffff,2.3147639261393596,2026-06,valid
 876ad1495ffffff,,,
 8796d35b4ffffff,,,
 876ad536affffff,,,
@@ -20642,7 +20641,7 @@ h3_index,flood_area_km2,month,quality
 876ad0ad0ffffff,,,
 8796d33a2ffffff,,,
 876ac6b33ffffff,,,
-876ade731ffffff,0.009999999999965075,2026-07,valid
+876ade731ffffff,,,
 876ac085affffff,,,
 876af14b3ffffff,,,
 8796d0d8dffffff,,,
@@ -20876,7 +20875,7 @@ h3_index,flood_area_km2,month,quality
 876ad526cffffff,,,
 8796d0530ffffff,,,
 876aeecccffffff,,,
-876adad92ffffff,0.009999999999988358,2026-07,valid
+876adad92ffffff,,,
 876aee519ffffff,,,
 876ac4843ffffff,,,
 876ad0642ffffff,,,
@@ -21012,7 +21011,7 @@ h3_index,flood_area_km2,month,quality
 8796d344bffffff,,,
 876ac0903ffffff,,,
 876ac2765ffffff,,,
-876ad12adffffff,0.03,2025-09,valid
+876ad12adffffff,,,
 8796d2c98ffffff,,,
 876ac6429ffffff,,,
 879689289ffffff,,,
@@ -21155,7 +21154,7 @@ h3_index,flood_area_km2,month,quality
 876ac6960ffffff,,,
 876ade55effffff,,,
 876ac64e8ffffff,,,
-876ada422ffffff,2.6272679077332577,2026-07,valid
+876ada422ffffff,0.20000000000002327,2026-07,valid
 876ac24e9ffffff,,,
 876ac4686ffffff,,,
 876ac434bffffff,,,
@@ -21219,7 +21218,7 @@ h3_index,flood_area_km2,month,quality
 876ad1725ffffff,,,
 876af145effffff,,,
 876af32c0ffffff,,,
-876ac0a2cffffff,0.024430645642003094,2026-06,valid
+876ac0a2cffffff,,,
 876ac5173ffffff,,,
 8796d3844ffffff,,,
 876ade903ffffff,,,
@@ -21278,7 +21277,7 @@ h3_index,flood_area_km2,month,quality
 876ade96dffffff,,,
 876af1ad3ffffff,,,
 876ad1d9affffff,,,
-8796d64ceffffff,0.07076931182285216,2026-07,valid
+8796d64ceffffff,,,
 876adaca9ffffff,,,
 876ad5a5effffff,,,
 876af1320ffffff,,,
@@ -21300,7 +21299,7 @@ h3_index,flood_area_km2,month,quality
 8796d27a0ffffff,,,
 876ad1d30ffffff,,,
 876af1a69ffffff,,,
-8796d6464ffffff,0.08000000000002329,2026-07,valid
+8796d6464ffffff,,,
 876ad3b92ffffff,,,
 8796d018bffffff,,,
 876ae3655ffffff,,,
@@ -21356,7 +21355,7 @@ h3_index,flood_area_km2,month,quality
 876ad14a9ffffff,,,
 876ad330bffffff,,,
 876ad516dffffff,,,
-876adac93ffffff,0.030250631311777434,2026-07,valid
+876adac93ffffff,,,
 876ac6d59ffffff,,,
 876ac0a80ffffff,,,
 876af1a15ffffff,,,
@@ -21381,7 +21380,7 @@ h3_index,flood_area_km2,month,quality
 8796d3d11ffffff,,,
 876ad32a1ffffff,,,
 8796d355effffff,,,
-876ac0b6affffff,0.04,2026-06,valid
+876ac0b6affffff,,,
 876ade8edffffff,,,
 876ac0a16ffffff,,,
 876ac46daffffff,,,
@@ -21399,7 +21398,7 @@ h3_index,flood_area_km2,month,quality
 876af12ccffffff,,,
 876ac5794ffffff,,,
 8796d2003ffffff,,,
-876ade883ffffff,0.057902414156184946,2026-07,valid
+876ade883ffffff,,,
 876ae366bffffff,,,
 8796d01a1ffffff,,,
 876ac09acffffff,,,
@@ -21416,7 +21415,7 @@ h3_index,flood_area_km2,month,quality
 876ac205bffffff,,,
 8796d072cffffff,,,
 8796d27b6ffffff,,,
-8796d258effffff,0.05000000000001164,2026-07,valid
+8796d258effffff,,,
 876ad1b1effffff,,,
 876ac40e5ffffff,,,
 8796d6252ffffff,,,
@@ -21609,7 +21608,7 @@ h3_index,flood_area_km2,month,quality
 876ac4a69ffffff,,,
 876ac68cbffffff,,,
 876ad26caffffff,,,
-876ade4c9ffffff,0.03382667998691286,2026-07,valid
+876ade4c9ffffff,,,
 876ac2454ffffff,,,
 8796d385affffff,,,
 876ac42b6ffffff,,,
@@ -21832,7 +21831,7 @@ h3_index,flood_area_km2,month,quality
 8796d2d16ffffff,,,
 876ad22a6ffffff,,,
 876aded91ffffff,,,
-876ade0a5ffffff,0.06975178681808361,2026-07,valid
+876ade0a5ffffff,,,
 876ac2030ffffff,,,
 8796d0701ffffff,,,
 8796d2563ffffff,,,
@@ -21872,7 +21871,7 @@ h3_index,flood_area_km2,month,quality
 876ac4d24ffffff,,,
 8796d0ca4ffffff,,,
 876ac6b86ffffff,,,
-876ade784ffffff,0.160776058407942,2026-07,valid
+876ade784ffffff,,,
 876ac0771ffffff,,,
 876ac08adffffff,,,
 876ac4571ffffff,,,
@@ -22207,7 +22206,7 @@ h3_index,flood_area_km2,month,quality
 876ad32b5ffffff,,,
 8796d3572ffffff,,,
 876ac6513ffffff,,,
-8796d2d82ffffff,0.0006921675635179443,2026-07,valid
+8796d2d82ffffff,,,
 876ac46b1ffffff,,,
 876ac6d03ffffff,,,
 876ade901ffffff,,,
@@ -22238,7 +22237,7 @@ h3_index,flood_area_km2,month,quality
 876ac6c99ffffff,,,
 876ac2822ffffff,,,
 876ac4684ffffff,,,
-876ada420ffffff,0.04770051116520332,2026-07,valid
+876ada420ffffff,,,
 876ae34eeffffff,,,
 8796d2d55ffffff,,,
 876ac64e6ffffff,,,
@@ -22397,7 +22396,7 @@ h3_index,flood_area_km2,month,quality
 876ad3718ffffff,,,
 876ac5304ffffff,,,
 876ad1103ffffff,,,
-876aded64ffffff,0.19526112531927137,2026-07,valid
+876aded64ffffff,,,
 876ac4b51ffffff,,,
 876ad5218ffffff,,,
 876ac69b3ffffff,,,
@@ -22534,7 +22533,7 @@ h3_index,flood_area_km2,month,quality
 876ac2318ffffff,,,
 876ac48d5ffffff,,,
 876ac04b6ffffff,,,
-8796d6cc2ffffff,0.06777432251673415,2026-07,valid
+8796d6cc2ffffff,,,
 876ac045effffff,,,
 876adc52bffffff,,,
 876ac4122ffffff,,,
@@ -22642,7 +22641,7 @@ h3_index,flood_area_km2,month,quality
 876ac058affffff,,,
 876ac2861ffffff,,,
 876ac46c3ffffff,,,
-8796d2d94ffffff,0.020641186034723393,2026-07,valid
+8796d2d94ffffff,,,
 876ade461ffffff,,,
 876ac6525ffffff,,,
 876ad2662ffffff,,,
@@ -22871,7 +22870,7 @@ h3_index,flood_area_km2,month,quality
 876ad115bffffff,,,
 876ac684affffff,,,
 876ad2649ffffff,,,
-876ade448ffffff,0.214138177198091,2026-07,valid
+876ade448ffffff,,,
 876ac0571ffffff,,,
 876ae3233ffffff,,,
 876ac4235ffffff,,,
@@ -23066,8 +23065,8 @@ h3_index,flood_area_km2,month,quality
 876ac6490ffffff,,,
 876ac08daffffff,,,
 8796892f0ffffff,,,
-876ade08effffff,0.18785893850813926,2026-07,valid
-876ade7b1ffffff,0.213738062514498,2026-07,valid
+876ade08effffff,,,
+876ade7b1ffffff,,,
 876ac2019ffffff,,,
 8796d06eaffffff,,,
 8796d254cffffff,,,
@@ -23292,7 +23291,7 @@ h3_index,flood_area_km2,month,quality
 876ade41dffffff,,,
 876ac6d5bffffff,,,
 876ac0546ffffff,,,
-876adac95ffffff,0.01999999999998254,2026-07,valid
+876adac95ffffff,,,
 876ac23a8ffffff,,,
 876ac420affffff,,,
 8796d28dbffffff,,,
@@ -23627,7 +23626,7 @@ h3_index,flood_area_km2,month,quality
 8796d2ac2ffffff,,,
 876ac6253ffffff,,,
 876ac2b60ffffff,,,
-8796d6786ffffff,0.020000000000023284,2026-07,valid
+8796d6786ffffff,,,
 8796d04adffffff,,,
 876ac5aa0ffffff,,,
 876ad3701ffffff,,,
@@ -23656,7 +23655,7 @@ h3_index,flood_area_km2,month,quality
 8796d3954ffffff,,,
 876af3a75ffffff,,,
 8796d660effffff,,,
-876adece3ffffff,0.010000000000040745,2026-07,valid
+876adece3ffffff,,,
 876ac2c6effffff,,,
 876ac4ad0ffffff,,,
 876ac60dbffffff,,,
@@ -23666,7 +23665,7 @@ h3_index,flood_area_km2,month,quality
 876ade530ffffff,,,
 876ac05b5ffffff,,,
 876ac431dffffff,,,
-8796d66b2ffffff,0.023589910514962686,2026-07,valid
+8796d66b2ffffff,0.006256095994276113,2026-07,valid
 876ade48cffffff,,,
 876af3b19ffffff,,,
 876ac688effffff,,,
@@ -23774,7 +23773,7 @@ h3_index,flood_area_km2,month,quality
 8796d2a1effffff,,,
 876ac6720ffffff,,,
 876ac434dffffff,,,
-8796d6c53ffffff,0.010000000000011642,2026-07,valid
+8796d6c53ffffff,,,
 876ac24ebffffff,,,
 876ac410bffffff,,,
 876ac0689ffffff,,,
@@ -23859,7 +23858,7 @@ h3_index,flood_area_km2,month,quality
 876ac0a52ffffff,,,
 876ac28b4ffffff,,,
 876ac4716ffffff,,,
-876ada4b2ffffff,0.690494978200688,2026-07,valid
+876ada4b2ffffff,,,
 876af024effffff,,,
 876ad3731ffffff,,,
 8796d6003ffffff,,,
@@ -23877,7 +23876,7 @@ h3_index,flood_area_km2,month,quality
 8796d3ce3ffffff,,,
 876ad3273ffffff,,,
 8796d3530ffffff,,,
-8796d67b6ffffff,0.01999057275673379,2026-07,valid
+8796d67b6ffffff,,,
 876ac6cc1ffffff,,,
 876ac284affffff,,,
 876ac6283ffffff,,,
@@ -24065,7 +24064,7 @@ h3_index,flood_area_km2,month,quality
 876ac2cadffffff,,,
 876ac6971ffffff,,,
 876adc910ffffff,1.6137685308351017,2025-05,valid
-876adc910ffffff,2.503609897279448,2025-09,valid
+876adc910ffffff,2.414493999442193,2025-09,valid
 876ac6b74ffffff,,,
 876ac0698ffffff,,,
 876ac4d12ffffff,,,
@@ -24206,7 +24205,7 @@ h3_index,flood_area_km2,month,quality
 876ac2a31ffffff,,,
 8796d3c6affffff,,,
 876af10d1ffffff,,,
-876ad1398ffffff,0.24000000000001745,2026-07,valid
+876ad1398ffffff,,,
 876ac5599ffffff,,,
 876ac4893ffffff,,,
 876ac66f5ffffff,,,
@@ -24272,7 +24271,7 @@ h3_index,flood_area_km2,month,quality
 876ac6d6affffff,,,
 8796d62e9ffffff,,,
 876ade968ffffff,,,
-876ad1bb5ffffff,0.00765405636601236,2026-07,valid
+876ad1bb5ffffff,,,
 876ac0a91ffffff,,,
 876ac28f3ffffff,,,
 876ac5db6ffffff,,,
@@ -24456,7 +24455,7 @@ h3_index,flood_area_km2,month,quality
 876ad0644ffffff,,,
 876ae3242ffffff,,,
 876ac4845ffffff,,,
-876ad116affffff,0.010000000000040745,2026-07,valid
+876ad116affffff,,,
 876aee51bffffff,,,
 876ac2d56ffffff,,,
 876ac6a1affffff,,,
@@ -24736,7 +24735,7 @@ h3_index,flood_area_km2,month,quality
 876ac285effffff,,,
 8796d3128ffffff,,,
 876ac46c0ffffff,,,
-8796d2d91ffffff,0.00013338475051608283,2026-07,valid
+8796d2d91ffffff,,,
 876ac6522ffffff,,,
 876ade120ffffff,,,
 8796d6a55ffffff,,,
@@ -24757,7 +24756,7 @@ h3_index,flood_area_km2,month,quality
 876ac0992ffffff,,,
 876ac4656ffffff,,,
 876ad361effffff,,,
-876ade0b6ffffff,0.6215516762060154,2026-07,valid
+876ade0b6ffffff,,,
 876ac2041ffffff,,,
 8796d0712ffffff,,,
 8796d2574ffffff,,,
@@ -24799,7 +24798,7 @@ h3_index,flood_area_km2,month,quality
 8796d15a4ffffff,,,
 876ac4d35ffffff,,,
 8796d3406ffffff,,,
-876ade795ffffff,0.2665113468901364,2026-07,valid
+876ade795ffffff,,,
 876adecd4ffffff,,,
 876ac2720ffffff,,,
 876ac4582ffffff,,,
@@ -25144,7 +25143,7 @@ h3_index,flood_area_km2,month,quality
 876ade8a8ffffff,,,
 876ac2833ffffff,,,
 876ac4695ffffff,,,
-876ada431ffffff,0.32588447127863984,2026-07,valid
+876ada431ffffff,,,
 8796d2d66ffffff,,,
 876ad22f6ffffff,,,
 876ad5766ffffff,,,
@@ -25294,7 +25293,7 @@ h3_index,flood_area_km2,month,quality
 876ac2866ffffff,,,
 8796d329dffffff,,,
 876ac6a2effffff,,,
-876ac0a04ffffff,0.1499999999999418,2026-06,valid
+876ac0a04ffffff,,,
 876ac0755ffffff,,,
 8796d0c88ffffff,,,
 876ac4419ffffff,,,
@@ -25456,7 +25455,7 @@ h3_index,flood_area_km2,month,quality
 876ae26ddffffff,,,
 876ac29a4ffffff,,,
 876adc4e4ffffff,,,
-876ac0b42ffffff,0.0028310562041448293,2026-06,valid
+876ac0b42ffffff,,,
 876ac4133ffffff,,,
 8796d2804ffffff,,,
 876af1acdffffff,,,
@@ -25481,7 +25480,7 @@ h3_index,flood_area_km2,month,quality
 8796d279affffff,,,
 876ad1d2affffff,,,
 876af1a63ffffff,,,
-8796d645effffff,0.03180972340354288,2026-07,valid
+8796d645effffff,,,
 876ad3b8cffffff,,,
 876ae3643ffffff,,,
 8796d0185ffffff,,,
@@ -25489,13 +25488,13 @@ h3_index,flood_area_km2,month,quality
 876aeec9bffffff,,,
 8796d3696ffffff,,,
 876ad3b80ffffff,,,
-876ac0b4effffff,0.05666076820237432,2026-06,valid
+876ac0b4effffff,,,
 876ac29b0ffffff,,,
 876ae26e9ffffff,,,
 876ad1d1effffff,,,
 876aee4e8ffffff,,,
 876ac4812ffffff,,,
-876ada5aeffffff,0.01,2026-07,valid
+876ada5aeffffff,,,
 8796d278effffff,,,
 876ac6674ffffff,,,
 876adc410ffffff,,,
@@ -25669,7 +25668,7 @@ h3_index,flood_area_km2,month,quality
 876ac00b5ffffff,,,
 8796d244affffff,,,
 876af1713ffffff,,,
-8796d6d43ffffff,0.03000000000001746,2026-07,valid
+8796d6d43ffffff,,,
 876ade40effffff,,,
 8796d610effffff,,,
 876ad569effffff,,,
@@ -25879,7 +25878,7 @@ h3_index,flood_area_km2,month,quality
 876ae2792ffffff,,,
 876aee591ffffff,,,
 876ac671dffffff,,,
-8796d6c50ffffff,0.019999999999988357,2026-07,valid
+8796d6c50ffffff,,,
 876ac0444ffffff,,,
 876ac6205ffffff,,,
 8796d2a74ffffff,,,
@@ -26046,7 +26045,7 @@ h3_index,flood_area_km2,month,quality
 876ac006affffff,,,
 876ae33a8ffffff,,,
 8796d6876ffffff,,,
-876ac54d1ffffff,0.02,2026-06,valid
+876ac54d1ffffff,,,
 876ad12d0ffffff,,,
 876ac6343ffffff,,,
 876ad02e0ffffff,,,
@@ -26177,7 +26176,7 @@ h3_index,flood_area_km2,month,quality
 876ac696effffff,,,
 876ad276dffffff,,,
 876ac08f1ffffff,,,
-876ade56cffffff,0.009999999999976717,2026-07,valid
+876ade56cffffff,,,
 876ac0695ffffff,,,
 876ac4359ffffff,,,
 876adc966ffffff,,,
@@ -26404,7 +26403,7 @@ h3_index,flood_area_km2,month,quality
 876ad144dffffff,,,
 8796d356cffffff,,,
 876ac0a99ffffff,,,
-876ac0a24ffffff,0.03000000000001746,2026-06,valid
+876ac0a24ffffff,,,
 876ade970ffffff,,,
 876ac2886ffffff,,,
 876ac46e8ffffff,,,
@@ -26732,7 +26731,7 @@ h3_index,flood_area_km2,month,quality
 876ac0562ffffff,,,
 8796d3753ffffff,,,
 876adcc80ffffff,,,
-8796d6d6effffff,0.009999999999994178,2026-07,valid
+8796d6d6effffff,,,
 876ac0c0bffffff,,,
 876ac2a6dffffff,,,
 876aee5a5ffffff,,,
@@ -27190,13 +27189,13 @@ h3_index,flood_area_km2,month,quality
 8796d63b2ffffff,,,
 876ad3ae0ffffff,,,
 876ad12dbffffff,,,
-876ac54dcffffff,0.009999999999988358,2026-06,valid
+876ac54dcffffff,,,
 8796d00d9ffffff,,,
 876af1204ffffff,,,
 876ad14cbffffff,,,
 8796d3d9dffffff,,,
 876ad332dffffff,,,
-876adacb5ffffff,0.005477902130014262,2026-07,valid
+876adacb5ffffff,,,
 876ad5752ffffff,,,
 876ac0aa2ffffff,,,
 876ac2904ffffff,,,
@@ -27522,7 +27521,7 @@ h3_index,flood_area_km2,month,quality
 8796d301effffff,,,
 876adc54bffffff,,,
 876ad521bffffff,,,
-8796d6ce2ffffff,0.010000000000029104,2026-07,valid
+8796d6ce2ffffff,,,
 876ac04d6ffffff,,,
 876ac419affffff,,,
 876af1290ffffff,,,
@@ -27571,7 +27570,7 @@ h3_index,flood_area_km2,month,quality
 8796d36e0ffffff,,,
 876adadabffffff,,,
 876af1a60ffffff,,,
-8796d645bffffff,0.020000000000005822,2026-07,valid
+8796d645bffffff,,,
 876ad3b89ffffff,,,
 876aeece5ffffff,,,
 8796d0182ffffff,,,
@@ -27583,12 +27582,12 @@ h3_index,flood_area_km2,month,quality
 876aeec98ffffff,,,
 8796d3693ffffff,,,
 876ad3423ffffff,,,
-876ac0b4bffffff,0.939999999999837,2026-06,valid
+876ac0b4bffffff,0.7799999999999069,2026-06,valid
 876ac29adffffff,,,
 876ae26e6ffffff,,,
 8796d2031ffffff,,,
 876aee4e5ffffff,,,
-876ada5abffffff,0.010000000000023284,2026-07,valid
+876ada5abffffff,,,
 876ad060effffff,,,
 876ae3699ffffff,,,
 876ac6671ffffff,,,
@@ -27633,7 +27632,7 @@ h3_index,flood_area_km2,month,quality
 876aee411ffffff,,,
 876ac659dffffff,,,
 876ad239cffffff,,,
-876ade19bffffff,0.48999999999992433,2026-07,valid
+876ade19bffffff,,,
 8796d6ad0ffffff,,,
 876ac2126ffffff,,,
 876ad348dffffff,,,
@@ -27682,7 +27681,7 @@ h3_index,flood_area_km2,month,quality
 876ac2052ffffff,,,
 876ac50e3ffffff,,,
 8796d0723ffffff,,,
-8796d2585ffffff,0.020000000000023284,2026-07,valid
+8796d2585ffffff,,,
 876ac5d16ffffff,,,
 876ad1b15ffffff,,,
 8796d6249ffffff,,,
@@ -27704,7 +27703,7 @@ h3_index,flood_area_km2,month,quality
 8796d2cceffffff,,,
 876ad5b0cffffff,,,
 876ad3caaffffff,,,
-8796d6992ffffff,0.01245160293825931,2026-07,valid
+8796d6992ffffff,,,
 876ac0186ffffff,,,
 8796d251bffffff,,,
 876ac6049ffffff,,,
@@ -27719,7 +27718,7 @@ h3_index,flood_area_km2,month,quality
 876ad0b45ffffff,,,
 876ac6ba8ffffff,,,
 876adc944ffffff,,,
-876ade7a6ffffff,0.028376378249917032,2026-07,valid
+876ade7a6ffffff,,,
 876adc598ffffff,,,
 876ac2731ffffff,,,
 876ac499affffff,,,
@@ -27777,7 +27776,7 @@ h3_index,flood_area_km2,month,quality
 876ac0048ffffff,,,
 876ac058dffffff,,,
 876ae3a45ffffff,,,
-876ade464ffffff,0.35371765511387754,2026-07,valid
+876ade464ffffff,,,
 876ad196dffffff,,,
 876af16a6ffffff,,,
 876ad2665ffffff,,,
@@ -28214,7 +28213,7 @@ h3_index,flood_area_km2,month,quality
 876ad37a4ffffff,,,
 876ad5606ffffff,,,
 876ac08ddffffff,,,
-876ade7b4ffffff,0.39594723523186115,2026-07,valid
+876ade7b4ffffff,,,
 876aee8b3ffffff,,,
 876adc952ffffff,,,
 876ac6bb6ffffff,,,
@@ -28369,7 +28368,7 @@ h3_index,flood_area_km2,month,quality
 876ac0c33ffffff,,,
 876ac2a95ffffff,,,
 876ac6541ffffff,,,
-8796d2db0ffffff,0.009999999999994178,2026-07,valid
+8796d2db0ffffff,,,
 876ac6759ffffff,,,
 876adc4f5ffffff,,,
 876ac0480ffffff,,,
@@ -28378,7 +28377,7 @@ h3_index,flood_area_km2,month,quality
 876ac0a1bffffff,,,
 876af1adeffffff,,,
 876ad1da5ffffff,,,
-8796d64d9ffffff,0.030000000000029104,2026-07,valid
+8796d64d9ffffff,,,
 876af3940ffffff,,,
 876ade8f2ffffff,,,
 876ad5a69ffffff,,,
@@ -28441,7 +28440,7 @@ h3_index,flood_area_km2,month,quality
 876ae2690ffffff,,,
 876ac6d5effffff,,,
 876ada555ffffff,,,
-876adac98ffffff,0.056944463269555254,2026-07,valid
+876adac98ffffff,,,
 876ac661bffffff,,,
 876ac21a4ffffff,,,
 876ac4006ffffff,,,
@@ -28456,7 +28455,7 @@ h3_index,flood_area_km2,month,quality
 876ad14b4ffffff,,,
 8796d3d86ffffff,,,
 876ad3316ffffff,,,
-876adac9effffff,0.001386837182412141,2026-07,valid
+876adac9effffff,,,
 876ac6d64ffffff,,,
 876ae3586ffffff,,,
 876ade962ffffff,,,
@@ -28483,7 +28482,7 @@ h3_index,flood_area_km2,month,quality
 876ac6615ffffff,,,
 876ac47b3ffffff,,,
 876aee489ffffff,,,
-876ac0a21ffffff,0.030000000000011642,2026-06,valid
+876ac0a21ffffff,,,
 876ac2883ffffff,,,
 876ae268affffff,,,
 876ac2951ffffff,,,
@@ -28510,7 +28509,7 @@ h3_index,flood_area_km2,month,quality
 876ad22dcffffff,,,
 8796d6a10ffffff,,,
 876ac2066ffffff,,,
-8796d2599ffffff,0.018559159530114097,2026-07,valid
+8796d2599ffffff,,,
 876ac5d2affffff,,,
 876ad1b29ffffff,,,
 8796d625dffffff,,,
@@ -28541,7 +28540,7 @@ h3_index,flood_area_km2,month,quality
 876ac019affffff,,,
 8796d06cdffffff,,,
 876ac5cc0ffffff,,,
-876ac0b59ffffff,0.5297704872041038,2026-06,valid
+876ac0b59ffffff,0.44977048720410384,2026-06,valid
 876ad3921ffffff,,,
 876ad5783ffffff,,,
 876ac550dffffff,,,
@@ -28737,7 +28736,7 @@ h3_index,flood_area_km2,month,quality
 876ac5906ffffff,,,
 876ac054effffff,,,
 876ad1705ffffff,,,
-8796d6d5affffff,0.04507863933299909,2026-07,valid
+8796d6d5affffff,,,
 876ade425ffffff,,,
 876ac5153ffffff,,,
 8796d3824ffffff,,,
@@ -29156,7 +29155,7 @@ h3_index,flood_area_km2,month,quality
 876af1749ffffff,,,
 876ad1a10ffffff,,,
 876ac5c11ffffff,,,
-8796d2480ffffff,0.06000000000009313,2026-07,valid
+8796d2480ffffff,,,
 876adc573ffffff,,,
 876ae3ae8ffffff,,,
 876ac2360ffffff,,,
@@ -29460,7 +29459,7 @@ h3_index,flood_area_km2,month,quality
 876ac2d64ffffff,,,
 8796d6b09ffffff,,,
 876ac6a28ffffff,,,
-876ada510ffffff,0.03999999999999418,2026-07,valid
+876ada510ffffff,,,
 876ac25b1ffffff,,,
 876ac4774ffffff,,,
 876ae22eaffffff,,,
@@ -29635,7 +29634,7 @@ h3_index,flood_area_km2,month,quality
 876ad0675ffffff,,,
 876ac66d8ffffff,,,
 876adc474ffffff,,,
-8796d6c0bffffff,0.08000000000001746,2026-07,valid
+8796d6c0bffffff,,,
 876ac40c3ffffff,,,
 8796d2794ffffff,,,
 876ad52dbffffff,,,
@@ -29653,13 +29652,13 @@ h3_index,flood_area_km2,month,quality
 876aeec95ffffff,,,
 8796d3690ffffff,,,
 876ad5a8effffff,,,
-876ac0b48ffffff,0.24859608212562226,2026-06,valid
+876ac0b48ffffff,,,
 876ac29aaffffff,,,
 876ae26e3ffffff,,,
 876aee4e2ffffff,,,
 876af3965ffffff,,,
 876ac480cffffff,,,
-876ada5a8ffffff,0.009999999999976717,2026-07,valid
+876ada5a8ffffff,,,
 876ad060bffffff,,,
 876af1b03ffffff,,,
 876ac666effffff,,,
@@ -29709,13 +29708,13 @@ h3_index,flood_area_km2,month,quality
 8796d20f1ffffff,,,
 876ac659affffff,,,
 876ad2399ffffff,,,
-876ade198ffffff,0.22999999999993598,2026-07,valid
+876ade198ffffff,,,
 8796d6acdffffff,,,
 876ac2123ffffff,,,
 8796d2656ffffff,,,
 8796d631affffff,,,
 876ad3a48ffffff,,,
-8796d6568ffffff,0.20998398095138165,2026-07,valid
+8796d6568ffffff,,,
 876ac5634ffffff,,,
 876af1b6dffffff,,,
 876ad1433ffffff,,,
@@ -29977,7 +29976,7 @@ h3_index,flood_area_km2,month,quality
 876ac0512ffffff,,,
 876ac2374ffffff,,,
 876af1b70ffffff,,,
-8796d656bffffff,0.05000000000004075,2026-07,valid
+8796d656bffffff,,,
 8796d0292ffffff,,,
 8796d2ab6ffffff,,,
 8796d20f4ffffff,,,
@@ -30086,7 +30085,7 @@ h3_index,flood_area_km2,month,quality
 876ac0ab3ffffff,,,
 876ac2915ffffff,,,
 876ae264effffff,,,
-876ada513ffffff,0.03000000000005821,2026-07,valid
+876ada513ffffff,,,
 876ac0042ffffff,,,
 8796d684effffff,,,
 8796d6b0cffffff,,,
@@ -30446,7 +30445,7 @@ h3_index,flood_area_km2,month,quality
 876aee560ffffff,,,
 876ac488affffff,,,
 876ac6d4affffff,,,
-876adac84ffffff,0.07868320947768073,2026-07,valid
+876adac84ffffff,,,
 876ac66ecffffff,,,
 876adc488ffffff,,,
 876ac0413ffffff,,,
@@ -30464,7 +30463,7 @@ h3_index,flood_area_km2,month,quality
 876aeeca9ffffff,,,
 8796d36a4ffffff,,,
 8796d00a8ffffff,,,
-876ac0b5cffffff,0.037168943330653986,2026-06,valid
+876ac0b5cffffff,,,
 876aee4f6ffffff,,,
 876ac4820ffffff,,,
 876ac6682ffffff,,,
@@ -30505,11 +30504,11 @@ h3_index,flood_area_km2,month,quality
 876ad3ac6ffffff,,,
 876ad5928ffffff,,,
 876ae3589ffffff,,,
-876ac56b2ffffff,0.029851987531118923,2026-06,valid
+876ac56b2ffffff,,,
 876ad14b1ffffff,,,
 8796d3d83ffffff,,,
 876ad3313ffffff,,,
-876adac9bffffff,0.020029377472483578,2026-07,valid
+876adac9bffffff,,,
 876ac6d61ffffff,,,
 876ad3366ffffff,,,
 876ac0a88ffffff,,,
@@ -30538,7 +30537,7 @@ h3_index,flood_area_km2,month,quality
 876ac2880ffffff,,,
 876ac46e2ffffff,,,
 876ac0392ffffff,,,
-8796d2db3ffffff,0.010866212042141584,2026-07,valid
+8796d2db3ffffff,,,
 8796d6b9effffff,,,
 876ac6544ffffff,,,
 876ac666bffffff,,,
@@ -30561,7 +30560,7 @@ h3_index,flood_area_km2,month,quality
 876ade88bffffff,,,
 876ac09b4ffffff,,,
 876ac2816ffffff,,,
-876ada414ffffff,0.11000000000019208,2026-07,valid
+876ada414ffffff,,,
 8796d2d49ffffff,,,
 876ac64daffffff,,,
 876ad5232ffffff,,,
@@ -30711,7 +30710,7 @@ h3_index,flood_area_km2,month,quality
 876ae22d3ffffff,,,
 876ac04d0ffffff,,,
 8796d2acdffffff,,,
-8796d6cdcffffff,0.04000000000000582,2026-07,valid
+8796d6cdcffffff,,,
 876ac625effffff,,,
 8796d6791ffffff,,,
 876adc545ffffff,,,
@@ -30782,7 +30781,7 @@ h3_index,flood_area_km2,month,quality
 876ac2ba5ffffff,,,
 8796d30d8ffffff,,,
 876ac6869ffffff,,,
-8796896c9ffffff,0.009999999999976717,2026-07,valid
+8796896c9ffffff,,,
 876ad2668ffffff,,,
 876ac0590ffffff,,,
 876ad1716ffffff,,,
@@ -30888,7 +30887,7 @@ h3_index,flood_area_km2,month,quality
 876ac2993ffffff,,,
 876ae26ccffffff,,,
 876aee4cbffffff,,,
-876ada591ffffff,0.007053821546285385,2026-07,valid
+876ada591ffffff,,,
 876ad364cffffff,,,
 8796d6b8affffff,,,
 876ac4042ffffff,,,
@@ -30938,8 +30937,7 @@ h3_index,flood_area_km2,month,quality
 8796d6303ffffff,,,
 876ad3a31ffffff,,,
 876ae34f4ffffff,,,
-876ac561dffffff,0.19959253231149793,2025-06,valid
-876ac561dffffff,0.029999999999930152,2026-01,valid
+876ac561dffffff,0.019999999999988357,2026-01,valid
 876ad141cffffff,,,
 8796d3ceeffffff,,,
 876ad36b6ffffff,,,
@@ -31248,7 +31246,7 @@ h3_index,flood_area_km2,month,quality
 876ac4155ffffff,,,
 8796d2826ffffff,,,
 876ad1db6ffffff,,,
-8796d64eaffffff,0.1407203138084808,2026-07,valid
+8796d64eaffffff,,,
 876af3951ffffff,,,
 8796d0211ffffff,,,
 876ae36dbffffff,,,
@@ -31285,14 +31283,14 @@ h3_index,flood_area_km2,month,quality
 8796d2540ffffff,,,
 876adad83ffffff,,,
 8796d06deffffff,,,
-876ac0b70ffffff,0.01586638234463284,2026-06,valid
+876ac0b70ffffff,,,
 876ac200dffffff,,,
 876aee50affffff,,,
 876ac4834ffffff,,,
 876ac01abffffff,,,
 876ac6696ffffff,,,
 876adc432ffffff,,,
-876ade082ffffff,6.584178878728411e-05,2026-07,valid
+876ade082ffffff,,,
 876ad2283ffffff,,,
 8796892e4ffffff,,,
 876ac6484ffffff,,,

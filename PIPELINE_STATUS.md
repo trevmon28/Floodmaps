@@ -1,9 +1,10 @@
 # DRC Flood Mapping Pipeline — Status Tracker
 
-**Last updated:** 2026-09-08  
+**Last updated:** 2026-09-22  
 **AOI:** Eastern DRC (North Kivu, South Kivu, Ituri)  
 **Period:** Jan 2025 – Jul 2026 (19 months, no gaps — Jun 2026 recovered and Jul 2026 re-pulled complete on 2026-09-08)  
-**Threshold:** −5 dB (raised from −3 dB after Sep 2025 anomaly investigation)  
+**Threshold:** −5 dB change **+ −12 dB absolute ceiling** (absolute gate added 2026-09-22)  
+**Masks:** slope >8°, permanent water buffered 3 px — applied *before* the 7×7 median filter  
 **Env:** `C:\Users\trevm\Projects\SpatialLab\gis_env`
 
 ## How to Restart After a Crash
@@ -32,7 +33,8 @@ Then open the notebook for the phase that failed and **run only the cells that h
 | 3 — Flood Detection (with masks) | `run_detection_pipeline.py` | ~2 min | ✅ Complete — all 16 months, 2026-05-16 7:20 PM |
 | 3b — Flood Detection (reprocess) | — | — | ✅ Done via FORCE_REPROCESS=True in step 3 |
 | 4 — Validation & Export | `notebooks/04_validation_export.ipynb` | ~2 min | 🔄 Ready to run |
-| 5 — Extend to May–Jul 2026 | `extend_months.py` | ~2 hr | ✅ Complete — May: 5.8 km²; Jun: 35.4 km²; Jul: 31.0 km² (all full-fidelity, no degraded blocks) |
+| 5 — Extend to May–Jul 2026 | `extend_months.py` | ~2 hr | ✅ Complete — all three acquired full-fidelity, no degraded blocks |
+| 6 — Absolute-gate re-release | `run_detection_pipeline.py` | ~15 min | ✅ Complete 2026-09-22 — all 19 months; May: 2.8; Jun: 23.3; Jul: 6.5 km² |
 
 ---
 
@@ -103,21 +105,21 @@ Both masks built by `build_masks.py`. Run once, persist forever.
 | 2025-02 | ✅ | — | 0.0 km² | ⚠️ VV raw amplitude — unreliable |
 | 2025-03 | ✅ | — | 0.0 km² | Baseline month — self-comparison = 0 |
 | 2025-04 | ✅ | — | 0.0 km² | Baseline month — self-comparison = 0 |
-| 2025-05 | ✅ | ✅ | 6.1 km² | Late long-rains |
-| 2025-06 | ✅ | ✅ | 4.3 km² | Early dry season |
-| 2025-07 | ✅ | ✅ | 0.2 km² | Mid dry season |
-| 2025-08 | ✅ | ✅ | 0.4 km² | Late dry season |
-| **2025-09** | ✅ | ✅ | **217.2 km²** | **Peak — short rains onset** *(was 3,427 km² at −3 dB — confirmed artifact)* |
-| 2025-10 | ✅ | ✅ | 0.9 km² | |
-| 2025-11 | ✅ | ✅ | 1.6 km² | |
-| 2025-12 | ✅ | ✅ | 2.0 km² | |
-| 2026-01 | ✅ | ✅ | 2.1 km² | |
-| 2026-02 | ✅ | ✅ | 17.4 km² | Long-rains onset |
-| 2026-03 | ✅ | — | 0.0 km² | Data gap (VV 4.5 MB — sparse coverage) |
-| 2026-04 | ✅ | — | 0.0 km² | Data gap (VV 1.3 MB — sparse coverage) |
-| 2026-05 | ✅ | ✅ | 5.8 km² | 7.6% coverage; reproduced exactly on re-run |
-| 2026-06 | ✅ | ✅ | 35.4 km² | 23.6% coverage; 220 patches, 91% of area in patches ≥10 px |
-| 2026-07 | ✅ | ✅ | 31.0 km² | 8.5% coverage; ⚠️ 610 patches, median 1 px — see fragmentation caveat below |
+| 2025-05 | ✅ | ✅ | 6.1 km² | Late long-rains (unchanged by the gate) |
+| 2025-06 | ✅ | ✅ | 0.8 km² | Early dry season |
+| 2025-07 | ✅ | — | 0.0 km² | Nothing survives absolute gating |
+| 2025-08 | ✅ | ✅ | 0.0 km² | Nothing survives absolute gating |
+| **2025-09** | ✅ | ✅ | **209.9 km²** | **Peak** *(3,427 → 217.2 at −5 dB → 209.9 with abs gate: only −3%)* |
+| 2025-10 | ✅ | — | 0.0 km² | Nothing survives absolute gating |
+| 2025-11 | ✅ | ✅ | 0.5 km² | |
+| 2025-12 | ✅ | ✅ | 0.9 km² | |
+| 2026-01 | ✅ | ✅ | 1.4 km² | |
+| 2026-02 | ✅ | ✅ | 11.1 km² | Long-rains onset |
+| 2026-03 | ✅ | ✅ | 5.6 km² | RTC recovery; 7.1% coverage |
+| 2026-04 | ✅ | ✅ | 2.5 km² | RTC recovery; 5.2% coverage |
+| 2026-05 | ✅ | ✅ | 2.8 km² | 7.6% coverage |
+| 2026-06 | ✅ | ✅ | 23.3 km² | 23.6% coverage; 46 patches, median 18 px |
+| 2026-07 | ✅ | ✅ | 6.5 km² | 8.5% coverage; 23 patches, median 10 px (was 610 / 1 px) |
 
 **How to run:**
 1. Open `notebooks/03_flood_detection.ipynb`
@@ -151,8 +153,10 @@ Both masks built by `build_masks.py`. Run once, persist forever.
 | Data leakage in training data | Affects ML model validity (not this pipeline directly) | Acknowledged; see CLAUDE.md |
 | **Absolute km² not comparable across months** | Coverage varies 0.9%–50.5% of bbox and months image *different places*; r=0.50 between usable area and reported km² | Report density (% of usable area) alongside usable km²; compare only within a fixed reference footprint |
 | **Baseline depth is shallow** | 45.6% of baseline pixels rest on a single observation, so the "dry" median cannot reject transient water; only 4.3% have all 3 obs | Widen the baseline window beyond 2025-03/04/05 |
-| **Detection fires overwhelmingly on open water** | Before masking, 81–99% of every month's detected pixels sit on JRC permanent water. 2026-07 is the extreme: 551,350 px (5,513 km²) raw, of which 99.4% is permanent water. Calm water is specular and reads as a large negative dB change against a windier baseline — a classic SAR false positive | The permanent-water mask hides it but does not fix it; the surviving extent is the fringe around masked water bodies. Consider masking *before* thresholding, and adding a wind/roughness or VH-ratio check |
-| **2026-07 flood extent is fringe, not flood** | 610 patches, median 1 px, only 64.9% of area in patches ≥10 px (vs 98.3% for 2025-09). The 7×7 median filter works — after it, 2026-07 has 569 patches at median 7 px and 99.8% of area in patches ≥10 px. The permanent-water mask then removes 99.3% of the detection, leaving 1-px remnants along its edges | Do not report 2026-07's 0.21% density as a series peak; treat it as a water-edge artifact pending validation |
+| ~~Detection fires on open water~~ **ADDRESSED 2026-09-22** | Relative change alone flagged pixels at −7.3 dB (p90, 2026-07) where open water sits at −23 dB and dry land at −10.5 dB | Fixed: −12 dB absolute ceiling + 3 px water-mask buffer + masks applied before smoothing. Peak month moved −3%, 2026-07 −79%, fragmentation resolved (610 → 23 patches) |
+| **−12 dB ceiling is uncalibrated** | It is the single most influential free parameter in the pipeline and is reasoned from scene statistics, not ground truth | Validate against CEMS/OCHA records or in-situ observation before the numbers drive decisions |
+| **VH/VV discriminator still disabled** | VH is the strongest open-water discriminator available; `vh_ratio_threshold_db` remains `null` | VH composites are missing for 2026-04…07 — requires re-acquiring those months with the VH band |
+| **Otsu absolute gate is a trap** | `absolute_threshold_method: otsu` finds the open-water/land split (−12 to −16.8 dB here), far darker than vegetated flooding; it cut 2025-09 to 108.5 km² and 2026-07 to 0.2 km² | Keep `fixed` unless mapping open water only |
 
 ---
 
@@ -178,6 +182,9 @@ Both masks built by `build_masks.py`. Run once, persist forever.
 | 2026-09-08 | Re-pulled May–Jul 2026 via `extend_months.py` (renamed from `extend_may_july_2026.py`, months now CLI args) | **Jun 2026 recovered: 35.4 km² — it was never a data gap.** The month was lost to one transient MPC read failure aborting a whole-AOI load. Jul re-pulled complete: 2.5% → 8.5% coverage, 0.0 → 31.0 km². May reproduced exactly (20,753,755 px / 98.1 MB / 5.8 km²). No block needed the lenient fallback. |
 | 2026-09-08 | Root-caused the 2026-06 gap | Failures are **transient**, not corrupt tiles: the same scenes that threw WarpOperationError/RasterioIOError read perfectly minutes later (A/B measured identical to the pixel under both signing methods). Fix = block-wise compositing + deferred second-pass retry; `fail_on_error=False` kept as last resort only, since applying it unconditionally silently cost 2026-05 2.85M valid px. |
 | 2026-09-08 | Coverage audit of all 19 months | Coverage ranges 0.9%–50.5% of bbox and **no pixel is covered in all 19 months** (≥13/19 gives 10,792 km²). Absolute km² correlates with usable area at r=0.50, so the month-to-month km² series is not comparable as published. Baseline rests on a **single** observation for 45.6% of its area (only 4.3% has all 3). |
+
+| 2026-09-22 | Full re-release: absolute-backscatter gate + buffered water mask | Relative change alone was flagging dry-land-bright pixels. Added −12 dB absolute ceiling, 3 px permanent-water buffer, and moved quality masks *before* the 7×7 median filter. All 19 months reprocessed. Series total 342.6 → **271.4 km²**. Discriminating, not blanket: 2025-09 −3% (217.2 → 209.9), 2026-07 −79% (31.0 → 6.5), marginal months (2025-07/08/10) → 0.0. Fragmentation resolved: 2026-07 from 610 patches/median 1 px to 23/median 10 px. Deleted 3 stale GeoJSONs for months that now detect zero. |
+| 2026-09-22 | Rejected Otsu for the absolute gate | First attempt used `min(otsu(VV), −12)`. Otsu locates the open-water/land split (−12 to −16.8 dB), darker than the vegetated flooding being mapped (flagged pixels median −13 to −14 dB), so it behaved as an open-water detector: 2025-09 → 108.5 km², 2026-07 → 0.2 km². Switched to a fixed −12 dB ceiling; results then matched the modelled prediction (predicted 210.8, actual 209.9 for 2025-09). |
 
 > **Update this table each time you run a phase.** Include what you ran, whether it succeeded, and any errors.
 

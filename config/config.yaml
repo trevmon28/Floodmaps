@@ -49,6 +49,21 @@ processing:
   change_threshold_db: -5.0
   # VH/VV ratio filter (None = disabled; -10.0 recommended once VH files verified)
   vh_ratio_threshold_db: null
+  # Absolute backscatter gate (added 2026-09-20). Relative change alone flags
+  # pixels far too bright to be standing water: in 2026-07 the flagged pixels
+  # reached -7.3 dB at p90, while open water in this AOI sits near -23 dB and dry
+  # land near -10.5 dB. A flood pixel must now also be dark in absolute terms.
+  absolute_db_max: -12.0
+  # fixed = use absolute_db_max as a ceiling (default, and what you want for
+  # shallow/vegetated flooding). otsu = per-scene open-water/land split of the
+  # month's dB histogram: much stricter (-12 to -16.8 dB here) and it removes
+  # vegetated flooding, so use it only for open-water-only mapping.
+  absolute_threshold_method: fixed
+  # Dilate the permanent-water mask by this many 100 m pixels before applying it.
+  # Absorbs shoreline and geolocation error that otherwise leaves a ring of false
+  # positives around lakes and rivers (37% of 2026-07's extent sat within 500 m
+  # of permanent water, against 0.3% for 2025-09).
+  water_buffer_px: 3
 
 output:
   format: GeoTIFF  # Cloud-Optimized GeoTIFF (COG)

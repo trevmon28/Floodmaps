@@ -125,11 +125,12 @@ for name in ['flood_map_interactive.html', 'flood_sampling_map.html']:
 # 5. README
 readme = """\
 # Eastern DRC Flood Mapping — Researcher Handover
-**Date:** 2026-09-09
+**Date:** 2026-09-22
 **Contact:** Trevor Monroe
 **AOI:** North Kivu, South Kivu, Ituri (Eastern DRC)
 **Period:** January 2025 – July 2026 (19 months, 17 valid, no gaps)
-**Method:** Sentinel-1 SAR change detection (Otsu adaptive / fixed −5 dB threshold, 100 m resolution)
+**Method:** Sentinel-1 SAR change detection — −5 dB change **and** −12 dB absolute
+backscatter ceiling, permanent-water mask buffered 3 px, 100 m resolution
 **License:** CC-BY 4.0 — see LICENSE in repository root
 
 ---
@@ -236,16 +237,27 @@ months image **different places** — no pixel is covered in all 19 months. Repo
 comparable month to month; use `flooded_pct` (share of usable area) for comparisons and
 always report the covered area alongside.
 
-### Open-water false positives
-Before the permanent-water mask is applied, 81–99% of every month's detected pixels sit
-on JRC permanent water. Calm water is specular at C-band and reads as a large negative
-dB change against a windier baseline, so lakes and rivers register as "flooded". The
-mask removes them, but the extent that survives is largely the fringe around those water
-bodies rather than independent flood signal.
+### Open-water false positives — addressed in this release
+Detecting flooding by *relative* change alone flagged pixels far too bright to be standing
+water: in July 2026 flagged pixels reached −7.3 dB at the 90th percentile, where open water
+in this area sits near −23 dB and dry land near −10.5 dB. This release adds an absolute
+ceiling (a pixel must be below −12 dB), buffers the permanent-water mask by 300 m, and
+applies quality masks before spatial smoothing.
 
-2026-07 is the extreme case: 5,513 km² detected raw, 99.4% of it on permanent water,
-leaving 610 fragments at a median of 1 pixel (versus 98% of area in patches ≥10 px for
-2025-09). Treat 2026-07 as a water-edge artifact, not a seasonal peak.
+Every figure in this package changed as a result. The revision is targeted rather than
+blanket — the validated September 2025 peak moved only −3% (217.2 → 209.9 km²) while
+July 2026 fell 79% (31.0 → 6.5 km²), and three marginal months resting on single-digit
+pixel counts now report 0.0 km² instead of a trace.
+
+**Caveat:** the −12 dB ceiling is reasoned from the scene statistics above but has **not
+been calibrated against ground truth**. It is the most influential single parameter in the
+pipeline. Treat these areas as best current estimates, not validated measurements.
+
+### Columns `near_water_km2` / `away_water_km2`
+`flood_stats.csv` now splits each month's extent by distance to permanent water rather
+than silently deleting near-shore detections. Riparian flooding is real and is where
+people live, but it is also where false positives concentrate, so both are reported.
+After the buffer, near-water area is 0.1–0.4 km² in every month.
 
 ## Peak flood event
 September 2025: **217.2 km²** — dominant signal consistent with the short-rains onset

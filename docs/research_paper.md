@@ -19,14 +19,20 @@ from Sentinel-1 Synthetic Aperture Radar (SAR) Ground Range Detected (GRD) image
 Using a change-detection approach against a calibrated three-month dry-season baseline
 confirmed against CHIRPS precipitation anomalies, we detect anomalous backscatter
 decreases (−5 dB threshold; Otsu adaptive threshold implemented for comparison)
-consistent with inundation, apply terrain and permanent-water quality masks, and export
+consistent with inundation, gate candidates on absolute backscatter, apply terrain and
+buffered permanent-water quality masks, and export
 flood extents as Cloud-Optimised GeoTIFFs and GeoJSON polygons. An initial −3 dB
 threshold produced a September 2025 reading of 3,427.6 km² that cross-validation against
 OCHA situation reports and CEMS rapid mapping activations revealed as a **wet-soil and
 wet-vegetation false positive** — no corroborating humanitarian evidence was found for
-a flood event of this scale. The threshold has been revised to −5 dB and all detections reprocessed. The confirmed
-peak flood reading is **217.2 km²** in September 2025 — consistent with Ruzizi
-floodplain inundation at short-rains onset and representing ~7% of Uvira territory.
+a flood event of this scale. The threshold was revised to −5 dB and all detections reprocessed. A second revision
+(September 2026) added an absolute-backscatter gate after relative change alone was found
+to flag pixels at −7.3 dB (p90, July 2026) — far brighter than standing water, which sits
+near −23 dB against dry land at −10.5 dB in this AOI — together with a 3-pixel buffer on
+the permanent-water mask. The confirmed peak flood reading is **209.9 km²** in September
+2025 — consistent with Ruzizi floodplain inundation at short-rains onset. Notably the
+peak moved only −3% under the revision while the most contaminated month fell 79%,
+indicating the correction targets error rather than uniformly shrinking the series.
 The full pipeline is open-source, laptop-runnable, and reproducible from publicly
 accessible STAC catalogs without API keys or cloud billing.
 
@@ -299,24 +305,26 @@ applied, setting flagged pixels to `nodata = 255`.
 | 2025-03 | 14 | 0.0 | 0.00% | valid | Baseline month — self-comparison |
 | 2025-04 | 9 | 0.0 | 0.00% | valid | Baseline month — self-comparison |
 | 2025-05 | 31 | 6.1 | 0.004% | valid | Baseline month / late long-rains |
-| 2025-06 | 19 | 4.3 | 0.003% | valid | Early dry season |
-| 2025-07 | 7 | 0.2 | <0.001% | valid | Mid dry season (sparse scenes) |
-| 2025-08 | 21 | 0.4 | <0.001% | valid | Late dry season |
-| **2025-09** | **38** | **217.2** | **0.132%** | **valid** | **Peak — short rains onset** *(revised from 3,427 km²; see §5.2)* |
-| 2025-10 | 8 | 0.9 | <0.001% | valid | Low scene count — may underestimate |
-| 2025-11 | 11 | 1.6 | 0.001% | valid | |
-| 2025-12 | 17 | 2.0 | 0.001% | valid | |
-| 2026-01 | 15 | 2.1 | 0.001% | valid | |
-| 2026-02 | 29 | 17.4 | 0.011% | valid | Long-rains onset; see §4.3 caveat |
-| 2026-03 | 107‡ | 12.0 | 0.007% | valid‡ | RTC composite; 7.1% spatial coverage — long-rains signal |
-| 2026-04 | 98‡ | 6.2 | 0.004% | valid‡ | RTC composite; 5.2% spatial coverage — long-rains signal |
-| 2026-05 | 127‡ | 5.8 | 0.004% | valid‡ | RTC composite; 7.6% spatial coverage — late long-rains signal |
-| 2026-06 | 147‡ | — | — | gap‡ | WarpOperationError — corrupt MPC RTC tiles; no composite written |
-| 2026-07 | 12‡ | 0.0 | 0.00% | partial‡ | 2.5% coverage; incomplete month — re-run after 2026-07-31 |
+| 2025-06 | 19 | 0.8 | <0.001% | valid | Early dry season |
+| 2025-07 | 7 | 0.0 | 0.00% | valid | Mid dry season — no detection survives gating |
+| 2025-08 | 21 | 0.0 | 0.00% | valid | Late dry season — no detection survives gating |
+| **2025-09** | **38** | **209.9** | **0.16%** | **valid** | **Peak — short rains onset** *(3,427 → 217.2 → 209.9 km²; see §5.2, §5.4)* |
+| 2025-10 | 8 | 0.0 | 0.00% | valid | Low scene count — no detection survives gating |
+| 2025-11 | 11 | 0.5 | <0.001% | valid | |
+| 2025-12 | 17 | 0.9 | 0.01% | valid | |
+| 2026-01 | 15 | 1.4 | 0.04% | valid | |
+| 2026-02 | 29 | 11.1 | 0.01% | valid | Long-rains onset; see §4.3 caveat |
+| 2026-03 | 107‡ | 5.6 | 0.03% | valid‡ | RTC composite; 7.1% spatial coverage — long-rains signal |
+| 2026-04 | 98‡ | 2.5 | 0.02% | valid‡ | RTC composite; 5.2% spatial coverage — long-rains signal |
+| 2026-05 | 127‡ | 2.8 | 0.02% | valid‡ | RTC composite; 7.6% spatial coverage — late long-rains signal |
+| 2026-06 | 147‡ | 23.3 | 0.04% | valid‡ | RTC composite; 23.6% spatial coverage — **recovered**, see §5.3 |
+| 2026-07 | 148‡ | 6.5 | 0.04% | valid‡ | RTC composite; 8.5% spatial coverage; full month |
 
 *Scene counts are approximate, derived from STAC item counts per month per AOI bounding box.  
-All flood areas computed at −5 dB threshold (raised from initial −3 dB; see §5.2 for rationale).*  
-*‡ 2026-05/06/07 acquired from Microsoft Planetary Computer `sentinel-1-rtc` collection (Radiometrically Terrain Corrected sigma0); calibration formula `10 × log₁₀(σ₀_power)` matching the existing pipeline baseline. Scene counts are items returned by STAC search that possessed a readable VV asset; June 2026 has 147 STAC items but all fail during odc-stac warp due to corrupt tile data — treated as a data gap. May 2026 valid pixel coverage is 7.6% of AOI (20.7M / 274M pixels) due to high corruption rate in 2026 RTC files, not a gap in acquisition.*
+All flood areas computed at −5 dB change threshold **and** a −12 dB absolute-backscatter
+ceiling, with the permanent-water mask buffered by 3 pixels and all quality masks applied
+before morphological smoothing (see §5.4). Series total: 271.4 km² across 17 valid months.*  
+*‡ 2026-03 through 2026-07 acquired from Microsoft Planetary Computer `sentinel-1-rtc` collection (Radiometrically Terrain Corrected sigma0); calibration formula `10 × log₁₀(σ₀_power)` matching the existing pipeline baseline. June 2026 was previously reported as a data gap attributed to corrupt tiles; it was in fact a transient read failure aborting a whole-AOI load, and on re-acquisition it yielded the second-best spatial coverage in the series (23.6%). See §5.3.*
 
 ### 5.2 September 2025 Reading — Likely Methodological Artifact
 
@@ -387,6 +395,12 @@ seasonal arc: dry-season baseline of 0.2–6.1 km² (May–Aug), peak of 217.2 k
 September, and gradual recession through December. All revised outputs have been
 committed to the GitHub repository.
 
+> The figures in this subsection are those of the −5 dB revision as published in
+> July 2026, retained here as the record of that step. They were superseded by the
+> September 2026 absolute-backscatter revision (§5.4), which moved the September
+> peak a further −3% to **209.9 km²**. The results table in §5.1 carries the
+> current values.
+
 **October–November 2025 dip (re-interpreted):** The drop from 3,427 km² in September
 to 11 km² in October is now better explained as the September reading being anomalously
 *high* (artifact) rather than October being anomalously *low*. October's 8-scene count
@@ -405,7 +419,77 @@ EMSR-702 as potentially relevant to South Kivu September 2025. On review, EMSR-7
 pertains to a different event; no September 2025 activation for Eastern DRC was
 confirmed. This further supports the artifact interpretation.
 
-### 5.3 Data Quality Discussion
+### 5.3 June 2026 — A Recovered "Data Gap"
+
+June 2026 was reported in the previous release as a permanent data gap, attributed to
+corrupt Microsoft Planetary Computer RTC tiles failing during warp. That attribution was
+wrong. The 147 STAC items were readable; a single *transient* read failure aborted the
+whole-AOI `odc-stac` load, and because the month was loaded in one call the failure cost
+the entire month. Re-acquisition on 2026-09-08 with block-wise compositing and a deferred
+retry pass recovered the month at **23.6% spatial coverage** — the second-highest in the
+19-month series, roughly four times its neighbours (2026-05: 7.6%, 2026-07: 8.5%).
+
+The same acquisition confirmed that the failures are transient rather than data defects:
+scenes that raised `WarpOperationError` mid-run read successfully, to the pixel, minutes
+later. Loading in 2,048-row blocks bounds the blast radius of any single failure, and
+`fail_on_error=False` is reserved as a last resort — applied unconditionally it silently
+converts transient errors to nodata, which cost 2026-05 2.85M valid pixels before the
+deferred retry was introduced.
+
+### 5.4 Absolute-Backscatter Gate (September 2026 Revision)
+
+The −5 dB revision (§5.2) constrained only *relative* change. Measurement of the surviving
+detections showed this is insufficient. In the July 2026 composite, flagged pixels ranged
+to **−7.3 dB at the 90th percentile**, while permanent water in the same scene sits at a
+median of **−23.0 dB** and non-water land at **−10.5 dB**. A pixel at −7.3 dB is dry-land
+brightness; it was flagged solely because it had dropped 5 dB from an even brighter
+baseline. Relative change alone cannot exclude such cases.
+
+Three changes were made:
+
+1. **Absolute ceiling.** A candidate must also satisfy VV < −12 dB, i.e. be dark in
+   absolute terms and not merely darker than before.
+2. **Buffered water mask.** The JRC permanent-water mask is dilated by 3 pixels (300 m)
+   to absorb shoreline and geolocation error. Before this, 36.6% of July 2026's extent lay
+   within 500 m of permanent water, against 0.3% for September 2025.
+3. **Mask-before-smooth ordering.** Quality masks previously ran *after* the 7×7 median
+   filter, carving holes in already-smoothed regions and leaving single-pixel remnants
+   along mask edges. They now run before it, so morphology operates on the final
+   candidate set.
+
+**On the choice of threshold.** The ceiling is deliberately fixed at −12 dB rather than
+derived per-scene by Otsu. Otsu applied to the VV histogram locates the open-water/land
+split, which across this series falls between −12 dB and −16.8 dB. That is substantially
+darker than shallow or vegetated inundation — the flagged pixels have a median of −13 to
+−14 dB — so an Otsu-derived gate behaves as an open-water detector and removes the
+partially-inundated signal the method is intended to map. Applying it reduced September
+2025 to 108.5 km² and July 2026 to 0.2 km². The Otsu path is retained in `config.yaml`
+(`absolute_threshold_method: otsu`) for open-water-only mapping, where that strictness is
+appropriate, but `fixed` is the operational default. We emphasise that −12 dB is
+physically reasoned from the scene statistics above and **has not been calibrated against
+ground truth**; it is the single most influential free parameter in the revised pipeline.
+
+**Effect.** The revision is discriminating rather than uniformly conservative:
+
+| Month | Pre-revision (km²) | Revised (km²) | Change |
+|-------|-------------------|---------------|--------|
+| 2025-09 (peak) | 217.2 | 209.9 | **−3%** |
+| 2026-02 | 17.4 | 11.1 | −36% |
+| 2026-06 | 35.4 | 23.3 | −34% |
+| 2026-07 | 31.0 | 6.5 | **−79%** |
+| 2025-07 / 08 / 10 | 0.2 / 0.4 / 0.9 | 0.0 | −100% |
+
+The validated September peak is essentially unchanged while the months with the strongest
+open-water contamination fall sharply, and marginal months resting on single-digit pixel
+counts resolve to zero. Spatial coherence improves correspondingly: July 2026 moves from
+610 patches at a median of 1 pixel (64.9% of area in patches ≥10 px) to 23 patches at a
+median of 10 pixels (90.9%), matching the profile of the validated September month.
+
+**Remaining limitation.** The VH/VV ratio discriminator (§4.4) remains disabled. VH is the
+strongest available open-water discriminator, but VH composites are absent for 2026-04
+through 2026-07; enabling it requires re-acquiring those months with the VH band.
+
+### 5.5 Data Quality Discussion
 
 **Bad months (2025-01/02):** Uncalibrated amplitude DN storage in the early preprocessing
 notebook version produces change signals ~30 dB higher than calibrated months, rendering
@@ -472,9 +556,12 @@ highest-priority gap for future work.
 A 19-month open-source Sentinel-1 SAR flood mapping pipeline for Eastern DRC has been
 developed and documented. Key findings:
 
-- **September 2025** is the confirmed peak at **217.2 km²** (0.13% of AOI) after
-  reprocessing at −5 dB. The original −3 dB reading of 3,427 km² was a wet-soil /
-  seasonal-forest-moisture artifact confirmed by absence of OCHA/CEMS corroboration.
+- **September 2025** is the confirmed peak at **209.9 km²** (0.16% of covered area)
+  after reprocessing at −5 dB and gating on absolute backscatter (§5.4). The original
+  −3 dB reading of 3,427 km² was a wet-soil / seasonal-forest-moisture artifact
+  confirmed by absence of OCHA/CEMS corroboration; the −5 dB step brought it to
+  217.2 km² and the absolute gate a further −3%. That the peak barely moved under a
+  revision which cut July 2026 by 79% is itself evidence the September signal is real.
   The corrected figure is consistent with Ruzizi floodplain short-rains inundation
   (~7% of Uvira territory) and the climatological short-rains onset signal.
 - The pipeline produces quality-coded monthly outputs with per-month scene counts, dual
@@ -658,7 +745,7 @@ follow-on paper rather than a requirement for this one.
 | 7×7 median filter vs 3×3 binary opening | R2 | ✅ **Implemented** — `run_detection_pipeline.py`; described in §4.4 |
 | Otsu cap revised to −5 dB | R1 | ✅ **Updated** — cap now applied at −5 dB (config-driven); §4.4 explains rationale |
 | Threshold raised −3 dB → −5 dB (Sep 2025 artifact) | R1, R2 | ✅ **Implemented** — all 16 prior months reprocessed; Sep 2025: 3,427.6 → 217.2 km² |
-| Temporal extension to Jul 2026 | — | 🔄 **In progress** — `extend_months.py` acquiring 2026-05/06/07 composites |
+| Temporal extension to Jul 2026 | — | ✅ **Complete** — 2026-05/06/07 acquired; 2026-06 recovered from a false data gap (§5.3) |
 
 *⚠️ = in progress / partial; 📋 = deferred to next version; 🔄 = actively running*
 
