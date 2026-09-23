@@ -151,14 +151,81 @@ used for targeting.
 
 ---
 
+## Uvira investigation (23 Sep) — resolved
+
+The Admin-3 shift flagged Uvira as a possible over-correction. It is not.
+
+Uvira's entire pre-revision 8.82 km² came from **2026-07 alone**. It records ~0.00 km² in
+every other month of the series, including months with externally documented flood events.
+Its "peak" was therefore one reading from the single most contaminated month in the series
+(2026-07: 99.4% of raw detection on permanent water, 610 fragments at median 1 px).
+
+Decomposition of the 884 pre-revision pixels:
+
+| Removed by | Pixels |
+|------------|--------|
+| Absolute gate (VV ≥ −12 dB, too bright for water) | 143 |
+| Water buffer alone (≤300 m, but dark enough to be water) | 249 |
+| Mask-before-smooth reordering | ~363 |
+| **Surviving** | **129** |
+
+Two independent lines support the removal:
+
+- **No GDACS event anywhere in DR Congo in July 2026**, so there is nothing to corroborate
+  an Uvira flood that month.
+- The removed pixels have a **median of −16.7 dB** — darker than typical flood detections
+  across this series (−13 to −14 dB) and closer to open water (−23 dB). They look like lake
+  and river surface, not inundated land.
+
+**Residual uncertainty.** The 249 pixels (2.49 km²) removed by the buffer alone are dark
+*and* near-shore, which describes both a calm-water artifact and genuine riparian flooding.
+With no corroborating event and the month being the worst in the series, removal is
+defensible — but Uvira figures merit a second look before targeting. The earlier "do not
+use for targeting" warning is withdrawn.
+
+---
+
+## Threshold sensitivity (23 Sep)
+
+The −12 dB absolute ceiling is the pipeline's most influential free parameter and is not
+ground-truth calibrated, so its effect was swept across −10 to −14 dB on six key months.
+Read-only; no outputs were changed.
+
+Flood area (km²) by ceiling:
+
+| Month | Corroborated? | −10 | −11 | **−12** | −13 | −14 |
+|-------|---------------|-----|-----|---------|-----|-----|
+| 2025-05 | yes | 6.1 | 6.1 | **6.1** | 6.0 | 3.3 |
+| 2025-09 | **no** (peak) | 215.6 | 214.6 | **209.8** | 177.9 | 107.4 |
+| 2026-02 | yes | 16.9 | 15.2 | **11.1** | 7.4 | 2.8 |
+| 2026-03 | yes | 6.0 | 5.9 | **5.6** | 3.5 | 1.6 |
+| 2026-06 | **no** | 31.0 | 30.0 | **23.4** | 15.2 | 5.2 |
+| 2026-07 | **no** | 6.8 | 6.5 | **6.5** | 6.1 | 4.8 |
+
+Findings:
+
+1. **Not knife-edge between −10 and −12 dB.** The corroborated anchor 2025-05 is unchanged
+   (6.1 → 6.1) and the peak moves 3% (215.6 → 209.8). The most sensitive month in that
+   band is 2026-02 at 1.51×.
+2. **Steep collapse below −12 dB.** At −14 dB, 2026-02 loses 75%, 2026-03 71%, 2026-06 78%.
+   −12 dB sits at the knee of the curve, which supports it as the operational value.
+3. **No threshold reverses the corroborated/uncorroborated contrast.** The September 2025
+   peak is 10–30× larger than any other month at *every* setting tested. The open question
+   about that month is therefore a property of the data, not an artifact of this parameter.
+
+This does not remove the need for ground-truth calibration, but it does mean the published
+conclusions do not hinge on the exact value within −10…−12 dB.
+
+---
+
 ## Recommended next steps
 
 1. **Test the VH/VV ratio discriminator.** VH composites now exist for 2026-01 onward
    (2026-04…07 acquired 2026-09-22). VH is a better open-water discriminator than a
    geometric buffer, so enabling it may permit a **smaller** buffer and recover genuine
    near-shore signal in Uvira. Test VH before revisiting the buffer.
-2. **Examine Uvira specifically**, with a per-region near-water / away-from-water split
-   rather than the current per-month split.
+2. ~~Examine Uvira specifically~~ — **done 23 Sep, resolved** (see above). Any further
+   work there would target only the 2.49 km² buffer-removed residual.
 3. **Rebuild the baseline** from a window with no documented in-AOI flooding.
 4. **Calibrate the −12 dB ceiling.** It remains the single most influential free parameter
    and rests on scene statistics, not ground truth.

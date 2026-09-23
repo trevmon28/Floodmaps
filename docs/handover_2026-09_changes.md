@@ -89,11 +89,16 @@ The pattern makes physical sense: the units that collapsed (Uvira, Bukavu, Kabar
 Lake Tanganyika and Lake Kivu, where the false positives were concentrated; the units that
 held steady (Irumu, Mambasa, Rutshuru) are inland.
 
-**But treat Uvira with caution.** It is the most documented flood-prone populated place in
-the area, and its flooding is by nature close to the shore and river mouths — exactly what
-the new 300 m exclusion zone removes. The 85% reduction there may be over-correction, in
-the place where need is highest. **Do not use the Uvira figure for targeting without
-checking it first.**
+**Uvira was investigated specifically** (23 Sep), because it is the most documented
+flood-prone populated place in the area and its flooding is by nature close to the shore —
+exactly what the new exclusion zone removes. The check clears the change: Uvira's entire
+previous figure came from **July 2026 alone**, the single most contaminated month, and it
+shows essentially nothing in every other month including ones with documented flood events.
+No flood event is recorded anywhere in DR Congo for July 2026, and the removed pixels are
+radar-darker than typical flooding — they look like lake and river surface, not flooded
+land. A small residual (about 2.5 km²) sits close enough to the shore to be genuinely
+ambiguous, so Uvira figures still warrant a second look before targeting, but the earlier
+"do not use" warning is withdrawn.
 
 ---
 
@@ -111,8 +116,10 @@ checking it first.**
 
 ## What is not done
 
-1. The −12 dB detection cut-off is not calibrated against ground truth. It is the single
-   most influential setting in the pipeline.
+1. The −12 dB detection cut-off is not calibrated against ground truth. It remains the
+   single most influential setting — though testing it across a range (−10 to −14 dB)
+   shows the published figures are not finely balanced on it: between −10 and −12 the
+   corroborated months barely move and the ranking of months never changes.
 2. The contaminated baseline is identified but not rebuilt.
 3. The VH radar band — a better water discriminator than the geometric exclusion zone —
    has now been acquired for all months from 2026-01 but is **not yet switched on**.
