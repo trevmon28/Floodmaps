@@ -142,12 +142,11 @@ on Lake Kivu. The units that barely moved — Irumu, Mambasa (inland Ituri) and 
 (inland North Kivu) — are away from large water bodies. That is the signature expected if
 the revision removes open-water false positives rather than real flooding.
 
-**⚠️ But it is also the risk.** Uvira is the most documented flood-prone populated place
-in this AOI (recurrent Mulongwe river flooding; ~80,000 people affected in the 2020
-event). Its flooding is by nature near-shore and river-mouth — precisely what a 300 m
-permanent-water buffer removes. An 85% reduction there may be over-correction in the
-place where humanitarian need is highest, and should be examined before these figures are
-used for targeting.
+**⚠️ This also carried a risk**, since Uvira is the most documented flood-prone populated
+place in this AOI (recurrent Mulongwe river flooding; ~80,000 people affected in the 2020
+event) and its flooding is by nature near-shore and river-mouth — precisely what a 300 m
+permanent-water buffer removes. That concern was investigated and **resolved**; see
+*Uvira investigation (23 Sep)* below.
 
 ---
 
