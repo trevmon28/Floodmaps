@@ -1,0 +1,179 @@
+# External Validation Cross-Check — September 2026
+
+**Status: PRELIMINARY.** This is a desk cross-check against public disaster registries.
+It is not ground truth and no field or in-situ observation was used. Treat the verdicts
+as indicative.
+
+**Scope:** the 19-month flood series (Jan 2025 – Jul 2026) as published after the
+absolute-backscatter revision (research paper §5.4).
+
+---
+
+## Sources queried
+
+| Source | How queried | Coverage returned |
+|--------|-------------|-------------------|
+| Copernicus EMS | `rapidmapping.emergency.copernicus.eu/backend/dashboard-api/public-activations-info/` | 265 activations, 2023-03-24 → 2026-09-15 |
+| International Charter | Activation archive (`disasterscharter.org/activations`) | Searched for DRC flood calls |
+| GDACS | `gdacs.org/gdacsapi/api/events/geteventlist/SEARCH?eventlist=FL` | 37 flood events globally, 2025-01 → 2026-09 |
+| UN-SPIDER | Knowledge portal | Recommended Practices only — no activation registry |
+| Copernicus GFM | News archive | DRC April 2025 reporting |
+
+### Why CEMS turned out to be uninformative here
+
+CEMS returned **zero activations of any category for the DRC across the full 2023–2026
+window**. Activation requires an authorised user to request the service, so for this
+country the absence of an activation says nothing about whether flooding occurred.
+
+This matters beyond bookkeeping: the July 2026 revision (§5.2) used "no CEMS activation"
+as part of its evidence that the September 2025 reading was an artifact. That inference
+is withdrawn — see the correction note in §5.2. The wet-soil physical argument is
+unaffected and stands on its own.
+
+The International Charter is requestable by the affected state and does show DRC
+activity, but its only recent flood call (#961, 10 April 2025) is for **Kinshasa**,
+roughly 1,500 km west of this AOI.
+
+**Practical consequence:** GDACS is the only one of these registries that is
+impact-driven rather than request-driven, and therefore the only usable corroboration
+source for eastern DRC.
+
+---
+
+## GDACS events vs. the detected series
+
+Four DRC flood events fall in the study window. Two are inside the AOI bounding box
+(26.8, −5.9, 30.8, 3.0).
+
+| GDACS event | Centroid | In AOI | Detected month(s) | Detected km² |
+|-------------|----------|--------|-------------------|--------------|
+| 2025-03-28 → 04-17 | 29.18, −5.90 | boundary (Tanganyika) | 2025-03 / 04 — *baseline months* | 0.0 |
+| 2025-05-01 → 05-14 | 27.87, −3.27 | ✅ South Kivu | 2025-05 | 6.1 |
+| 2025-06-13 → 06-18 | 18.03, −0.79 | ❌ Équateur | 2025-06 | 0.8 |
+| 2026-02-11 → 03-05 | 28.71, −0.56 | ✅ North Kivu | 2026-02 + 2026-03 | 11.1 + 5.6 |
+
+### Agreements
+
+- **Both in-AOI events are detected.** Neither is missed.
+- **Event duration matches.** The 2026 event runs 11 Feb → 5 Mar and the pipeline reports
+  signal in both calendar months, at the two largest magnitudes of that period.
+- **True negatives agree.** Months the pipeline now reports as 0.0 km² (2025-07, 2025-08,
+  2025-10) have no corresponding GDACS event.
+
+### Disagreements
+
+- **2025-09 (209.9 km², the series peak) has no GDACS event anywhere in DRC.**
+- **2026-06 (23.3 km²) has no GDACS event.**
+
+The two largest months in the series are the two without independent corroboration, while
+the corroborated events produce comparatively modest areas. This is the inverse of the
+desired pattern and is the main open question in the dataset.
+
+**Counter-consideration.** GDACS alerting is driven by modelled population impact. A large
+inundation in a sparsely populated floodplain can fail to raise an alert, so absence of a
+GDACS event is not evidence of absence of flooding. The September 2025 signal is also
+spatially coherent (262 patches, median 17 px, 98.6% of area in patches ≥10 px) and moved
+only −3% under a revision that cut July 2026 by 79% — both consistent with real signal.
+The finding is *unresolved*, not *refuted*.
+
+---
+
+## Baseline contamination — now externally confirmed
+
+The dry-season baseline is the median of **2025-03, 2025-04 and 2025-05**.
+
+GDACS places an in-AOI flood event at **2025-05-01 → 2025-05-14**, and a second event on
+the AOI's southern boundary at 2025-03-28 → 2025-04-17. The baseline therefore
+incorporates at least one documented in-AOI flood period.
+
+Consequences:
+
+1. Where the May 2025 flood stood, the baseline is artificially dark, so the apparent
+   change in later months is reduced and **detection is suppressed** in exactly the
+   locations most prone to flooding.
+2. 2025-05 is compared against a baseline that contains 2025-05. A documented flood month
+   yielding only 6.1 km² is the expected result of that self-comparison.
+3. This compounds the observation-depth problem: **45.6%** of baseline pixels rest on a
+   single observation, and only 4.3% have all three, so a single wet scene can set the
+   baseline outright for nearly half the area.
+
+This was previously a speculative caveat in `CLAUDE.md`. It is now supported by external
+evidence and should be treated as a defect rather than a caveat.
+
+**Suggested remedy (not implemented).** Move the baseline to a window with no in-AOI GDACS
+events. The 2025 dry season (Jun–Aug) qualifies, but its coverage is poor (2025-07: 0.9%,
+2025-08: 4.1%), so a longer window or a per-pixel low percentile across many months is
+likely to be more robust than a 3-month median.
+
+---
+
+## Effect of the September 2026 revision on rankings
+
+### Months
+
+| Rank | Before | After |
+|------|--------|-------|
+| 1 | 2025-09 — 217.2 | 2025-09 — 209.9 (−3%) |
+| 2 | 2026-06 — 35.4 | 2026-06 — 23.3 (−34%) |
+| 3 | 2026-07 — 31.0 | 2026-02 — 11.1 |
+| 4 | 2026-02 — 17.4 | 2026-07 — 6.5 (−79%) |
+| 5 | 2026-03 — 12.0 | 2025-05 — 6.1 (0%) |
+
+The top two are unchanged. The series concentrates: the top month now holds **77.3%** of
+all detected area (was 63.4%) and the top three hold **90.0%** (was 82.8%). That
+concentration falls on the one month lacking corroboration.
+
+### Regions (Admin-3, peak single-month area)
+
+| Rank | Before | After |
+|------|--------|-------|
+| 1 | Irumu 10.27 | Irumu 7.25 (−29%) |
+| 2 | Uvira 8.82 | Mambasa 4.04 (−2%) |
+| 3 | Kabare 5.33 | Rutshuru 3.06 (−2%) |
+| 4 | Mambasa 4.12 | Uvira 1.29 (**−85%**) |
+| 5 | Bukavu 3.28 | — (nothing remains) |
+
+Only Irumu and Mambasa survive in the top five, and after the revision only **four
+Admin-3 units in the entire AOI report any flooding**. Admin-2 behaves identically.
+
+**The pattern is physically coherent.** The units that collapsed — Uvira (−85%), Bukavu
+(−100%), Kabare (−100%) — are all lakeshore: Uvira on Lake Tanganyika, Bukavu and Kabare
+on Lake Kivu. The units that barely moved — Irumu, Mambasa (inland Ituri) and Rutshuru
+(inland North Kivu) — are away from large water bodies. That is the signature expected if
+the revision removes open-water false positives rather than real flooding.
+
+**⚠️ But it is also the risk.** Uvira is the most documented flood-prone populated place
+in this AOI (recurrent Mulongwe river flooding; ~80,000 people affected in the 2020
+event). Its flooding is by nature near-shore and river-mouth — precisely what a 300 m
+permanent-water buffer removes. An 85% reduction there may be over-correction in the
+place where humanitarian need is highest, and should be examined before these figures are
+used for targeting.
+
+---
+
+## Recommended next steps
+
+1. **Test the VH/VV ratio discriminator.** VH composites now exist for 2026-01 onward
+   (2026-04…07 acquired 2026-09-22). VH is a better open-water discriminator than a
+   geometric buffer, so enabling it may permit a **smaller** buffer and recover genuine
+   near-shore signal in Uvira. Test VH before revisiting the buffer.
+2. **Examine Uvira specifically**, with a per-region near-water / away-from-water split
+   rather than the current per-month split.
+3. **Rebuild the baseline** from a window with no documented in-AOI flooding.
+4. **Calibrate the −12 dB ceiling.** It remains the single most influential free parameter
+   and rests on scene statistics, not ground truth.
+
+---
+
+## Reproducing this check
+
+```bash
+# CEMS activations (JSON)
+curl "https://rapidmapping.emergency.copernicus.eu/backend/dashboard-api/public-activations-info/?limit=2000"
+
+# GDACS flood events
+curl "https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH?eventlist=FL&fromDate=2025-01-01&toDate=2026-09-30&countrylist=COD"
+```
+
+Note: the ReliefWeb API v1 is decommissioned and v2 requires a registered `appname`, so
+ReliefWeb was not queried programmatically for this check.

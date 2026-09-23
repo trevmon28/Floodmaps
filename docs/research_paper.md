@@ -347,8 +347,22 @@ November 2025 found **no corroborating evidence** for a flood event of this scal
   (Uvira/Fizi, 80,000 people affected, May 2025). These events had independent satellite
   confirmation and humanitarian alerts. No equivalent September event was identified.
 - No CEMS rapid mapping activation for Eastern DRC was found for September–October 2025.
-  CEMS typically activates within 24–72 hours when 500+ km² of population-dense areas
-  are inundated — a 3,427 km² event without activation is implausible.
+
+> **⚠️ Correction (September 2026).** The CEMS argument above does not hold and is
+> retained only to document the reasoning as originally published. A complete query of
+> the CEMS activations API (265 activations, 2023-03 to 2026-09) returns **zero
+> activations of any category for the DRC over the entire period**. CEMS activation
+> depends on an authorised user requesting the service, not on whether an event occurs,
+> so for this country the absence of an activation carries no information — CEMS would
+> not have corroborated *any* DRC flood, of any size. The same check found a single
+> African flood activation in 2025–2026 (EMSR857, Mozambique/South Africa). The
+> International Charter has one recent DRC flood activation (#961, 10 April 2025) and it
+> is for **Kinshasa**, ~1,500 km west of this AOI.
+>
+> The wet-soil physical argument in §5.2 stands on its own and is unaffected. What is
+> withdrawn is the inference from CEMS silence. Independent corroboration for this AOI
+> is better sought from GDACS, which is impact-driven rather than request-driven; see
+> `docs/validation_2026-09.md` for that cross-check.
 
 **Uvira geometry check:** The research paper originally cited Uvira as a corroborating
 location. Uvira territory (South Kivu) covers approximately 3,146 km² in total. The

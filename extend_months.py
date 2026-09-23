@@ -107,7 +107,20 @@ STAC_URL          = cfg["data_sources"]["sar"]["catalog"]
 COLLECTION        = cfg["data_sources"]["sar"]["collection"]
 
 DEFAULT_MONTHS       = ["2026-05", "2026-06", "2026-07"]
-NEW_MONTHS           = sys.argv[1:] or DEFAULT_MONTHS
+
+# --band vv (default) | vh. VH is acquisition-only: detection runs against the VV
+# baseline, and the VH composite feeds run_detection_pipeline.py's VH/VV ratio
+# discriminator on a later pass.
+_args = sys.argv[1:]
+BAND = "vv"
+if "--band" in _args:
+    _i = _args.index("--band")
+    BAND = _args[_i + 1].lower()
+    del _args[_i:_i + 2]
+    if BAND not in ("vv", "vh"):
+        sys.exit(f"ERROR: --band must be vv or vh (got {BAND!r})")
+ACQUIRE_ONLY = BAND != "vv"
+NEW_MONTHS           = _args or DEFAULT_MONTHS
 for _m in NEW_MONTHS:
     if not re.fullmatch(r"\d{4}-\d{2}", _m):
         sys.exit(f"ERROR: month arguments must look like YYYY-MM (got {_m!r})")
@@ -166,7 +179,8 @@ def read_band_at(path, resample_m=RESAMPLE_M):
     return arr, transform, src.crs
 
 
-def load_median_vv(items, month_str, native_m=NATIVE_M, block_rows=BLOCK_ROWS):
+def load_median_vv(items, month_str, native_m=NATIVE_M, block_rows=BLOCK_ROWS,
+                   band=None):
     """
     Monthly median VV composite over `items`, computed in horizontal blocks.
 
@@ -207,13 +221,14 @@ def load_median_vv(items, month_str, native_m=NATIVE_M, block_rows=BLOCK_ROWS):
     degraded = []
 
     def _median(sub_geobox, strict):
-        ds = odc_load(items, bands=["vv"], geobox=sub_geobox,
+        ds = odc_load(items, bands=[band or BAND], geobox=sub_geobox,
                       chunks={"x": 2048, "y": 2048}, groupby="solar_day",
                       patch_url=planetary_computer.sign,
                       fail_on_error=strict)
-        if "vv" not in ds:
-            raise KeyError("'vv' missing from loaded dataset")
-        return ds["vv"].median(dim="time").compute().values.astype("float32")
+        _b = band or BAND
+        if _b not in ds:
+            raise KeyError(f"'{_b}' missing from loaded dataset")
+        return ds[_b].median(dim="time").compute().values.astype("float32")
 
     def _try(bi, y0, y1, tries, delay, strict=True):
         """Attempt one block; on success write it into `out` and return True."""
@@ -290,7 +305,7 @@ def preprocess_month(month_str):
 
     Returns the output path, or None if no scenes were found.
     """
-    out_path = PROCESSED_DIR / f"{month_str}_VV.tif"
+    out_path = PROCESSED_DIR / f"{month_str}_{BAND.upper()}.tif"
     if out_path.exists() and not FORCE_REPROCESS_SAR:
         size_mb = out_path.stat().st_size / 1e6
         print(f"  [SAR] {month_str}: already exists ({size_mb:.1f} MB) — skipping acquisition.")
@@ -333,8 +348,8 @@ def preprocess_month(month_str):
         datetime=f"{dt_start}/{dt_end}",
         limit=500,
     )
-    items = [it for it in mpc_search.items() if "vv" in it.assets]
-    print(f"  [SAR] {month_str}: found {len(items)} RTC VV scenes.")
+    items = [it for it in mpc_search.items() if BAND in it.assets]
+    print(f"  [SAR] {month_str}: found {len(items)} RTC {BAND.upper()} scenes.")
 
     if not items:
         print(f"  [SAR] {month_str}: no scenes found — writing empty placeholder.")
@@ -354,7 +369,7 @@ def preprocess_month(month_str):
     from rasterio.windows import Window
 
     def _rio_readable(item):
-        href = planetary_computer.sign(item.assets["vv"].href)
+        href = planetary_computer.sign(item.assets[BAND].href)
         try:
             with rasterio.open(href) as src:
                 h, w = src.height, src.width
@@ -510,6 +525,20 @@ def main():
         print(f"ERROR: baseline_VV.tif not found at {BASELINE_PATH}")
         print("       Run run_detection_pipeline.py first to build the baseline.")
         sys.exit(1)
+
+    if ACQUIRE_ONLY:
+        # VH has no baseline of its own; it is consumed by the VH/VV ratio
+        # discriminator in run_detection_pipeline.py, not by change detection here.
+        print(f"─" * 50)
+        print(f"Acquisition only — band {BAND.upper()}, no detection")
+        print(f"─" * 50)
+        for month_str in NEW_MONTHS:
+            preprocess_month(month_str)
+        print()
+        print(f"[DONE] {BAND.upper()} composites written for {', '.join(NEW_MONTHS)}.")
+        print("       Enable vh_ratio_threshold_db in config/config.yaml, then")
+        print("       re-run run_detection_pipeline.py to apply the ratio filter.")
+        return
 
     print("[BASELINE] Loading …")
     baseline, baseline_transform, baseline_crs = read_band_at(BASELINE_PATH)

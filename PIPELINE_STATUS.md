@@ -1,6 +1,6 @@
 # DRC Flood Mapping Pipeline — Status Tracker
 
-**Last updated:** 2026-09-22  
+**Last updated:** 2026-09-23  
 **AOI:** Eastern DRC (North Kivu, South Kivu, Ituri)  
 **Period:** Jan 2025 – Jul 2026 (19 months, no gaps — Jun 2026 recovered and Jul 2026 re-pulled complete on 2026-09-08)  
 **Threshold:** −5 dB change **+ −12 dB absolute ceiling** (absolute gate added 2026-09-22)  
@@ -155,7 +155,9 @@ Both masks built by `build_masks.py`. Run once, persist forever.
 | **Baseline depth is shallow** | 45.6% of baseline pixels rest on a single observation, so the "dry" median cannot reject transient water; only 4.3% have all 3 obs | Widen the baseline window beyond 2025-03/04/05 |
 | ~~Detection fires on open water~~ **ADDRESSED 2026-09-22** | Relative change alone flagged pixels at −7.3 dB (p90, 2026-07) where open water sits at −23 dB and dry land at −10.5 dB | Fixed: −12 dB absolute ceiling + 3 px water-mask buffer + masks applied before smoothing. Peak month moved −3%, 2026-07 −79%, fragmentation resolved (610 → 23 patches) |
 | **−12 dB ceiling is uncalibrated** | It is the single most influential free parameter in the pipeline and is reasoned from scene statistics, not ground truth | Validate against CEMS/OCHA records or in-situ observation before the numbers drive decisions |
-| **VH/VV discriminator still disabled** | VH is the strongest open-water discriminator available; `vh_ratio_threshold_db` remains `null` | VH composites are missing for 2026-04…07 — requires re-acquiring those months with the VH band |
+| **VH/VV discriminator still disabled** | VH is the strongest open-water discriminator available; `vh_ratio_threshold_db` remains `null` | ✅ VH now acquired for 2026-01…07 (2026-04…07 on 2026-09-23). Ready to enable — test it **before** revisiting the water buffer, since VH may permit a smaller buffer |
+| **⚠️ Uvira may be over-corrected** | Uvira's peak fell 8.82 → 1.29 km² (−85%), Bukavu and Kabare to zero. All three are lakeshore, so the pattern is physically coherent — but Uvira is the most documented flood-prone populated place in the AOI and its flooding is inherently near-shore, which the 300 m buffer removes | Do not use Uvira for targeting without checking. Needs a per-region near/away-water split (current split is per-month only) |
+| **Baseline contains a documented flood** | Baseline = 2025-03/04/05; GDACS records an in-AOI flood 2025-05-01→05-14. Suppresses detection where flooding recurs; 2025-05 self-compares | Rebuild from a flood-free window. 2025 dry season (Jun–Aug) has no in-AOI events but poor coverage (0.9% / 4.1%) — a longer window or per-pixel low percentile is likely more robust than a 3-month median |
 | **Otsu absolute gate is a trap** | `absolute_threshold_method: otsu` finds the open-water/land split (−12 to −16.8 dB here), far darker than vegetated flooding; it cut 2025-09 to 108.5 km² and 2026-07 to 0.2 km² | Keep `fixed` unless mapping open water only |
 
 ---
@@ -185,6 +187,10 @@ Both masks built by `build_masks.py`. Run once, persist forever.
 
 | 2026-09-22 | Full re-release: absolute-backscatter gate + buffered water mask | Relative change alone was flagging dry-land-bright pixels. Added −12 dB absolute ceiling, 3 px permanent-water buffer, and moved quality masks *before* the 7×7 median filter. All 19 months reprocessed. Series total 342.6 → **271.4 km²**. Discriminating, not blanket: 2025-09 −3% (217.2 → 209.9), 2026-07 −79% (31.0 → 6.5), marginal months (2025-07/08/10) → 0.0. Fragmentation resolved: 2026-07 from 610 patches/median 1 px to 23/median 10 px. Deleted 3 stale GeoJSONs for months that now detect zero. |
 | 2026-09-22 | Rejected Otsu for the absolute gate | First attempt used `min(otsu(VV), −12)`. Otsu locates the open-water/land split (−12 to −16.8 dB), darker than the vegetated flooding being mapped (flagged pixels median −13 to −14 dB), so it behaved as an open-water detector: 2025-09 → 108.5 km², 2026-07 → 0.2 km². Switched to a fixed −12 dB ceiling; results then matched the modelled prediction (predicted 210.8, actual 209.9 for 2025-09). |
+
+| 2026-09-23 | External validation cross-check (preliminary) | CEMS/Charter/GDACS/UN-SPIDER. **CEMS returns zero DRC activations 2023–2026** — activation is request-driven, so its silence carries no information for this country; the paper's §5.2 CEMS inference is withdrawn (physical argument unaffected). GDACS: both in-AOI events detected (2025-05 South Kivu; 2026-02→03 North Kivu, duration matches across two months), true negatives agree. **2025-09 (209.9 km²) and 2026-06 (23.3 km²) have no corroboration** — the two largest months. Full writeup in `docs/validation_2026-09.md`. |
+| 2026-09-23 | **Baseline contamination confirmed externally** | Baseline = 2025-03/04/05. GDACS records an in-AOI flood 2025-05-01→05-14 and a boundary event 2025-03-28→04-17. The "dry" baseline therefore contains documented flooding, suppressing detection where flooding recurs, and 2025-05 is compared against a baseline containing itself. Previously speculative in CLAUDE.md; now evidence-backed. Not yet fixed. |
+| 2026-09-23 | VH acquired for 2026-04…07 | `extend_months.py --band vh` (acquisition-only path added). Coverage matches VV exactly: 5.2% / 7.6% / 23.6% / 8.5%. VH now present for every month from 2026-01. `vh_ratio_threshold_db` still `null` — not enabled, would move the numbers a third time. |
 
 > **Update this table each time you run a phase.** Include what you ran, whether it succeeded, and any errors.
 
