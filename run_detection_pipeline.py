@@ -52,6 +52,8 @@ RESAMPLE_M           = 100
 ABS_DB_MAX           = cfg["processing"].get("absolute_db_max", None)
 ABS_METHOD           = cfg["processing"].get("absolute_threshold_method", "fixed")
 WATER_BUFFER_PX      = int(cfg["processing"].get("water_buffer_px", 0))
+VH_MIN_FOOTPRINT     = float(cfg["processing"].get("vh_min_footprint", 0.80))
+VH_MAX_MEDIAN_RATIO  = float(cfg["processing"].get("vh_max_median_ratio_db", -1.0))
 FORCE_REPROCESS      = True    # rerun all months with corrected threshold
 
 # Threshold method: read from config; fall back to "fixed" if skimage unavailable
@@ -187,6 +189,56 @@ def load_mask_aligned(mask_path, target_shape, target_transform, target_crs):
         )
     return dest
 
+def vh_usable(vh_path, vv):
+    """
+    Decide whether a VH composite may be used for the VH/VV ratio filter.
+
+    Returns (vh_array, status). vh_array is None when VH must not be used.
+
+    Existence of a _VH.tif is NOT sufficient. Three failure modes were found in
+    this archive on 2026-09-23, any of which silently corrupts the filter:
+
+    * Degenerate placeholders. 2025-05_VH.tif and 2026-03_VH.tif are all zeros.
+      With VH=0 and VV~-10 dB the ratio computes to +10 dB, above any sane
+      threshold, so EVERY flood pixel is classified "not water" and deleted.
+      2025-05 is one of only two externally corroborated months in the series.
+    * Partial footprint. VH coverage ranges 0%-23.6% of the AOI while VV reaches
+      50.5%. Applying the filter where VH covers a fraction of the VV footprint
+      shrinks some months and not others, which breaks cross-month comparability
+      exactly as the coverage audit in docs/validation_2026-09.md describes.
+    * Source mismatch. 2026-03 pairs an MPC RTC VV with a GRD-era VH; the ratio
+      then mixes two calibrations and is meaningless. A physically implausible
+      median ratio is the detectable symptom.
+    """
+    if not os.path.exists(vh_path):
+        return None, "no VH file"
+    vh, _, _ = read_band(vh_path)
+    if vh.shape != vv.shape:
+        return None, f"grid mismatch {vh.shape} vs {vv.shape}"
+
+    # Zeros are RTC nodata, not a valid -0 dB measurement.
+    usable = np.isfinite(vh) & (vh != 0)
+    if not usable.any():
+        return None, "all zero/nodata (degenerate placeholder)"
+
+    vv_valid = np.isfinite(vv)
+    denom = int(vv_valid.sum())
+    if denom == 0:
+        return None, "no valid VV to compare against"
+    footprint = float((usable & vv_valid).sum()) / denom
+    if footprint < VH_MIN_FOOTPRINT:
+        return None, (f"VH covers only {100*footprint:.1f}% of the VV footprint "
+                      f"(need {100*VH_MIN_FOOTPRINT:.0f}%)")
+
+    # VH is below VV for essentially every natural surface, so a non-negative
+    # median ratio means the pair is miscalibrated, mismatched or degenerate.
+    with np.errstate(invalid="ignore"):
+        med = float(np.nanmedian((vh - vv)[usable & vv_valid]))
+    if not np.isfinite(med) or med > VH_MAX_MEDIAN_RATIO:
+        return None, f"implausible median VH-VV ratio {med:.1f} dB (expected < {VH_MAX_MEDIAN_RATIO:g})"
+    return vh, f"ok ({100*footprint:.0f}% footprint, median {med:.1f} dB)"
+
+
 slope_mask_arr     = None
 perm_water_mask_arr = None
 _water_dist_cache  = {}        # grid shape -> distance-to-permanent-water (px)
@@ -298,17 +350,23 @@ for i, fname in enumerate(vv_files, 1):
         print(f"  [abs<{abs_thr:.1f}dB] -{n_bright:,} px", end="  ", flush=True)
 
     # ── VH/VV ratio discriminator (wet-soil / wet-vegetation suppression) ────
-    # Open water: VH << VV (ratio typically < -10 dB).
-    # Wet soil / wet forest: both reduced but the ratio stays higher (~-6 to -8 dB).
+    # Open water: VH << VV. Wet soil / wet forest: both reduced but the ratio
+    # stays higher. The filter is only applied when the VH composite passes the
+    # checks below — an unvalidated VH file is worse than none, see vh_usable().
+    vh_status = "disabled" if VH_RATIO_THRESHOLD_DB is None else "not applied"
     if VH_RATIO_THRESHOLD_DB is not None:
         vh_path = os.path.join(PROCESSED_DIR, fname.replace("_VV.tif", "_VH.tif"))
-        if os.path.exists(vh_path):
-            vh, _, _ = read_band(vh_path)
+        vh, vh_status = vh_usable(vh_path, vv)
+        if vh is not None:
             with np.errstate(invalid="ignore"):
                 vh_vv_ratio = vh - vv   # both in dB, so subtraction = ratio in dB
             non_water_ratio = (vh_vv_ratio > VH_RATIO_THRESHOLD_DB) & np.isfinite(vh_vv_ratio)
+            removed = int((non_water_ratio & (flood_mask == 1)).sum())
             flood_mask[non_water_ratio & (flood_mask == 1)] = 0
-            print(f"  [VH/VV] -{int(non_water_ratio.sum()):,} px", end="  ", flush=True)
+            vh_status = "applied"
+            print(f"  [VH/VV] -{removed:,} px", end="  ", flush=True)
+        else:
+            print(f"  [VH/VV skipped: {vh_status}]", end="  ", flush=True)
 
     # ── Quality masks, applied BEFORE smoothing ───────────────────────────────
     # Masking after the median filter carved holes in already-smoothed blobs and
@@ -387,7 +445,8 @@ for i, fname in enumerate(vv_files, 1):
     flood_stats.append({"month": month_str, "flooded_pct": pct,
                         "flooded_px": flooded_px, "flood_area_km2": area_km2,
                         "near_water_km2": near_km2, "away_water_km2": away_km2,
-                        "quality": "bad" if month_str in UNCALIBRATED_MONTHS else "valid"})
+                        "quality": "bad" if month_str in UNCALIBRATED_MONTHS else "valid",
+                        "vh_filter": vh_status})
 
     geojson_note = f"{len(flood_geoms)} polygon(s)" if flood_geoms else "no flooded pixels"
     print(f"{pct}% flooded — {area_km2} km²  ({geojson_note})")

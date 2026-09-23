@@ -47,8 +47,20 @@ processing:
   # permissive in tropical equatorial environments during rainy-season onset.
   # -5 dB requires a halving of power beyond the wet-soil noise floor (~-3 dB).
   change_threshold_db: -5.0
-  # VH/VV ratio filter (None = disabled; -10.0 recommended once VH files verified)
+  # VH/VV ratio filter. STILL DISABLED (null) — see docs/validation_2026-09.md.
+  # The -10 dB figure previously noted as "recommended" was never tested: on the
+  # one properly matched RTC pair (2026-06) it keeps 0 of 2,326 flood pixels, i.e.
+  # it would delete the month. Measured medians there: flood -4.6 dB, permanent
+  # water -6.2 dB, other land -5.9 dB — the classes barely separate, so a
+  # threshold must be derived empirically before this is switched on.
   vh_ratio_threshold_db: null
+  # Guards applied whenever the VH filter IS enabled (see vh_usable()).
+  # Minimum share of the VV footprint that VH must cover, so the filter cannot be
+  # applied strongly to some months and not at all to others.
+  vh_min_footprint: 0.80
+  # VH sits below VV on natural surfaces; a median ratio above this means the pair
+  # is degenerate, miscalibrated or mismatched (all-zero VH yields about +10 dB).
+  vh_max_median_ratio_db: -1.0
   # Absolute backscatter gate (added 2026-09-20). Relative change alone flags
   # pixels far too bright to be standing water: in 2026-07 the flagged pixels
   # reached -7.3 dB at p90, while open water in this AOI sits near -23 dB and dry
