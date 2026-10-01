@@ -1,0 +1,143 @@
+# Eastern DRC flood mapping — handover letter
+
+**Date:** 1 October 2026
+**Dataset:** January 2025 – July 2026, 19 months (17 usable)
+**Purpose this is fit for:** identifying **which areas flood most** across the sample.
+**Purpose this is not fit for:** precise measurement of how much area flooded.
+
+---
+
+## What you can rely on
+
+The dataset is built to rank places, and the ranking is the part that holds up. Areas are
+derived from Sentinel-1 radar, which sees through cloud — essential here, because optical
+satellites are blocked by cloud over eastern DRC for much of the year.
+
+**Where flooding concentrates, most to least:**
+
+| Rank | Admin-3 area | Province | Peak | Driven by | Independently documented? |
+|------|--------------|----------|------|-----------|---------------------------|
+| 1 | **Mambasa** | Ituri | 4.04 | May 2025, Feb 2026 | **Yes — both months** |
+| 2 | **Rutshuru** | North Kivu | 3.06 | Sep 2025, May 2025 | Partly |
+| 3 | Irumu | Ituri | 2.98 | Jun 2026 | No |
+| 4 | Uvira | South Kivu | 0.16 | Jul 2026 | No |
+
+Only four Admin-3 units register flooding above the detection floor across the whole
+sample.
+
+**Mambasa is the most defensible target.** Its two flood months — May 2025 and February
+2026 — are the only two events in the whole series that are independently confirmed by an
+external disaster registry. It is the one area whose ranking rests on corroborated events
+rather than on the satellite data alone.
+
+**A caution on Irumu.** In the previous release Irumu ranked first by a wide margin (7.25).
+That rested entirely on two months, June and July 2026, which we have since found were
+inflated by a sensor calibration mismatch (see *What changed*). Corrected, Irumu drops to
+third. If you received an earlier version of this ranking, this is the single most
+important change in it.
+
+Mambasa and Rutshuru were unaffected by that correction — their flooding falls in months
+from the earlier, unaffected sensor period, and their figures are identical before and
+after.
+
+**When flooding concentrates:** September 2025 is by far the largest month in the series,
+several times any other. February–March 2026 and June 2026 form a secondary group. The dry
+months (July, August, October 2025) register nothing.
+
+---
+
+## What you should not rely on
+
+**The absolute square-kilometre figures.** Treat them as indicative. Three reasons:
+
+1. **The detection threshold is not calibrated against observed floods.** It is set from
+   the radar statistics of these scenes. Testing it across a plausible range changes
+   individual months by up to a third, while leaving the order of months unchanged — the
+   ranking is less fragile than the numbers, which is why we lead with it.
+
+2. **Satellite coverage is very uneven between months**, from under 1% to about 50% of the
+   study area, and different months image different places. No location is covered in all
+   19 months. **Use the `flooded_pct` column, not `flood_area_km2`, when comparing
+   months** — a larger area can simply mean a better-imaged month.
+
+3. **The dry-season reference period contains a real flood.** The pipeline detects
+   flooding by comparing each month against a "normal" dry baseline built from March–May
+   2025. An independent disaster registry records a flood inside the study area from 1–14
+   May 2025, so part of the baseline is wetter than it should be. Where that happened,
+   later flooding is *under*-detected. This biases the data toward missing flooding, not
+   inventing it — so the areas flagged are more likely to be real than the quiet areas are
+   to be genuinely quiet.
+
+---
+
+## Two things to know about specific results
+
+**September 2025 is the largest month but has no independent corroboration.** We checked
+Copernicus EMS, the International Charter, GDACS and UN-SPIDER. No flood event is recorded
+anywhere in DR Congo that month. That does not make it wrong — the alerting systems are
+driven by population impact, and a large flood in a thinly populated floodplain may raise
+no alert, while the signal itself is spatially coherent and survives every robustness test
+we applied. But it is unverified, and it is the single biggest number in the dataset.
+
+By contrast, both flood events that *are* independently documented inside the study area
+(May 2025 in South Kivu, February–March 2026 in North Kivu) were detected, and the 2026
+event shows up across both calendar months, matching its actual duration. That is the best
+evidence the method works.
+
+**September 2025 falls largely outside the three target provinces.** Of its total, only a
+few square kilometres lie inside North Kivu, South Kivu and Ituri. If your work is scoped
+to those provinces, use the Admin-3 tables rather than the study-area totals.
+
+---
+
+## What changed in this release
+
+- **June 2026 was recovered.** It had been recorded as permanently missing data. It was
+  not — a transient download failure had been logged as corrupt data. Re-processed, it has
+  the second-best satellite coverage of any month in the series.
+- **July 2026 was re-pulled** as a complete month, having been captured mid-month before.
+- **Detection was made stricter.** Flooding had been identified purely by a drop in radar
+  brightness, which let through ground too bright to be standing water. A pixel must now
+  also be dark in absolute terms.
+- **A sensor mismatch was corrected.** Months from March 2026 onward come from a different
+  satellite product than earlier months, and sat about 0.8 dB darker on identical ground —
+  making those months appear to flood more than they had. They are now placed on a common
+  scale. This only changed the five affected months; earlier months are untouched.
+
+Every area figure has changed as a result. Replace any numbers held from earlier versions.
+
+---
+
+## Known limitations, in priority order
+
+1. **The dry baseline is contaminated** (above). The fix needs more satellite observations
+   per location than the current archive has — the median location has only three. We
+   attempted a rebuild using all months and rejected it: it degraded the months we have
+   independent evidence for. Documented so it is not retried blind.
+2. **The detection threshold is uncalibrated.** Checking a few months against known flood
+   events would settle it.
+3. **The VH radar band is not in use.** It is the best available discriminator between open
+   water and flooded land, but the archive's VH coverage is too patchy and inconsistent to
+   apply without biasing some months against others.
+
+These mostly affect how much confidence to place in any single number rather than the
+order of areas. But the order is not guaranteed stable: correcting the sensor mismatch in
+this release moved Irumu from first to third. A systematic error that affects one sensor
+period, or one group of months, can reorder the table — whereas tuning the detection
+threshold does not. Treat the top of the ranking as firm and the exact order below it as
+provisional, and prefer areas whose flooding is independently documented (Mambasa, and
+partly Rutshuru).
+
+---
+
+## Files
+
+| File | What it is |
+|------|------------|
+| `flood_stats.csv` | Monthly totals. Use `flooded_pct` to compare months |
+| `csv/admin3_flood_summary.csv` | **Per-area exposure — the table for ranking areas** |
+| `flood_extents/*.geojson` | Monthly flood polygons (WGS84), open directly in QGIS |
+| `sampling_frames/*.parquet` | Flood data joined to administrative units and hex grid |
+| `maps/*.html` | Interactive maps. Flood patches are small — zoom in to see them |
+
+Happy to run specific months or areas, or to walk through any of the above.

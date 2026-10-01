@@ -217,6 +217,90 @@ conclusions do not hinge on the exact value within −10…−12 dB.
 
 ---
 
+## Cross-sensor radiometric offset (1 Oct) — corrected
+
+The archive mixes two source products: Element84 GRD-derived σ⁰ via NB02 (2025-03 →
+2026-02) and MPC `sentinel-1-rtc` (2026-03 → 2026-07). They are **not on the same
+radiometric scale**.
+
+Measured over 5.95M paired stable-land pixels (non-water, slope ≤8°), the RTC months sit a
+median **0.82 dB below** the GRD-era baseline on identical ground — about **16% of the
+−5 dB change threshold**, biasing 2026-03…07 toward over-detection.
+
+It is radiometric, not seasonal: same-month year-on-year pairs show the same step
+(2025-05 −7.37 dB vs 2026-05 −9.26 dB; 2025-06 −7.43 vs 2026-06 −9.42), and the break lands
+exactly at the source change. RTC applies terrain flattening, which also makes the
+difference brightness-dependent rather than a constant offset (−0.4 dB for typical land at
+−14…−7 dB, −2.8 dB for bright targets at −5…0 dB).
+
+> **A measurement caution.** A first pass read the offset as ~1.9 dB from per-month medians
+> over the ≥10-month common footprint. That subset is unrepresentative and does show ≈1.7 dB;
+> the full paired population gives 0.66 dB, and 0.82 dB against the actual baseline. Use the
+> paired population.
+
+**Correction applied: quantile mapping**, matching the RTC empirical CDF to the GRD-era CDF
+over stable land (`config/rtc_to_grd_harmonisation.json`). Shifts range +0.48 to +1.03 dB
+across the distribution, and spread is preserved (RTC sd 1.96 → 1.81 against GRD's 1.82).
+
+Regressing GRD on RTC was tried first and **rejected**: the conditional median shrinks
+toward the mean (+5.2 dB at the dark tail), and the dark tail is precisely the flood signal.
+Quantile mapping matches distributions without compressing dynamic range.
+
+**Effect — targeted, as intended.** GRD-era months are unchanged to the decimal; only the
+five RTC months move:
+
+| Month | Era | Before | Harmonised |
+|-------|-----|--------|-----------|
+| 2025-05 | GRD | 6.1 | 6.1 |
+| 2025-09 | GRD | 209.9 | 209.8 |
+| 2026-02 | GRD | 11.1 | 11.1 |
+| 2026-03 | RTC | 5.6 | 1.9 |
+| 2026-06 | RTC | 23.3 | 9.3 |
+| 2026-07 | RTC | 6.5 | 2.8 |
+
+Notably 2026-06 — one of the two uncorroborated months — loses 60%, so a substantial part
+of it was the calibration artefact.
+
+---
+
+## Multi-month baseline rebuild (1 Oct) — ATTEMPTED AND REJECTED
+
+The flood-contaminated baseline was to be replaced by a per-pixel percentile across all 17
+harmonised months. It does not work on this archive and was **not adopted**. Recorded here
+so it is not retried blind.
+
+**Design error found during the work.** The first build pooled all 17 months *including the
+month being tested*, so every month was partly compared against itself — the same
+self-comparison defect it was meant to fix, generalised to the whole series. Rebuilt
+leave-one-out; results were nearly identical, so this was not the binding problem.
+
+**Why it fails:**
+
+| Month | Published | LOO p50 | LOO p75 |
+|-------|-----------|---------|---------|
+| 2025-05 (corroborated) | 6.1 | 6.1 | 8.4 |
+| 2025-09 (peak) | 209.9 | 91.4 | **460.9** |
+| 2026-02 (corroborated) | 11.1 | **3.6** | 12.6 |
+| 2026-03 (corroborated) | 5.6 | **0.4** | 0.9 |
+
+1. **It degrades externally corroborated months** — 2026-02 by 68%, 2026-03 by 93%.
+   Destroying signal that independent evidence supports is disqualifying.
+2. **Observation depth is the binding constraint.** A dry baseline needs a high percentile,
+   but the median pixel has only **3 observations** (≥5 obs: 9% of area; ≥12 obs: 2.5%). At
+   n=3, p75 *is* the maximum — hence 2025-09 exploding to 460.9 km². The archive cannot
+   support a robust percentile.
+3. Pooling all months yields an *average* baseline, not a dry one, suppressing detection
+   generally. Coverage barely improved (51.3% → 52.0%).
+
+The one real gain — no pixel resting on a single observation, against 45.6% before — does
+not offset the cost.
+
+**Implication.** The contaminated baseline remains an open defect, and the fix requires
+**more observations per pixel**, not a different statistic. That means denser acquisition
+from a single consistent source, not a reprocessing trick.
+
+---
+
 ## Recommended next steps
 
 1. **Test the VH/VV ratio discriminator.** VH composites now exist for 2026-01 onward

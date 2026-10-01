@@ -1,9 +1,10 @@
 # DRC Flood Mapping Pipeline — Status Tracker
 
-**Last updated:** 2026-09-23  
+**Last updated:** 2026-10-01  
 **AOI:** Eastern DRC (North Kivu, South Kivu, Ituri)  
 **Period:** Jan 2025 – Jul 2026 (19 months, no gaps — Jun 2026 recovered and Jul 2026 re-pulled complete on 2026-09-08)  
-**Threshold:** −5 dB change **+ −12 dB absolute ceiling** (absolute gate added 2026-09-22)  
+**Threshold:** −5 dB change **+ −12 dB absolute ceiling**  
+**Harmonisation:** MPC RTC months (2026-03 →) quantile-mapped onto the Element84 GRD-era scale  
 **Masks:** slope >8°, permanent water buffered 3 px — applied *before* the 7×7 median filter  
 **Env:** `C:\Users\trevm\Projects\SpatialLab\gis_env`
 
@@ -193,6 +194,10 @@ Both masks built by `build_masks.py`. Run once, persist forever.
 | 2026-09-23 | VH acquired for 2026-04…07 | `extend_months.py --band vh` (acquisition-only path added). Coverage matches VV exactly: 5.2% / 7.6% / 23.6% / 8.5%. VH now present for every month from 2026-01. `vh_ratio_threshold_db` still `null` — not enabled, would move the numbers a third time. |
 
 | 2026-09-23 | Uvira investigation + threshold sensitivity sweep (read-only, no outputs changed) | **Uvira resolved**: its whole 8.82 km² came from 2026-07; decomposition of the 884 px = 143 removed by the absolute gate, 249 by the water buffer alone, ~363 by the mask-before-smooth reordering, 129 surviving. No GDACS event in Jul 2026 and median −16.7 dB → artifact, not recurrent flood. **Sensitivity**: ceilings −10/−11/−12/−13/−14 dB on six key months. Stable −10→−12 (2025-05 unchanged at 6.1; 2025-09 215.6→209.8), steep collapse below −12 (−14 dB: 2026-02 −75%, 2026-06 −78%). No threshold reverses the corroborated/uncorroborated contrast — the Sep 2025 peak dominates by 10–30× throughout. |
+
+| 2026-10-01 | **Cross-sensor harmonisation shipped** | RTC months (2026-03…07) sat a median 0.82 dB below the GRD-era baseline on identical ground (5.95M paired stable-land px) — ~16% of the −5 dB threshold, biasing them toward over-detection. Confirmed radiometric not seasonal by same-month year-on-year pairs. Quantile mapping applied (`config/rtc_to_grd_harmonisation.json`); regression-on-RTC rejected (shrinks +5.2 dB at the dark tail, which is the flood signal). Surgical: **all 14 GRD months unchanged to the decimal, all 5 RTC months corrected.** Series 271.4 → 245.9 km². 2026-06 23.3 → 9.2, 2026-03 5.6 → 1.9, 2026-07 6.5 → 2.7. |
+| 2026-10-01 | **Admin-3 ranking reordered** | Irumu fell from 1st (7.25) to 3rd (2.98): its lead rested entirely on 2026-06 and 2026-07, both calibration-inflated RTC months. New order **Mambasa (4.04) > Rutshuru (3.06) > Irumu (2.98) > Uvira (0.16)**. Mambasa and Rutshuru unchanged — their flooding falls in GRD-era months. Mambasa is the best-evidenced unit: both its flood months (2025-05, 2026-02) are GDACS-corroborated. |
+| 2026-10-01 | Multi-month baseline rebuild REJECTED | Attempted per-pixel percentile over 17 harmonised months, leave-one-out. Degrades corroborated months (2026-02 −68%, 2026-03 −93%) because observation depth is too low — median pixel has 3 obs, so p75 is the maximum (2025-09 exploded to 460.9 km²). Baseline contamination stays open; the fix needs denser acquisition, not a different statistic. See `docs/validation_2026-09.md`. |
 
 > **Update this table each time you run a phase.** Include what you ran, whether it succeeded, and any errors.
 

@@ -61,6 +61,14 @@ processing:
   # VH sits below VV on natural surfaces; a median ratio above this means the pair
   # is degenerate, miscalibrated or mismatched (all-zero VH yields about +10 dB).
   vh_max_median_ratio_db: -1.0
+  # Cross-sensor harmonisation (added 2026-10-01). Months from 2026-03 onward come
+  # from MPC sentinel-1-rtc; earlier months come from Element84 GRD via NB02. Over
+  # 5.95M paired stable-land pixels the RTC months sit a median 0.82 dB below the
+  # GRD-era baseline on identical ground (~16% of the -5 dB change threshold), which
+  # biased 2026-03..07 toward over-detection. Confirmed radiometric not seasonal by
+  # same-month year-on-year pairs (2025-05 -7.37 dB vs 2026-05 -9.26 dB).
+  rtc_era_from: "2026-03"
+  harmonisation_file: config/rtc_to_grd_harmonisation.json
   # Absolute backscatter gate (added 2026-09-20). Relative change alone flags
   # pixels far too bright to be standing water: in 2026-07 the flagged pixels
   # reached -7.3 dB at p90, while open water in this AOI sits near -23 dB and dry

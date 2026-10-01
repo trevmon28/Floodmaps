@@ -6,6 +6,7 @@ Outputs are saved incrementally — safe to kill and restart; completed months a
 """
 
 import os, sys, warnings
+import json
 import numpy as np
 import pandas as pd
 import rasterio
@@ -53,6 +54,9 @@ ABS_DB_MAX           = cfg["processing"].get("absolute_db_max", None)
 ABS_METHOD           = cfg["processing"].get("absolute_threshold_method", "fixed")
 WATER_BUFFER_PX      = int(cfg["processing"].get("water_buffer_px", 0))
 VH_MIN_FOOTPRINT     = float(cfg["processing"].get("vh_min_footprint", 0.80))
+RTC_ERA_FROM         = str(cfg["processing"].get("rtc_era_from", "2026-03"))
+HARMONISATION_FILE   = cfg["processing"].get("harmonisation_file",
+                                             "config/rtc_to_grd_harmonisation.json")
 VH_MAX_MEDIAN_RATIO  = float(cfg["processing"].get("vh_max_median_ratio_db", -1.0))
 FORCE_REPROCESS      = True    # rerun all months with corrected threshold
 
@@ -189,6 +193,53 @@ def load_mask_aligned(mask_path, target_shape, target_transform, target_crs):
         )
     return dest
 
+_HARMONISATION = None
+
+def load_harmonisation():
+    """
+    Quantile map putting MPC RTC months onto the Element84 GRD-era radiometric
+    scale, so a single baseline and a single absolute threshold are meaningful
+    across both source products.
+
+    Measured 2026-09-30: over 5.95M paired stable-land pixels the RTC months sit
+    a median 0.82 dB below the GRD-era baseline on identical ground -- about 16%
+    of the -5 dB change threshold, biasing 2026-03..07 toward over-detection.
+    The step lands exactly at the source change and is confirmed by same-month
+    year-on-year pairs (2025-05 -7.37 dB vs 2026-05 -9.26 dB), so it is
+    radiometric, not seasonal. RTC applies terrain flattening, which also makes
+    the difference brightness-dependent rather than a constant offset.
+
+    Quantile mapping is used rather than regressing GRD on RTC: the conditional
+    median shrinks toward the mean (+5.2 dB at the dark tail) and the dark tail
+    is precisely the flood signal. Quantile mapping matches the distributions
+    while preserving spread (RTC sd 1.96 -> 1.81 against GRD's 1.82).
+    """
+    global _HARMONISATION
+    if _HARMONISATION is None:
+        if not os.path.exists(HARMONISATION_FILE):
+            _HARMONISATION = False
+        else:
+            with open(HARMONISATION_FILE) as fh:
+                hm = json.load(fh)
+            _HARMONISATION = (np.asarray(hm["rtc"], dtype="float64"),
+                              np.asarray(hm["grd"], dtype="float64"))
+    return _HARMONISATION
+
+
+def harmonise(arr, month_str):
+    """Map an RTC-era month onto the GRD-era scale. GRD-era months pass through."""
+    if month_str < RTC_ERA_FROM:
+        return arr, "grd-era (native)"
+    hm = load_harmonisation()
+    if not hm:
+        return arr, "NOT harmonised (map file missing)"
+    qr, qg = hm
+    out = arr.copy()
+    fin = np.isfinite(out)
+    out[fin] = np.interp(out[fin], qr, qg)
+    return out, "harmonised rtc->grd"
+
+
 def vh_usable(vh_path, vv):
     """
     Decide whether a VH composite may be used for the VH/VV ratio filter.
@@ -302,6 +353,9 @@ for i, fname in enumerate(vv_files, 1):
         continue
 
     vv, transform, crs = read_band(os.path.join(PROCESSED_DIR, fname))
+    vv, harm_note = harmonise(vv, month_str)
+    if month_str >= RTC_ERA_FROM:
+        print(f"  [{harm_note}]", end="  ", flush=True)
 
     change = vv - baseline
 
