@@ -2,8 +2,11 @@ data/raw/
 data/processed/
 data/outputs/
 data/boundaries/
-# Exclude large GeoJSONs and zip from handover — keep CSV/parquet
-data/handover/flood_extents/
+# Handover: publish the tables AND the flood polygons. The GeoJSONs were
+# excluded as "large" when a single month ran to 256 MB at the -3 dB threshold;
+# after the 2026-09/10 corrections the whole set is 372 KB, so it now ships.
+# Maps stay out as duplicates of docs/ (already served by GitHub Pages), and the
+# zip stays out as a build artefact.
 data/handover/maps/
 data/eastern_drc_flood_data.zip
 *.tif

@@ -130,14 +130,33 @@ partly Rutshuru).
 
 ---
 
-## Files
+## Where to get the files
+
+Everything is public, no account needed.
+
+**Data — browse or download:**
+https://github.com/trevmon28/Floodmaps/tree/master/data/handover
+
+**Interactive maps — open in a browser:**
+- Flood extents by month: https://trevmon28.github.io/Floodmaps/flood_map_interactive.html
+- Sampling frame (admin units and hex grid): https://trevmon28.github.io/Floodmaps/flood_sampling_map.html
+
+**The two files most people want, direct:**
+- Per-area exposure (the ranking table):
+  https://raw.githubusercontent.com/trevmon28/Floodmaps/master/data/handover/csv/admin3_flood_summary.csv
+- Monthly totals:
+  https://raw.githubusercontent.com/trevmon28/Floodmaps/master/data/handover/flood_stats.csv
 
 | File | What it is |
 |------|------------|
-| `flood_stats.csv` | Monthly totals. Use `flooded_pct` to compare months |
 | `csv/admin3_flood_summary.csv` | **Per-area exposure — the table for ranking areas** |
+| `flood_stats.csv` | Monthly totals. Use `flooded_pct` to compare months |
 | `flood_extents/*.geojson` | Monthly flood polygons (WGS84), open directly in QGIS |
 | `sampling_frames/*.parquet` | Flood data joined to administrative units and hex grid |
-| `maps/*.html` | Interactive maps. Flood patches are small — zoom in to see them |
+| `README.md` | Column definitions and data-quality flags |
+
+On the maps: flood patches are small at country zoom, so zoom in to see them. The
+background tiles carry an "API KEY REQUIRED" watermark, which is cosmetic and does not
+affect any of the data.
 
 Happy to run specific months or areas, or to walk through any of the above.
